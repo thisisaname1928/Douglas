@@ -8,5 +8,5 @@ import (
 
 func main() {
 	fmt.Println(docx.Parse2Html())
-	docx.DecompressDocxMedia("./test.docx", "./testmedia/")
+	docx.DecompressDocxMedia("./test.docx", "./testmedia/media/")
 }

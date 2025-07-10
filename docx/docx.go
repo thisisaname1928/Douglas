@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -135,11 +134,11 @@ func Parse2Html() string {
 		hastext := false
 		for _, i := range r {
 			if i.Drawing != nil {
+				hastext = true
 				for _, drawing := range *i.Drawing {
-					fmt.Println(rIDTable[ParseDrawing(&drawing)])
+					output += "<img src=\"./" + rIDTable[ParseDrawing(&drawing)] + "\">"
 				}
-			}
-			if i.Text.Text != nil {
+			} else if i.Text.Text != nil {
 				hastext = true
 				text := i.Text.Text
 				ParseProperties(i.RunProperties.Properties, text)
