@@ -1,4 +1,6 @@
 tmp/
+testmedia/
+.*
 
 *.zip
 test.xml

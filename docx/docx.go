@@ -1,14 +1,20 @@
 package docx
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 )
 
 type Property struct {
 	XMLName xml.Name
 	Val     *string `xml:"val,attr"`
+	Fill    *string `xml:"fill,attr"`
 }
 
 type Text struct {
@@ -22,10 +28,10 @@ type RunProperties struct {
 }
 
 type Run struct {
-	XMLName xml.Name `xml:"r"`
-	Text    Text     `xml:"t"`
-
+	XMLName       xml.Name      `xml:"r"`
+	Text          Text          `xml:"t"`
 	RunProperties RunProperties `xml:"rPr"`
+	Drawing       *[]Drawing    `xml:"drawing"`
 }
 
 type Paragraph struct {
@@ -47,6 +53,14 @@ func parseSubPropery(p *Property) bool {
 	if p != nil {
 
 		if p.Val != nil { // when property tag have w:val
+			// some exception
+			if p.Fill != nil {
+				switch *p.Fill {
+				case "auto":
+					return false
+				}
+			}
+
 			if *p.Val != "false" {
 				return true
 			} else {
@@ -67,45 +81,160 @@ func ParseProperties(p *[]Property, text *string) {
 			if parseSubPropery(&prop) {
 				switch prop.XMLName.Local {
 				case "b":
-					*text = "\033[1m" + *text
+					*text = "<b>" + *text + "</b>"
 				case "i":
-					*text = "\033[3m" + *text
+					*text = "<i>" + *text + "</i>"
 				case "u":
-					*text = "\033[4m" + *text
+					*text = "<u>" + *text + "</u>"
 				case "shd":
-					*text = "\033[7m" + *text
+					*text = "<mark>" + *text + "</mark>"
 				}
 			}
 		}
 	}
+}
 
-	*text += "\033[0m"
+func Parse(path string) (Document, error) {
+	var doc Document
+	invalidDocxFile := errors.New("invalid docx file")
+
+	documentXML, e := DecompressFile(path, "word/document.xml")
+
+	if e != nil {
+		return doc, invalidDocxFile
+	}
+
+	if string(documentXML) == "" { // if the file content is ""
+		return doc, invalidDocxFile
+	}
+
+	e = xml.Unmarshal(documentXML, &doc)
+
+	if e != nil {
+		return doc, invalidDocxFile
+	}
+
+	return doc, nil
 }
 
 func Parse2Html() string {
-	s, _ := os.ReadFile("./tmp/word/document.xml")
+
 	var doc Document
-	xml.Unmarshal(s, &doc)
+	doc, e := Parse("./test.docx")
+	rIDTable := GetRID("./test.docx")
+
+	if e != nil {
+		panic(e)
+	}
 
 	p := doc.Body.Paragraphs
 
 	output := ""
 	for _, v := range p {
 		r := v.Runs
-		hasAnyText := false
+		hastext := false
 		for _, i := range r {
+			if i.Drawing != nil {
+				for _, drawing := range *i.Drawing {
+					fmt.Println(rIDTable[ParseDrawing(&drawing)])
+				}
+			}
 			if i.Text.Text != nil {
-				hasAnyText = true
+				hastext = true
 				text := i.Text.Text
 				ParseProperties(i.RunProperties.Properties, text)
-				fmt.Print(*text)
+				output += "<label>" + *text + "</label>"
 			}
-
 		}
-		if hasAnyText {
-			fmt.Println()
+		if hastext {
+			output += "\n<br>\n"
 		}
 	}
 
-	return output
+	return "<body>\n" + output + "</body>"
+}
+
+func checkIsMediaFile(f string) bool {
+	res := strings.Split(f, "/")
+	if res[0] == "word" && res[1] == "media" {
+		return true
+	}
+
+	return false
+}
+
+func DecompressDocxMedia(path string, outpath string) error {
+
+	f, e := os.ReadFile(path)
+
+	if e != nil {
+		return e
+	}
+
+	a, e := zip.NewReader(bytes.NewReader(f), int64(len(f)))
+
+	if e != nil {
+		return e
+	}
+
+	for _, f := range a.File {
+		if checkIsMediaFile(f.Name) {
+			dat, e := f.Open()
+
+			if e != nil {
+				return e
+			}
+			defer dat.Close()
+
+			tmp := strings.Split(f.Name, "/")
+			fname := tmp[len(tmp)-1]
+
+			f, e := os.Create(outpath + fname)
+			if e != nil {
+				return e
+			}
+
+			if _, e := io.Copy(f, dat); e != nil {
+				return e
+			}
+		}
+	}
+
+	return nil
+}
+
+func DecompressFile(path string, fname string) ([]byte, error) {
+	f, e := os.ReadFile(path)
+
+	if e != nil {
+		return []byte(""), e
+	}
+
+	arch, e := zip.NewReader(bytes.NewReader(f), int64(len(f)))
+
+	if e != nil {
+		return []byte(""), e
+	}
+
+	for _, f := range arch.File {
+		if f.Name == fname {
+			dat, e := f.Open()
+			if e != nil {
+				return []byte(""), e
+			}
+
+			defer dat.Close()
+
+			buf := new(bytes.Buffer)
+
+			if _, e := io.Copy(buf, dat); e != nil {
+				return []byte(""), e
+			}
+
+			return buf.Bytes(), nil
+
+		}
+	}
+
+	return []byte(""), nil
 }
