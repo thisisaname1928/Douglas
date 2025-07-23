@@ -24,12 +24,8 @@ type FluidString struct {
 	Properties []FluidProperty
 }
 
-func calStart(len int) int {
-	if len == 0 {
-		return 0
-	}
-
-	return len - 1
+func calLen(inp string) int {
+	return len([]rune(inp))
 }
 
 func Parse2Fluid(path string) ([]FluidString, error) {
@@ -50,11 +46,9 @@ func Parse2Fluid(path string) ([]FluidString, error) {
 			if r.Drawing != nil { // parse drawing
 				for _, drawing := range *r.Drawing {
 					var currentProperty FluidProperty
-					currentLine.Text += " "
-					currentProperty.Start = len(currentLine.Text)
-					currentProperty.End = len("[image]") + currentProperty.Start
-					currentLine.Text += "[image]"
-					currentLine.Text += " "
+					currentLine.Text += ""
+					currentProperty.Start = calLen(currentLine.Text)
+					currentProperty.End = currentProperty.Start
 					var p Prop
 					p.Type = ImgSource
 					p.Value = rIDTab[ParseDrawing(&drawing)]
@@ -66,8 +60,8 @@ func Parse2Fluid(path string) ([]FluidString, error) {
 			if r.Text.Text != nil {
 				if r.RunProperties.Properties != nil { // parse properties
 					var currentProperty FluidProperty
-					currentProperty.Start = len(currentLine.Text)
-					currentProperty.End = len(*r.Text.Text) + currentProperty.Start
+					currentProperty.Start = calLen(currentLine.Text)
+					currentProperty.End = calLen(*r.Text.Text) + currentProperty.Start
 
 					for _, pr := range *r.RunProperties.Properties {
 						var p Prop
@@ -111,4 +105,102 @@ func Parse2Fluid(path string) ([]FluidString, error) {
 	}
 
 	return str, nil
+}
+
+func DelFirstCharacterStr(str *string) {
+	r := []rune(*str)
+	*str = string(r[1:])
+}
+
+func DelNCharacterStr(str *string, n int) {
+	for i := 0; i < n; i++ {
+		DelFirstCharacterStr(str)
+	}
+}
+
+func DelFirstCharacterRune(str *[]rune) {
+	tmp := *str
+	*str = tmp[1:]
+}
+
+func DelNCharacterRune(str *[]rune, n int) {
+	for i := 0; i < n; i++ {
+		DelFirstCharacterRune(str)
+	}
+}
+
+func DelFirstCharacter(str *FluidString) {
+	tmpText := ""
+	r := []rune(str.Text) // go use utf8 by default so this is the safe way to delete
+	if len(r) > 0 {
+		tmpText = string(r[1:])
+	}
+
+	for i := range str.Properties {
+		if str.Properties[i].Start > 0 {
+			str.Properties[i].Start--
+		}
+
+		if str.Properties[i].End > 0 {
+			str.Properties[i].End--
+		}
+	}
+
+	str.Text = tmpText
+}
+
+func DelNCharacter(str *FluidString, n int) {
+	for i := 0; i < n; i++ {
+		DelFirstCharacter(str)
+	}
+}
+
+func ParseFluid2Html(str FluidString) string {
+	output := ""
+
+	text := []rune(str.Text)
+	for i, c := range text {
+		for _, prop := range str.Properties {
+			if prop.Start == i {
+				for _, pr := range prop.Property {
+					if pr.Type == ImgSource {
+						output += "<img src=\"" + pr.Value + "\">"
+					}
+					if pr.Type == Bold && pr.Value != "false" {
+						output += "<b>"
+					}
+					if pr.Type == Italic && pr.Value != "false" {
+						output += "<i>"
+					}
+					if pr.Type == Underline && pr.Value != "false" {
+						output += "<u>"
+					}
+					if pr.Type == Marked && pr.Value != "auto" {
+						output += "<mark>"
+					}
+				}
+			}
+
+			if prop.End == i {
+				for _, pr := range prop.Property {
+					if pr.Type == Bold && pr.Value != "false" {
+						output += "</b>"
+					}
+					if pr.Type == Italic && pr.Value != "false" {
+						output += "</i>"
+					}
+					if pr.Type == Underline && pr.Value != "false" {
+						output += "</u>"
+					}
+					if pr.Type == Marked && pr.Value != "auto" {
+						output += "</mark>"
+					}
+				}
+			}
+
+		}
+		output += string(c)
+	}
+
+	return output
 }
