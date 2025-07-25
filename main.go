@@ -11,12 +11,23 @@ func main() {
 	docx.DecompressDocxMedia("./test.docx", "./media/")
 	var index uint64 = 0
 	i, q := docx.ParseFluid2Question(&index, v)
+	fmt.Println("<body>")
 	for i == 0 {
-		fmt.Println(i)
-		fmt.Println(q.Content)
-		fmt.Println(index)
+		fmt.Println("Noi dung cau: ", q.Content)
+		fmt.Println("loai cau hoi: ", q.Stype, "<br>")
+		if q.Type == docx.TN {
+			fmt.Println("A. ", q.Answer[0], "<br>")
+			fmt.Println("B. ", q.Answer[1], "<br>")
+			fmt.Println("C. ", q.Answer[2], "<br>")
+			fmt.Println("D. ", q.Answer[3], "<br>")
+			fmt.Println("Dap an: ", q.TrueAnswer, "<br>")
+		} else {
+			fmt.Println(q.TLNA, "<br>")
+		}
+		fmt.Println("<br>")
 		i, q = docx.ParseFluid2Question(&index, v)
 	}
+	fmt.Println("</body>")
 
 	// for _, val := range v {
 	// 	val.Text += " "

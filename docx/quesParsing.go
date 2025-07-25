@@ -26,6 +26,11 @@ const (
 // GOLANG CAN'T PERFORM A DEEPCOPY BY ITS SELF:(
 func copyFluidString(input []FluidString, index uint64) FluidString {
 	var cpyInput FluidString
+
+	defer func() {
+		if r := recover(); r != nil {
+		}
+	}()
 	if index > uint64(len(input)-1) {
 		return cpyInput
 	}
@@ -119,25 +124,30 @@ func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	// parse TN question
 	if strings.HasPrefix(currentStr.Text, "A.") {
 		res.Type = TN
-		t := parseAnswer(index, input)
+		t, ans := parseAnswer(index, input)
 		copy(res.Answer[:], t[:])
+		copy(res.TrueAnswer[:], ans)
 	} else if strings.HasPrefix(string(currentStr.Text), "đáp án:") || strings.HasPrefix(string(currentStr.Text), "Đáp án:") {
 		res.Type = TLN
 		DelNCharacter(&currentStr, 7)
 
-		if len(currentStr.Text) > 0 {
-			for currentStr.Text[0] == ' ' {
+		analyseStrRune = []rune(currentStr.Text)
+
+		if len(analyseStrRune) > 0 {
+			for analyseStrRune[0] == ' ' {
 				DelFirstCharacter(&currentStr)
-				if len(currentStr.Text) <= 0 {
+				DelFirstCharacterRune(&analyseStrRune)
+				if len(analyseStrRune) <= 0 {
 					break
 				}
 			}
 		}
 
 		for i := 0; i < 4; i++ {
-			if len(currentStr.Text) > 0 {
-				res.TLNA[i] = string(currentStr.Text[0])
+			if len(analyseStrRune) > 0 {
+				res.TLNA[i] = string(analyseStrRune[0])
 				DelFirstCharacter(&currentStr)
+				DelFirstCharacterRune(&analyseStrRune)
 			}
 		}
 		*index++
@@ -146,21 +156,31 @@ func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	return 0, res
 }
 
-func parseAnswer(index *uint64, input []FluidString) []string {
+func parseAnswer(index *uint64, input []FluidString) ([]string, []bool) {
 	var output [4]string
+	var ans [4]bool
 
-	output[0] = parseSubAnswer(index, input, "A.", "B.")
-	output[1] = parseSubAnswer(index, input, "B.", "C.")
-	output[2] = parseSubAnswer(index, input, "C.", "D.")
-	output[3] = parseSubAnswer(index, input, "D.", "Câu")
+	output[0], ans[0] = parseSubAnswer(index, input, "A.", "B.")
+	output[1], ans[1] = parseSubAnswer(index, input, "B.", "C.")
+	output[2], ans[2] = parseSubAnswer(index, input, "C.", "D.")
+	output[3], ans[3] = parseSubAnswer(index, input, "D.", "Câu")
 
-	return output[:]
+	return output[:], ans[:]
 }
 
-func parseSubAnswer(index *uint64, input []FluidString, curPrefix string, nextPrefix string) string {
+func parseSubAnswer(index *uint64, input []FluidString, curPrefix string, nextPrefix string) (string, bool) {
 	var output string
+	res := false
 
 	currentStr := copyFluidString(input, *index)
+	// check is answer
+	for _, p := range currentStr.Properties {
+		for _, rp := range p.Property {
+			if rp.Type == Marked && rp.Value != "auto" {
+				res = true
+			}
+		}
+	}
 
 	for !strings.HasPrefix(currentStr.Text, curPrefix) {
 		DelFirstCharacter(&currentStr)
@@ -168,7 +188,7 @@ func parseSubAnswer(index *uint64, input []FluidString, curPrefix string, nextPr
 		if len(currentStr.Text) <= 0 {
 			*index++
 			if *index > uint64(len(input)-1) {
-				return output
+				return output, res
 			}
 			currentStr = copyFluidString(input, *index)
 		}
@@ -176,22 +196,22 @@ func parseSubAnswer(index *uint64, input []FluidString, curPrefix string, nextPr
 
 	DelNCharacter(&currentStr, 2)
 
-	output = ParseFluid2Html(currentStr)
+	output = ParseFluid2HtmlNonMark(currentStr)
 
 	*index++
 	if *index > uint64(len(input)-1) {
-		return output
+		return output, res
 	}
 	currentStr = copyFluidString(input, *index)
 
 	for !strings.HasPrefix(currentStr.Text, nextPrefix) {
-		output += "<br>" + ParseFluid2Html(currentStr)
+		output += "<br>" + ParseFluid2HtmlNonMark(currentStr)
 		*index++
 		if *index > uint64(len(input)-1) {
-			return output
+			return output, res
 		}
 		currentStr = copyFluidString(input, *index)
 	}
 
-	return output
+	return output, res
 }

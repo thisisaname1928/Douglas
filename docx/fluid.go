@@ -92,16 +92,13 @@ func Parse2Fluid(path string) ([]FluidString, error) {
 					}
 					currentLine.Properties = append(currentLine.Properties, currentProperty)
 				}
-
 				currentLine.Text += *r.Text.Text
 
 			}
+		}
+		currentLine.Text += " "
+		str = append(str, currentLine)
 
-		}
-		if len(currentLine.Text) > 0 {
-			currentLine.Text += " "
-			str = append(str, currentLine)
-		}
 	}
 
 	return str, nil
@@ -157,8 +154,20 @@ func DelNCharacter(str *FluidString, n int) {
 
 func ParseFluid2Html(str FluidString) string {
 	output := ""
+	addLabel := false
+
+	if str.Text == "" {
+		str.Text += " "
+	}
 
 	text := []rune(str.Text)
+	for _, v := range text {
+		if v != ' ' {
+			addLabel = true
+			break
+		}
+	}
+
 	for i, c := range text {
 		for _, prop := range str.Properties {
 			if prop.Start == i {
@@ -202,5 +211,67 @@ func ParseFluid2Html(str FluidString) string {
 		output += string(c)
 	}
 
+	if addLabel {
+		output = "<label class=\"ques_content\">" + output + "</label>"
+	}
+	return output
+}
+
+func ParseFluid2HtmlNonMark(str FluidString) string {
+	output := ""
+	addLabel := false
+
+	if str.Text == "" {
+		str.Text += " "
+	}
+
+	text := []rune(str.Text)
+	for _, v := range text {
+		if v != ' ' {
+			addLabel = true
+			break
+		}
+	}
+
+	for i, c := range text {
+		for _, prop := range str.Properties {
+			if prop.Start == i {
+				for _, pr := range prop.Property {
+					if pr.Type == ImgSource {
+						output += "<img src=\"" + pr.Value + "\">"
+					}
+					if pr.Type == Bold && pr.Value != "false" {
+						output += "<b>"
+					}
+					if pr.Type == Italic && pr.Value != "false" {
+						output += "<i>"
+					}
+					if pr.Type == Underline && pr.Value != "false" {
+						output += "<u>"
+					}
+				}
+			}
+
+			if prop.End == i {
+				for _, pr := range prop.Property {
+					if pr.Type == Bold && pr.Value != "false" {
+						output += "</b>"
+					}
+					if pr.Type == Italic && pr.Value != "false" {
+						output += "</i>"
+					}
+					if pr.Type == Underline && pr.Value != "false" {
+						output += "</u>"
+					}
+				}
+			}
+
+		}
+		output += string(c)
+	}
+
+	if addLabel {
+		output = "<label class=\"ques_content\">" + output + "</label>"
+	}
 	return output
 }
