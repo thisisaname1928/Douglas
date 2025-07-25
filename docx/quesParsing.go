@@ -26,6 +26,9 @@ const (
 // GOLANG CAN'T PERFORM A DEEPCOPY BY ITS SELF:(
 func copyFluidString(input []FluidString, index uint64) FluidString {
 	var cpyInput FluidString
+	if index > uint64(len(input)-1) {
+		return cpyInput
+	}
 	cpyInput.Text = input[index].Text
 	cpyInput.Properties = make([]FluidProperty, len(input[index].Properties))
 	for i := range cpyInput.Properties {
@@ -42,6 +45,10 @@ func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	var res Question
 
 	currentStr := copyFluidString(input, *index)
+
+	if len(currentStr.Text) <= 0 {
+		return OUT_OF_RANGE, res
+	}
 
 	analyseStrRune := []rune(strings.ToLower(currentStr.Text))
 	// pass space
@@ -110,6 +117,81 @@ func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	}
 
 	// parse TN question
+	if strings.HasPrefix(currentStr.Text, "A.") {
+		res.Type = TN
+		t := parseAnswer(index, input)
+		copy(res.Answer[:], t[:])
+	} else if strings.HasPrefix(string(currentStr.Text), "đáp án:") || strings.HasPrefix(string(currentStr.Text), "Đáp án:") {
+		res.Type = TLN
+		DelNCharacter(&currentStr, 7)
+
+		if len(currentStr.Text) > 0 {
+			for currentStr.Text[0] == ' ' {
+				DelFirstCharacter(&currentStr)
+				if len(currentStr.Text) <= 0 {
+					break
+				}
+			}
+		}
+
+		for i := 0; i < 4; i++ {
+			if len(currentStr.Text) > 0 {
+				res.TLNA[i] = string(currentStr.Text[0])
+				DelFirstCharacter(&currentStr)
+			}
+		}
+		*index++
+	}
 
 	return 0, res
+}
+
+func parseAnswer(index *uint64, input []FluidString) []string {
+	var output [4]string
+
+	output[0] = parseSubAnswer(index, input, "A.", "B.")
+	output[1] = parseSubAnswer(index, input, "B.", "C.")
+	output[2] = parseSubAnswer(index, input, "C.", "D.")
+	output[3] = parseSubAnswer(index, input, "D.", "Câu")
+
+	return output[:]
+}
+
+func parseSubAnswer(index *uint64, input []FluidString, curPrefix string, nextPrefix string) string {
+	var output string
+
+	currentStr := copyFluidString(input, *index)
+
+	for !strings.HasPrefix(currentStr.Text, curPrefix) {
+		DelFirstCharacter(&currentStr)
+
+		if len(currentStr.Text) <= 0 {
+			*index++
+			if *index > uint64(len(input)-1) {
+				return output
+			}
+			currentStr = copyFluidString(input, *index)
+		}
+	}
+
+	DelNCharacter(&currentStr, 2)
+
+	output = ParseFluid2Html(currentStr)
+
+	*index++
+	if *index > uint64(len(input)-1) {
+		return output
+	}
+	currentStr = copyFluidString(input, *index)
+
+	for !strings.HasPrefix(currentStr.Text, nextPrefix) {
+		output += "<br>" + ParseFluid2Html(currentStr)
+		*index++
+		if *index > uint64(len(input)-1) {
+			return output
+		}
+		currentStr = copyFluidString(input, *index)
+	}
+
+	return output
 }
