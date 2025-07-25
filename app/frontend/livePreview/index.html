@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Douglas - Live Preview</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/LivePreview/styles.css">
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
+                <div class="file-input-container">
+                    <input type="text" id="filePathInput" class="file-path-input"
+                        placeholder="Nhập đường dẫn file (ví dụ: C:/users/document.txt)">
+                </div>
+            </div>
+
+            <button id="modeToggleButton" class="mode-toggle-button">Chế độ tối</button>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1>Bản xem trước của đề thi</h1>
+                <p>Trang sẽ tự cập nhật sau khi lưu (có thể sử dụng Ctrl + S để việc lưu thuận tiện hơn)</p>
+            </div>
+            <div class="scrollable-box">
+                <label id="msg"></label>
+                <div id="questions"></div>
+
+            </div>
+        </div>
+
+        <script src="/LivePreview/lp.js"></script>
+
+</body>
+
+</html>

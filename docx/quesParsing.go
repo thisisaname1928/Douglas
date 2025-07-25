@@ -10,12 +10,12 @@ const (
 )
 
 type Question struct {
-	Type       int
-	Stype      string
-	Content    string
-	Answer     [4]string
-	TrueAnswer [4]bool
-	TLNA       [4]string // true answer for TLN question type
+	Type       int       `json:"type"`
+	Stype      string    `json:"stype"`
+	Content    string    `json:"content"`
+	Answer     [4]string `json:"answers"`
+	TrueAnswer [4]bool   `json:"TNAnswers"`
+	TLNA       [4]string `json:"TLNAnswers"` // true answer for TLN question type
 }
 
 const (
@@ -49,6 +49,10 @@ func copyFluidString(input []FluidString, index uint64) FluidString {
 func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	var res Question
 
+	if *index >= uint64(len(input)-1) {
+		return OUT_OF_RANGE, res
+	}
+
 	currentStr := copyFluidString(input, *index)
 
 	if len(currentStr.Text) <= 0 {
@@ -56,10 +60,15 @@ func ParseFluid2Question(index *uint64, input []FluidString) (int, Question) {
 	}
 
 	analyseStrRune := []rune(strings.ToLower(currentStr.Text))
+
 	// pass space
 	for analyseStrRune[0] == ' ' {
 		DelFirstCharacterRune(&analyseStrRune)
 		DelFirstCharacter(&currentStr)
+
+		if len(analyseStrRune) <= 0 {
+			return OUT_OF_RANGE, res
+		}
 	}
 
 	if !strings.HasPrefix(string(analyseStrRune), "câu") {
