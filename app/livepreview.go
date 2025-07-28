@@ -109,15 +109,6 @@ func GenQues(path string) ([]docx.Question, error) {
 	dest := strings.Split(path, "/")
 	ddest := dest[len(dest)-1]
 
-	_, e := os.Stat("./app/tests/" + ddest)
-	if os.IsNotExist(e) {
-		os.Mkdir("./app/tests/"+ddest, 0775)
-	}
-
-	if e != nil {
-		return []docx.Question{}, e
-	}
-
 	docx.DecompressDocxMedia(path, "./app/media/"+ddest+"/")
 	fluid, e := docx.Parse2Fluid(path)
 	if e != nil {
