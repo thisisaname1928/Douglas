@@ -4,33 +4,15 @@ const filePathInput = document.getElementById('filePathInput')
 const msg = document.getElementById('msg')
 const questions = document.getElementById('questions')
 
-/*<div class="question-card">
-                    <div class="question-text">
-                        1. Đâu là thủ đô của Việt Nam?
-                    </div>
-                    <div class="options-list">
-                        <div class="option-item">
-                            <div class="option-letter">A.</div>
-                            <div class="option-text">Thành phố Hồ Chí Minh</div>
-                        </div>
-                        <div class="option-item">
-                            <div class="option-letter">B.</div>
-                            <div class="option-text">Hà Nội</div>
-                        </div>
-                        <div class="option-item">
-                            <div class="option-letter">C.</div>
-                            <div class="option-text">Đà Nẵng</div>
-                        </div>
-                    </div>
-                </div> */
-
-const savedMode = localStorage.getItem('theme');
-if (savedMode === 'dark') {
-    body.classList.add('dark-mode');
-    modeToggleButton.textContent = 'Chế độ sáng';
-} else {
-    modeToggleButton.textContent = 'Chế độ tối';
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const savedMode = localStorage.getItem('theme');
+    if (savedMode === 'dark') {
+        body.classList.add('dark-mode');
+        modeToggleButton.textContent = 'Chế độ sáng';
+    } else {
+        modeToggleButton.textContent = 'Chế độ tối';
+    }
+})
 
 modeToggleButton.addEventListener('click', () => {
     body.classList.toggle('dark-mode');

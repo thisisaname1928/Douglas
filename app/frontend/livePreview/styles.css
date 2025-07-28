@@ -341,3 +341,47 @@
         body.dark-mode .option-text {
             color: #d0d0d0;
         }
+
+        .page-header {
+            font-size: large;
+        }
+
+        .button-container-left {
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            width: 100%;
+        }
+
+        .btn {
+            width: 200px;
+            height: 50px;
+            background-color: white;
+            color: #555;
+            font-size: large;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: width 0.1s ease-in-out;
+        }
+
+        body.dark-mode .btn {
+            background-color: #333;
+            color: white;
+        }
+
+
+        .btn:hover {
+            background-color: #a09c9c;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 220px;
+        }
+
+        .btn:active {
+            background-color: rgb(25, 25, 26);
+        }
