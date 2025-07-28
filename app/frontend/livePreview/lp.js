@@ -89,7 +89,6 @@ function prepareQuestions(json) {
                     </div>
                     <div class="options-list">
                         <div class="option-item">
-                            <div class="option-letter">A.</div>
                             <div class="option-text">Đáp án: ${json.questions[i].TLNAnswers}</div>
                         </div>
                     </div>
@@ -110,7 +109,7 @@ function sleep(ms) {
 livePreviewLoop()
 async function livePreviewLoop() {
     while (true) {
-        await sleep(1000);
+        await sleep(500);
         fetchForQuestions()
     }
 }
