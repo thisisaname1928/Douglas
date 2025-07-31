@@ -93,7 +93,7 @@ func livePreviewAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func convertPath(path *string) {
+func ConvertPath(path *string) {
 	r := []rune(*path)
 	for i := range r {
 		if r[i] == '\\' {
@@ -105,7 +105,7 @@ func convertPath(path *string) {
 }
 
 func GenQues(path string) ([]docx.Question, error) {
-	convertPath(&path)
+	ConvertPath(&path)
 	dest := strings.Split(path, "/")
 	ddest := dest[len(dest)-1]
 

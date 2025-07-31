@@ -3,16 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/thisisaname1928/goParsingDocx/security"
+	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
 func main() {
 	//app.StartApp()
 
-	b, _ := security.Encrypt([]byte("ALCKIS"), "abc")
-	b, e := security.Decrypt(b, "abc")
-
-	fmt.Println(string(b), e, security.EncryptKey("abc"))
+	e := dou.Export("test.docx", "", 123, false, "")
+	fmt.Println(e)
 
 	// for _, val := range v {
 	// 	val.Text += " "
