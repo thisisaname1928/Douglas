@@ -106,10 +106,10 @@ func ConvertPath(path *string) {
 
 func GenQues(path string) ([]docx.Question, error) {
 	ConvertPath(&path)
-	dest := strings.Split(path, "/")
-	ddest := dest[len(dest)-1]
+	// dest := strings.Split(path, "/")
+	// ddest := dest[len(dest)-1]
 
-	docx.DecompressDocxMedia(path, "./app/media/"+ddest+"/")
+	docx.DecompressDocxMedia(path, "./app/media/")
 	fluid, e := docx.Parse2Fluid(path)
 	if e != nil {
 		return []docx.Question{}, e
@@ -128,20 +128,22 @@ func GenQues(path string) ([]docx.Question, error) {
 
 func mediaRoute(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	file, e := os.Open("./media/" + vars["FILE"])
+	file, e := os.Open("./app/media/" + vars["FILE"])
 	if e != nil {
 		w.Write([]byte{})
 	}
 	f, e := io.ReadAll(file)
+	if e != nil {
+		return
+	}
 
-	if str := detectFileExt("./media/" + vars["FILE"]); str != "" {
+	if str := detectFileExt("./app/media/" + vars["FILE"]); str != "" {
 		w.Header().Add("Content-Type", str)
 	} else {
 		contentType := http.DetectContentType(f)
 		w.Header().Add("Content-Type", contentType)
 	}
 
-	if e == nil {
-		w.Write(f)
-	}
+	w.Write(f)
+
 }
