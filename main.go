@@ -1,11 +1,18 @@
 package main
 
 import (
-	"github.com/thisisaname1928/goParsingDocx/app"
+	"fmt"
+
+	"github.com/thisisaname1928/goParsingDocx/security"
 )
 
 func main() {
-	app.StartApp()
+	//app.StartApp()
+
+	b, _ := security.Encrypt([]byte("ALCKIS"), "abc")
+	b, e := security.Decrypt(b, "abc")
+
+	fmt.Println(string(b), e, security.EncryptKey("abc"))
 
 	// for _, val := range v {
 	// 	val.Text += " "
