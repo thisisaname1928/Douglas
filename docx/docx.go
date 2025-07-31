@@ -153,7 +153,7 @@ func Parse2Html() string {
 	return "<body>\n" + output + "</body>"
 }
 
-func checkIsMediaFile(f string) bool {
+func CheckIsMediaFile(f string) bool {
 	res := strings.Split(f, "/")
 	if res[0] == "word" && res[1] == "media" {
 		return true
@@ -177,7 +177,7 @@ func DecompressDocxMedia(path string, outpath string) error {
 	}
 
 	for _, f := range a.File {
-		if checkIsMediaFile(f.Name) {
+		if CheckIsMediaFile(f.Name) {
 			dat, e := f.Open()
 
 			if e != nil {
@@ -192,6 +192,7 @@ func DecompressDocxMedia(path string, outpath string) error {
 			if e != nil {
 				return e
 			}
+			defer f.Close()
 
 			if _, e := io.Copy(f, dat); e != nil {
 				return e

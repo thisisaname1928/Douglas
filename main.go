@@ -9,7 +9,7 @@ import (
 func main() {
 	//app.StartApp()
 
-	e := dou.Export("test.docx", "", 123, false, "")
+	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, "KEY")
 	fmt.Println(e)
 
 	// for _, val := range v {
