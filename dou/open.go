@@ -30,6 +30,19 @@ type DouFile struct {
 	Media []MediaData
 }
 
+// only work with path from tag <relationship> of docx file
+func (file DouFile) OpenMedia(path string) []byte {
+	app.ConvertPath(&path)
+
+	for i := range file.Media {
+		if file.Media[i].Name == ("/" + path) {
+			return file.Media[i].Data
+		}
+	}
+
+	return []byte{}
+}
+
 func douCheckMedia(path string) bool {
 	app.ConvertPath(&path)
 	arr := strings.Split(path, "/")
@@ -111,6 +124,7 @@ func Open(path string, key string) (DouFile, error) {
 
 			var medDat MediaData
 			medDat.Name = f.Name
+			app.ConvertPath(&medDat.Name)
 			medDat.Data, _ = io.ReadAll(dat) // Im too lazy to add a error handler
 
 			if needDecrypting {

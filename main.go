@@ -12,9 +12,9 @@ func main() {
 	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, "KEY")
 	fmt.Println(e)
 
-	_, e = dou.Open("output.dou", "KEY")
+	d, _ := dou.Open("output.dou", "KEY")
 
-	fmt.Println(e)
+	fmt.Println(d.OpenMedia("media/image1.png"))
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {
