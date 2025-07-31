@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/thisisaname1928/goParsingDocx/app"
 	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
@@ -13,8 +12,9 @@ func main() {
 	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, "KEY")
 	fmt.Println(e)
 
-	app.StartApp()
+	_, e = dou.Open("output.dou", "KEY")
 
+	fmt.Println(e)
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {
