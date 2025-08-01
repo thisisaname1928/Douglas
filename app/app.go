@@ -57,6 +57,8 @@ func StartApp() {
 	server.HandleFunc("/media/{FILE}", mediaRoute)
 	server.HandleFunc("/Home", homePage)
 	server.HandleFunc("/Home/{FILE}", homePageRes)
+	server.HandleFunc("/Export", exportRoute)
+	server.HandleFunc("/Export/{FILE}", exportRouteRes)
 	fmt.Println("dia chi web app: http://localhost:8080")
 	http.ListenAndServe("localhost:8080", server)
 }

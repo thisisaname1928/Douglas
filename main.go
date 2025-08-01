@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/thisisaname1928/goParsingDocx/app"
 	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
@@ -14,9 +15,7 @@ func main() {
 	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, t, false, "KEY")
 	fmt.Println(e)
 
-	d, _ := dou.Open("output.dou", "KEY")
-
-	fmt.Println(string(d.OpenMedia("media/image1.png")))
+	app.StartApp()
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {

@@ -1,7 +1,5 @@
 const modeToggleButton = document.getElementById('modeToggleButton');
 const body = document.body;
-const openLPButton = document.getElementById('openLP')
-const openExButton = document.getElementById('openEx')
 document.addEventListener('DOMContentLoaded', () => {
     const savedMode = localStorage.getItem('theme');
     if (savedMode === 'dark') {
@@ -26,8 +24,4 @@ modeToggleButton.addEventListener('click', () => {
 
 openLPButton.addEventListener('click', () => {
     window.location.href = window.location.href.replace("/Home", "/LivePreview")
-});
-
-openExButton.addEventListener('click', () => {
-    window.location.href = window.location.href.replace("/Home", "/Export")
 });
