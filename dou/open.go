@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/thisisaname1928/goParsingDocx/app"
 	"github.com/thisisaname1928/goParsingDocx/docx"
 	"github.com/thisisaname1928/goParsingDocx/security"
 )
@@ -32,7 +31,7 @@ type DouFile struct {
 
 // only work with path from tag <relationship> of docx file
 func (file DouFile) OpenMedia(path string) []byte {
-	app.ConvertPath(&path)
+	ConvertPath(&path)
 
 	for i := range file.Media {
 		if file.Media[i].Name == ("/" + path) {
@@ -44,7 +43,7 @@ func (file DouFile) OpenMedia(path string) []byte {
 }
 
 func douCheckMedia(path string) bool {
-	app.ConvertPath(&path)
+	ConvertPath(&path)
 	arr := strings.Split(path, "/")
 
 	if len(arr) < 2 {
@@ -124,7 +123,7 @@ func Open(path string, key string) (DouFile, error) {
 
 			var medDat MediaData
 			medDat.Name = f.Name
-			app.ConvertPath(&medDat.Name)
+			ConvertPath(&medDat.Name)
 			medDat.Data, _ = io.ReadAll(dat) // Im too lazy to add a error handler
 
 			if needDecrypting {

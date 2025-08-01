@@ -10,3 +10,4 @@ test.docx
 exportMedia
 exported.dou
 output.dou
+./app/tests/*

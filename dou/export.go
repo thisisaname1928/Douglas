@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/thisisaname1928/goParsingDocx/app"
 	"github.com/thisisaname1928/goParsingDocx/docx"
 	"github.com/thisisaname1928/goParsingDocx/security"
 )
@@ -43,6 +42,17 @@ type DouInfo struct {
 	Key       string `json:"key"` // store as sha256
 }
 
+func ConvertPath(path *string) {
+	r := []rune(*path)
+	for i := range r {
+		if r[i] == '\\' {
+			r[i] = '/'
+		}
+	}
+
+	*path = string(r)
+}
+
 func search4Stype(qs []DouQuestion, stype string) int {
 	for i := range qs {
 		if qs[i].Stype == stype {
@@ -68,8 +78,8 @@ func search4Stype(qs []DouQuestion, stype string) int {
 
 func Export(input string, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string) error {
 	// make sure...
-	app.ConvertPath(&input)
-	app.ConvertPath(&output)
+	ConvertPath(&input)
+	ConvertPath(&output)
 
 	// EXPORT QUESTIONS DATA HERE
 	fluid, e := docx.Parse2Fluid(input)
