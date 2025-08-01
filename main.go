@@ -9,12 +9,14 @@ import (
 func main() {
 	//app.StartApp()
 
-	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, "KEY")
+	var t []dou.TestStructure
+	t = append(t, dou.TestStructure{Stype: "sus", N: 1, Points: 1})
+	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, t, false, "KEY")
 	fmt.Println(e)
 
 	d, _ := dou.Open("output.dou", "KEY")
 
-	fmt.Println(d.OpenMedia("media/image1.png"))
+	fmt.Println(string(d.OpenMedia("media/image1.png")))
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {

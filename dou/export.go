@@ -22,10 +22,18 @@ type DouQuestion struct {
 	Question []docx.Question `json:"questions"`
 }
 
+type TestStructure struct {
+	Stype  string  `json:"stype"`
+	N      uint64  `json:"number"`
+	Points float64 `json:"point"`
+}
+
 type DouData struct {
-	Revision     uint64        `json:"revision"`     // version data
-	TestDuration uint64        `json:"testDuration"` // in second, if this field is zero then no time limit
-	Questions    []DouQuestion `json:"questions"`    // store info about dou file version
+	Revision         uint64          `json:"revision"`     // version data
+	TestDuration     uint64          `json:"testDuration"` // in second, if this field is zero then no time limit
+	Questions        []DouQuestion   `json:"questions"`    // store info about dou file version
+	UseTestStructure bool            `json:"useTestStructure"`
+	TestStruct       []TestStructure `json:"testStructure"` // store info about how 2 display the test, and point per type
 }
 
 type DouInfo struct {
@@ -58,7 +66,7 @@ func search4Stype(qs []DouQuestion, stype string) int {
 // 	return nil
 // }
 
-func Export(input string, output string, author string, testDuration uint64, useEncryption bool, key string) error {
+func Export(input string, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string) error {
 	// make sure...
 	app.ConvertPath(&input)
 	app.ConvertPath(&output)
@@ -96,6 +104,12 @@ func Export(input string, output string, author string, testDuration uint64, use
 	dou.Questions = douQues
 	dou.Revision = DOU_REVISION_1
 	dou.TestDuration = testDuration
+
+	dou.UseTestStructure = useTestStructure
+	if useTestStructure {
+		dou.TestStruct = testStructure
+	}
+
 	jsonQuestionData, e := json.Marshal(&dou)
 	if e != nil {
 		return e
