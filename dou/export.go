@@ -24,7 +24,7 @@ type DouQuestion struct {
 type TestStructure struct {
 	Stype  string  `json:"stype"`
 	N      uint64  `json:"number"`
-	Points float64 `json:"point"`
+	Points float64 `json:"point"` // point per ques
 }
 
 type DouData struct {
