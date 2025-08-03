@@ -2,6 +2,8 @@ const modeToggleButton = document.getElementById('modeToggleButton');
 const uploadTest = document.getElementById('uploadTest');
 const fileInput = document.getElementById('fileInput');
 const body = document.body;
+let currentUUID = "NONE"
+
 document.addEventListener('DOMContentLoaded', () => {
     const savedMode = localStorage.getItem('theme');
     if (savedMode === 'dark') {
@@ -25,10 +27,10 @@ modeToggleButton.addEventListener('click', () => {
 });
 
 async function getUUID() {
-    const response = await fetch("/Export/API/genUUID", { method: "POST" })
+    response = await fetch("/Export/API/genUUID", { method: "POST" })
     res = await response.text()
 
-    return res
+    return await res
 }
 
 
@@ -51,31 +53,33 @@ function readFile(file) {
 
 async function handleFile(file) {
     if (!file) {
-        console.error("No file selected.");
         return;
     }
 
     try {
-        const arrayBuffer = await readFile(file);
-
-        uploadWrapper(arrayBuffer)
+        data = await readFile(file)
+        UUID = await uploadWrapper(data)
+        window.location.href = window.location.href.replace("/Export", "/Export/Config/UUID/" + UUID)
 
     } catch (error) {
-        console.error("Error reading file:", error);
+        return;
     }
 }
 
-function uploadWrapper(data) {
-    // get unique uuid for test that being uploaded
-    getUUID().then((res) => uploadFile(data, res))
+async function uploadWrapper(data) {
+    curUUID = "NONE"
+    curUUID = await getUUID()
+    console.log(curUUID)
+    await uploadFile(data, curUUID)
+
+    return curUUID
 }
 
 function uploadFile(data, uuid) {
-    console.log(uuid)
     var hdrs = new Headers()
     hdrs.append("uuid", uuid)
     hdrs.append("Content-Type", "application/octet-stream")
-    fetch("/Export/API/upload", { method: "POST", headers: hdrs, body: data })
+    return fetch("/Export/API/upload", { method: "POST", headers: hdrs, body: data })
 }
 
 uploadTest.addEventListener('click', () => {

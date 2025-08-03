@@ -27,6 +27,22 @@ func exportRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func exportConfigRouteRes(w http.ResponseWriter, r *http.Request) {
+	addResource(w, r, "./app/frontend/export/config/")
+}
+
+func exportConfigRoute(w http.ResponseWriter, r *http.Request) {
+	file, e := os.Open("./app/frontend/export/config/index.html")
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if e == nil {
+		w.Write(f)
+	}
+}
+
 type ExportRequest struct {
 	Author           string              `json:"author"`
 	UseEncryption    bool                `json:"useEncryption"`
