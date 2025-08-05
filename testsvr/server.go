@@ -1,0 +1,3 @@
+package testsvr
+
+func OpenTestSvr() {}
