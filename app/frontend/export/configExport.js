@@ -118,6 +118,12 @@ async function exportTest(obj) {
     }
 
     alert('Xuat de thanh cong!')
+    const link = document.createElement("a")
+    link.href = "/Export/Download/UUID/" + UUID
+    link.download = 'exported.dou'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 }
 
 function fetch4ExportConfig() {

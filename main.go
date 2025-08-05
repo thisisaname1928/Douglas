@@ -1,19 +1,10 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/thisisaname1928/goParsingDocx/app"
-	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
 func main() {
-	//app.StartApp()
-
-	var t []dou.TestStructure
-	t = append(t, dou.TestStructure{Stype: "sus", N: 1, Points: 1})
-	e := dou.Export("test.docx", "output.dou", "NGQT", 123, true, t, false, "KEY")
-	fmt.Println(e)
 
 	app.StartApp()
 	// for _, val := range v {

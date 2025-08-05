@@ -62,6 +62,7 @@ func StartApp() {
 	server.HandleFunc("/Export/API/{NAME}", exportAPI)
 	server.HandleFunc("/Export/Config/{FILE}", exportConfigRouteRes)
 	server.HandleFunc("/Export/Config/UUID/{UUID}", exportConfigRoute)
+	server.HandleFunc("/Export/Download/UUID/{UUID}", downloadTestRoute)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }

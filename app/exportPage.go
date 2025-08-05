@@ -204,3 +204,18 @@ func getExportConfig(UUID string) (ExportConfigResponse, error) {
 
 	return response, nil
 }
+
+func downloadTestRoute(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	path := "./app/tests/" + v["UUID"] + ".dou"
+
+	b, e := os.ReadFile(path)
+	fmt.Println(path)
+	if e != nil {
+		w.Write([]byte("404 NOT FOUND!"))
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/octet-stream")
+	w.Write(b)
+}
