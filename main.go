@@ -1,12 +1,17 @@
 package main
 
 import (
-	"github.com/thisisaname1928/goParsingDocx/app"
+	"fmt"
+
+	"github.com/thisisaname1928/goParsingDocx/testsvr"
 )
 
 func main() {
-
-	app.StartApp()
+	s, e := testsvr.NewDouglasFir("5999", "./exported.dou", "abc")
+	fmt.Println(e)
+	e = s.OpenServer()
+	fmt.Println(e)
+	//app.StartApp()
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {
