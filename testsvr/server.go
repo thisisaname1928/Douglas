@@ -16,6 +16,7 @@ type DouglasFir struct {
 	ServerPort string
 	Douglas    dou.DouFile // test file
 	Created    bool        // check for if init success
+	HttpServer *http.Server
 }
 
 // create new test server
@@ -44,9 +45,13 @@ func (fir DouglasFir) OpenServer() error {
 
 	server.HandleFunc("/", route)
 
-	e := http.ListenAndServe("0.0.0.0:"+fir.ServerPort, server)
+	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + fir.ServerPort, Handler: server}
 
-	return e
+	return fir.HttpServer.ListenAndServe()
+}
+
+func (fir DouglasFir) CloseServer() {
+	fir.HttpServer.Close()
 }
 
 func route(w http.ResponseWriter, r *http.Request) {

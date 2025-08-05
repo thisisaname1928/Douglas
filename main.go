@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	s, e := testsvr.NewDouglasFir("5999", "./exported.dou", "abc")
+	s, e := testsvr.NewDouglasFir("5999", "./app/tests/52f4cb03-5903-4d79-afd0-7f5ee934a7db.dou", "")
 	fmt.Println(e)
 	e = s.OpenServer()
 	fmt.Println(e)
