@@ -52,13 +52,13 @@ func exportConfigRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type ExportRequest struct {
-	Author           string              `json:"author"`
-	UseEncryption    bool                `json:"useEncryption"`
-	Key              string              `json:"key"`
-	UseTestStructure string              `json:"useTestStructure"`
-	TestStruct       []dou.TestStructure `json:"testStructure"`
-}
+// type ExportRequest struct {
+// 	Author           string              `json:"author"`
+// 	UseEncryption    bool                `json:"useEncryption"`
+// 	Key              string              `json:"key"`
+// 	UseTestStructure bool                `json:"useTestStructure"`
+// 	TestStruct       []dou.TestStructure `json:"testStructure"`
+// }
 
 // gen a v4 uuid
 func genUUID() string {
@@ -68,6 +68,21 @@ func genUUID() string {
 
 type GetConfigRequest struct {
 	UUID string `json:"UUID"`
+}
+
+type ExportRequest struct {
+	Status       bool     `json:"status"`
+	UUID         string   `json:"UUID"`
+	Msg          string   `json:"msg"`
+	TestDuration uint64   `json:"testDuration"`
+	Author       string   `json:"author"`
+	Key          string   `json:"key"`
+	Stype        []StypeN `json:"stype"`
+}
+
+type ExportRespone struct {
+	Status bool   `json:"status"`
+	Msg    string `json:"msg"`
 }
 
 func exportAPI(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +107,38 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 		encoder := json.NewEncoder(w)
 		encoder.Encode(&response)
 	case "export":
+		var request ExportRequest
+		var response ExportRespone
+		decoder := json.NewDecoder(r.Body)
+		e := decoder.Decode(&request)
+
+		if e != nil {
+			response.Status = false
+			response.Msg = fmt.Sprintf("%v", e)
+		}
+
+		var testStructure []dou.TestStructure
+		// im too silly to convert this, it is the same=)))
+		for _, v := range request.Stype {
+			var curS dou.TestStructure
+			curS.N = v.N
+			curS.Stype = v.Stype
+			curS.Points = v.Point
+			testStructure = append(testStructure, curS)
+		}
+
+		useEncryption := false
+		if request.Key != "" {
+			useEncryption = true
+		}
+
+		dou.Export("./app/tests/"+request.UUID+".dat", "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+
+		response.Msg = "ok"
+		response.Status = true
+
+		encoder := json.NewEncoder(w)
+		encoder.Encode(&response)
 	case "upload":
 		f, e := os.Create("./app/tests/" + r.Header.Get("uuid") + ".dat")
 		if e != nil {
@@ -111,8 +158,9 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 type StypeN struct {
-	Stype string `json:"stype"`
-	N     uint64 `json:"N"`
+	Stype string  `json:"stype"`
+	N     uint64  `json:"N"`
+	Point float64 `json:"Point"`
 }
 
 type ExportConfigResponse struct {
@@ -150,7 +198,7 @@ func getExportConfig(UUID string) (ExportConfigResponse, error) {
 		if curIdx != -1 { // there are some questions already have that stype in response
 			response.Stype[curIdx].N++
 		} else {
-			response.Stype = append(response.Stype, StypeN{v.Stype, 1})
+			response.Stype = append(response.Stype, StypeN{v.Stype, 1, 0})
 		}
 	}
 
