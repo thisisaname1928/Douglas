@@ -2,8 +2,11 @@ package testsvr
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/thisisaname1928/goParsingDocx/dou"
 )
@@ -17,6 +20,20 @@ type DouglasFir struct {
 	Douglas    dou.DouFile // test file
 	Created    bool        // check for if init success
 	HttpServer *http.Server
+}
+
+func copyFile(dest string, src string) {
+	f, e := os.ReadFile(src)
+
+	if e != nil {
+		fmt.Println("internal error: " + fmt.Sprintf("%v", e))
+	}
+
+	e = os.WriteFile(dest, f, 0755)
+
+	if e != nil {
+		fmt.Println("internal error: " + fmt.Sprintf("%v", e))
+	}
 }
 
 // create new test server
@@ -34,6 +51,17 @@ func NewDouglasFir(serverPort string, path string, key string) (DouglasFir, erro
 	fir.Douglas = df
 
 	fir.Created = true
+
+	// create new data folder
+	uuid := uuid.New().String()
+	e = os.Mkdir("./testsvr/testdata/"+uuid, 0755)
+	if e != nil {
+		fmt.Println("internal error: " + fmt.Sprintf("%v", e))
+	}
+
+	// copy a backup .dou file into it
+	copyFile("./testsvr/testdata/"+uuid+"/test.dou", path)
+
 	return fir, nil
 }
 
