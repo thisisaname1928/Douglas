@@ -19,6 +19,7 @@ type DouglasFir struct {
 	ServerPort string
 	Douglas    dou.DouFile // test file
 	Created    bool        // check for if init success
+	UUID       string
 	HttpServer *http.Server
 }
 
@@ -62,10 +63,46 @@ func NewDouglasFir(serverPort string, path string, key string) (DouglasFir, erro
 	// copy a backup .dou file into it
 	copyFile("./testsvr/testdata/"+uuid+"/test.dou", path)
 
+	fir.UUID = uuid
+	os.Mkdir("./testsvr/testdata/"+uuid+"/testdat", 0755)
+
 	return fir, nil
 }
 
-func (fir DouglasFir) OpenServer() error {
+func isExist(path string) bool {
+	_, e := os.Stat(path)
+
+	return !os.IsNotExist(e)
+}
+
+func OpenOldTest(uuid string, key string) (DouglasFir, error) {
+	if !isExist(fmt.Sprintf("./testsvr/testdata/%v", uuid)) {
+		return DouglasFir{}, errors.New(ERROR_FIR_NOT_CREATED)
+	}
+	if !isExist(fmt.Sprintf("./testsvr/testdata/%v/test.dou", uuid)) {
+		return DouglasFir{}, errors.New(ERROR_FIR_NOT_CREATED)
+	}
+
+	var fir DouglasFir
+	fir.UUID = uuid
+
+	var df dou.DouFile
+	df, e := dou.Open(fmt.Sprintf("./testsvr/testdata/%v/test.dou", uuid), key)
+	if e != nil {
+		return DouglasFir{}, e
+	}
+	fir.Douglas = df
+
+	fir.Created = true
+
+	if !isExist(fmt.Sprintf("./testsvr/testdata/%v/testdat", uuid)) {
+		os.Mkdir(fmt.Sprintf("./testsvr/testdata/%v/testdat", uuid), 0755)
+	}
+
+	return fir, nil
+}
+
+func (fir DouglasFir) OpenServer(port string) error {
 	if !fir.Created {
 		return errors.New(ERROR_FIR_NOT_CREATED)
 	}
@@ -73,7 +110,7 @@ func (fir DouglasFir) OpenServer() error {
 
 	server.HandleFunc("/", route)
 
-	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + fir.ServerPort, Handler: server}
+	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
 
 	return fir.HttpServer.ListenAndServe()
 }

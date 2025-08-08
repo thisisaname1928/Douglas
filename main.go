@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	s, e := testsvr.NewDouglasFir("5999", "./app/tests/52f4cb03-5903-4d79-afd0-7f5ee934a7db.dou", "")
+	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "")
 	fmt.Println(e)
-	e = s.OpenServer()
+	e = s.OpenServer("5999")
 	fmt.Println(e)
 	//app.StartApp()
 	// for _, val := range v {
