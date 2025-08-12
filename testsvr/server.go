@@ -110,9 +110,11 @@ func (fir DouglasFir) OpenServer(port string) error {
 	}
 	server := mux.NewRouter()
 
+	// ROUTING
 	server.HandleFunc("/", route)
 	server.HandleFunc("/rsrc/{FILE}", res)
 	server.HandleFunc("/favicon.ico", favicon)
+	server.HandleFunc("/api/{NAME}", fir.testsvrAPI)
 
 	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
 

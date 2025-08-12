@@ -7,7 +7,7 @@ import (
 const (
 	TN   = 0x12
 	TLN  = 0x13
-	TLDS = 0x15
+	TNDS = 0x15
 )
 
 type Question struct {
