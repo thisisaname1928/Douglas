@@ -8,11 +8,12 @@ import (
 )
 
 func main() {
-	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "")
+	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "abc")
 	fmt.Println(e)
 	test := s.ShuffleNewTest()
 	b, _ := json.Marshal(&test)
 	fmt.Println(string(b))
+
 	//app.StartApp()
 	// for _, val := range v {
 	// 	val.Text += " "

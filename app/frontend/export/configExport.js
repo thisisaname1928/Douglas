@@ -103,7 +103,7 @@ function getConfig() {
             return { status: false, UUID: UUID, testDuration: testDuration, msg: `so cau moi de cua loai ${confObj.stype[i].stype} lon hon so cau ton tai`, author: author, key: key, stype: stype }
         }
 
-        stype.push({ N: numberOfQuesPerTest, Point: pointPerQues })
+        stype.push({ stype: confObj.stype[i].stype, N: numberOfQuesPerTest, Point: pointPerQues })
     }
 
     return { status: true, UUID: UUID, testDuration: testDuration, msg: "ok", author: author, key: key, stype: stype }

@@ -50,6 +50,7 @@ func (fir DouglasFir) ShuffleNewTest() DouglasTest {
 			v.Point = testStructure[v.Stype].Points
 			test = append(test, v)
 		}
+
 	}
 
 	// shuffle questions list
