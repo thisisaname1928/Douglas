@@ -1,0 +1,13 @@
+.center-div {
+    display: grid;
+    place-items: center;
+    height: 200px;
+    gap: 20px;
+}
+
+.input-form {
+    display: flex;
+    flex-direction: row;
+    place-items: center;
+    gap: 10px;
+}

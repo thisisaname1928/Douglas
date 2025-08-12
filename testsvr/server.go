@@ -160,7 +160,15 @@ func addResource(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 func route(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Sus"))
+	file, e := os.Open("./testsvr/frontend/taketest/index.html")
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if e == nil {
+		w.Write(f)
+	}
 }
 
 func res(w http.ResponseWriter, r *http.Request) {
