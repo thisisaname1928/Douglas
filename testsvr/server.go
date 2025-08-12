@@ -3,8 +3,10 @@ package testsvr
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -109,6 +111,8 @@ func (fir DouglasFir) OpenServer(port string) error {
 	server := mux.NewRouter()
 
 	server.HandleFunc("/", route)
+	server.HandleFunc("/rsrc/{FILE}", res)
+	server.HandleFunc("/favicon.ico", favicon)
 
 	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
 
@@ -119,6 +123,65 @@ func (fir DouglasFir) CloseServer() {
 	fir.HttpServer.Close()
 }
 
+func detectFileExt(path string) string {
+	fileExtSpl := strings.Split(path, ".")
+	ext := fileExtSpl[len(fileExtSpl)-1]
+
+	switch ext {
+	case "js":
+		return "text/javascript"
+	case "css":
+		return "text/css"
+	case "ico":
+		return "image/x-icon"
+	default:
+		return ""
+	}
+}
+
+func addResource(w http.ResponseWriter, r *http.Request, path string) {
+	vars := mux.Vars(r)
+	file, e := os.Open(path + vars["FILE"])
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if str := detectFileExt(vars["FILE"]); str != "" {
+		w.Header().Add("Content-Type", str)
+	} else {
+		contentType := http.DetectContentType(f)
+		w.Header().Add("Content-Type", contentType)
+	}
+
+	if e == nil {
+		w.Write(f)
+	}
+}
+
 func route(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Sus"))
+}
+
+func res(w http.ResponseWriter, r *http.Request) {
+	addResource(w, r, "./testsvr/frontend/resources/")
+}
+
+func favicon(w http.ResponseWriter, r *http.Request) {
+	file, e := os.Open("./app/icon.ico")
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if str := detectFileExt("./app/icon.ico"); str != "" {
+		w.Header().Add("Content-Type", str)
+	} else {
+		contentType := http.DetectContentType(f)
+		w.Header().Add("Content-Type", contentType)
+	}
+
+	if e == nil {
+		w.Write(f)
+	}
 }

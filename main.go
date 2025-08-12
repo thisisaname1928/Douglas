@@ -14,6 +14,8 @@ func main() {
 	b, _ := json.Marshal(&test)
 	fmt.Println(string(b))
 
+	s.OpenServer("5999")
+
 	//app.StartApp()
 	// for _, val := range v {
 	// 	val.Text += " "
