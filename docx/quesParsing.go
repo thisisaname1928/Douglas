@@ -5,8 +5,9 @@ import (
 )
 
 const (
-	TN  = 0x12
-	TLN = 0x13
+	TN   = 0x12
+	TLN  = 0x13
+	TLDS = 0x15
 )
 
 type Question struct {
@@ -16,6 +17,7 @@ type Question struct {
 	Answer     [4]string `json:"answers"`
 	TrueAnswer [4]bool   `json:"TNAnswers"`
 	TLNA       [4]string `json:"TLNAnswers"` // true answer for TLN question type
+	Point      float64   `json:"point"`
 }
 
 const (
