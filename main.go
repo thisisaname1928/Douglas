@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/thisisaname1928/goParsingDocx/testsvr"
@@ -10,11 +9,9 @@ import (
 func main() {
 	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "abc")
 	fmt.Println(e)
-	test := s.ShuffleNewTest()
-	b, _ := json.Marshal(&test)
-	fmt.Println(string(b))
+	fmt.Println(s.RenderTest("e7552ea8-e232-4365-9a52-02aea1ff960e"))
 
-	s.OpenServer("5999")
+	//s.OpenServer("5999")
 
 	//app.StartApp()
 	// for _, val := range v {
