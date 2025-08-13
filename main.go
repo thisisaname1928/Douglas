@@ -11,7 +11,7 @@ func main() {
 	fmt.Println(e)
 	fmt.Println(s.RenderTest("e7552ea8-e232-4365-9a52-02aea1ff960e"))
 
-	//s.OpenServer("5999")
+	s.OpenServer("5999")
 
 	//app.StartApp()
 	// for _, val := range v {

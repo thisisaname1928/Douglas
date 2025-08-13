@@ -60,22 +60,23 @@ func (fir DouglasFir) RenderTest(uuid string) (string, error) {
 	for i, v := range info.Questions {
 		switch v.Type {
 		case docx.TN:
-			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i)}}, "TNTemplate.html")
+			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i + 1)}, {"quesContent", v.Content}, {"quesAns[0]", v.Answer[0]}, {"quesAns[1]", v.Answer[1]}, {"quesAns[2]", v.Answer[2]}, {"quesAns[3]", v.Answer[3]}}, "TNTemplate.html")
 			if e == nil {
 				output += s
 			}
 		case docx.TNDS:
-			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i)}}, "TNDSTemplate.html")
+			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i + 1)}, {"quesContent", v.Content}, {"quesAns[0]", v.Answer[0]}, {"quesAns[1]", v.Answer[1]}, {"quesAns[2]", v.Answer[2]}, {"quesAns[3]", v.Answer[3]}}, "TNDSTemplate.html")
 			if e == nil {
 				output += s
 			}
 		case docx.TLN:
-			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i)}}, "TLNTemplate.html")
+			s, e := loadTemplate([]templateElement{{"quesIndex", fmt.Sprint(i + 1)}, {"quesContent", v.Content}}, "TLNTemplate.html")
 			if e == nil {
 				output += s
 			}
 		}
 	}
 
-	return output, nil
+	s, e := loadTemplate([]templateElement{{"testContent", output}}, "testTemplate.html")
+	return s, e
 }
