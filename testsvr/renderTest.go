@@ -9,6 +9,8 @@ import (
 	"github.com/thisisaname1928/goParsingDocx/docx"
 )
 
+// this file is not using but preserved for some functions
+
 func (fir DouglasFir) getTestDataPath() string {
 	return "./testsvr/testdata/" + fir.UUID + "/testdat/"
 }

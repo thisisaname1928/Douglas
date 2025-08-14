@@ -6,6 +6,27 @@ startTestButton.addEventListener("click", () => {
     sendConfigForm(nameInput.value, classInput.value)
 })
 
+async function renderTest(testsvr) {
+    questions = testsvr.test.questions
+
+    // render questions
+    for (i = 0; i < questions.length; i++) {
+        console.log(questions[i].content)
+    }
+}
+
+async function getTest(uuid) {
+    res = await fetch("/api/getTest", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
+    jsonRes = await res.json()
+
+    if (!jsonRes.status) {
+        alert(jsonRes.msg)
+        return
+    }
+
+    renderTest(jsonRes)
+}
+
 async function sendConfigForm(name, className) {
     res = await fetch("/api/startTest", { method: "POST", body: JSON.stringify({ name: name, className: className }) })
     jsonRes = await res.json()
@@ -13,4 +34,6 @@ async function sendConfigForm(name, className) {
     if (!jsonRes.status) {
         alert(jsonRes.msg)
     }
+
+    getTest(jsonRes.uuid)
 }
