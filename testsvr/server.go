@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/google/uuid"
@@ -102,6 +104,55 @@ func OpenOldTest(uuid string, key string) (DouglasFir, error) {
 	}
 
 	return fir, nil
+}
+
+func GetIp() (string, error) {
+	it, e := net.Interfaces()
+	fmt.Println(e)
+
+	for _, v := range it {
+		if v.Flags&net.FlagUp == 0 || v.Flags&net.FlagLoopback != 0 || v.Flags&net.FlagMulticast == 0 {
+			continue
+		}
+
+		// detect wireless lan network interface
+		if runtime.GOOS == "linux" {
+			if !strings.HasPrefix(v.Name, "wl") {
+				continue
+			}
+		} else if runtime.GOOS == "darwin" {
+			if !strings.HasPrefix(v.Name, "en") {
+				continue
+			}
+		}
+
+		addrs, e := v.Addrs()
+		if e != nil {
+			continue
+		}
+
+		for _, addr := range addrs {
+			var ip net.IP
+
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+
+			// not what we are finding
+			if ip == nil || ip.IsLoopback() {
+				continue
+			}
+
+			if ip.IsPrivate() {
+				return ip.String(), nil
+			}
+		}
+	}
+
+	return "", errors.New("cant detect wlan ip")
 }
 
 func (fir DouglasFir) OpenServer(port string) error {
