@@ -121,7 +121,11 @@ func GetIp() (string, error) {
 				continue
 			}
 		} else if runtime.GOOS == "darwin" {
-			if !strings.HasPrefix(v.Name, "en") {
+			if !strings.HasPrefix(v.Name, "en0") {
+				continue
+			}
+		} else if runtime.GOOS == "windows" {
+			if !strings.HasPrefix(v.Name, "Wireless LAN adapter	Wi-Fi") {
 				continue
 			}
 		}

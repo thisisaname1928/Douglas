@@ -256,7 +256,7 @@
             margin-bottom: 8px;
             padding: 10px 15px;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
@@ -275,6 +275,7 @@
 
         .option-letter {
             font-weight: bold;
+            overflow-wrap: break-word;
             margin-right: 10px;
             color: #555;
             font-size: 0.95em;
@@ -288,7 +289,7 @@
             line-height: 1.3;
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 700px) {
             .question-card {
                 padding: 15px;
                 margin-top: 10px;
@@ -464,6 +465,11 @@
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
+        .tnds-ans-r:hover {
+            background-color: #a8f0a6;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
         .tnds-ans-w {
             background-color: #fcfcfc;
             border: 1px solid #e9e9e9;
@@ -472,4 +478,26 @@
             padding: 10px 15px;
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .tnds-ans-w:hover {
+            background-color: #f0a6a6;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .TLN-input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 300px;
+            gap: 10px;
+        }
+
+        .square-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.2em;
         }

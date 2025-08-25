@@ -29,6 +29,7 @@ function chooseTNOption(i, ans) {
 
 async function renderTest(testsvr) {
     questions = testsvr.test.questions
+    configForm.remove()
 
     // delete config form
     configForm.innerHTML = "";
@@ -60,6 +61,19 @@ async function renderTest(testsvr) {
         </div>
     </div>
 </div>`
+        } else if (questions[i].type == 0x13) {
+            testContent.innerHTML += `    
+    <div class="question-card">
+        <div class="question-text">
+            Câu ${i + 1}: ${questions[i].content}
+        </div>
+        <div class="TLN-input-container">
+            <input class="square-input" type="text" maxlength="1">
+            <input class="square-input" type="text" maxlength="1">
+            <input class="square-input" type="text" maxlength="1">
+            <input class="square-input" type="text" maxlength="1">
+        </div>
+    </div>`
         }
     }
 }
