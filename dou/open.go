@@ -30,16 +30,16 @@ type DouFile struct {
 }
 
 // only work with path from tag <relationship> of docx file
-func (file DouFile) OpenMedia(path string) []byte {
+func (file DouFile) OpenMedia(path string) ([]byte, error) {
 	ConvertPath(&path)
 
 	for i := range file.Media {
 		if file.Media[i].Name == ("/" + path) {
-			return file.Media[i].Data
+			return file.Media[i].Data, nil
 		}
 	}
 
-	return []byte{}
+	return []byte{}, errors.New("media not found")
 }
 
 func douCheckMedia(path string) bool {

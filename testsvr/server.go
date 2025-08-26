@@ -170,6 +170,7 @@ func (fir DouglasFir) OpenServer(port string) error {
 	server.HandleFunc("/rsrc/{FILE}", res)
 	server.HandleFunc("/favicon.ico", favicon)
 	server.HandleFunc("/api/{NAME}", fir.testsvrAPI)
+	server.HandleFunc("/media/{FILE}", fir.mediaRoute)
 
 	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
 

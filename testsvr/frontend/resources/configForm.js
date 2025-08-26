@@ -65,7 +65,7 @@ async function renderTest(testsvr) {
             testContent.innerHTML += `    
     <div class="question-card">
         <div class="question-text">
-            Câu ${i + 1}: ${questions[i].content}
+            Câu ${i + 1} (Trac nghiem tra loi ngan): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
             <input class="square-input" type="text" maxlength="1">
@@ -74,6 +74,39 @@ async function renderTest(testsvr) {
             <input class="square-input" type="text" maxlength="1">
         </div>
     </div>`
+        } else if (questions[i].type == 0x14) {
+            testContent.innerHTML += `
+<div class="question-card">
+    <div class="question-text">
+        Câu ${i + 1} (Trac nghiem dung sai): ${questions[i].content}
+    </div>
+    <div class="options-list">
+        <div class="option-item">
+            <button class="tnds-ans-r">D</button>
+            <button class="tnds-ans-w">S</button>
+            <div class="option-letter">a) </div>
+            <div class="option-text">${questions[i].answers[0]}</div>
+        </div>
+        <div class="option-item">
+            <button class="tnds-ans-r">D</button>
+            <button class="tnds-ans-w">S</button>
+            <div class="option-letter">b) </div>
+            <div class="option-text">${questions[i].answers[1]}</div>
+        </div>
+        <div class="option-item">
+            <button class="tnds-ans-r">D</button>
+            <button class="tnds-ans-w">S</button>
+            <div class="option-letter">c) </div>
+            <div class="option-text">${questions[i].answers[2]}</div>
+        </div>
+        <div class="option-item">
+            <button class="tnds-ans-r">D</button>
+            <button class="tnds-ans-w">S</button>
+            <div class="option-letter">d) </div>
+            <div class="option-text">${questions[i].answers[3]}</div>
+        </div>
+    </div>
+</div>`
         }
     }
 }
