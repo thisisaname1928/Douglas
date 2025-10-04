@@ -3,6 +3,7 @@ package testsvr
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -32,6 +33,7 @@ type startTestResponse struct {
 type testsvrInfo struct {
 	Name      string          `json:"name"`
 	Class     string          `json:"class"`
+	IP        string          `json:"IP"`
 	StartTime time.Time       `json:"startTime"`
 	Questions []docx.Question `json:"questions"`
 }
@@ -62,6 +64,10 @@ func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	info.Name = request.Name
 	info.Questions = fir.ShuffleNewTest().Test
 	info.StartTime = time.Now()
+
+	// save IP
+	IP, _, _ := net.SplitHostPort(r.RemoteAddr)
+	info.IP = IP
 
 	f, e := os.Create("./testsvr/testdata/" + fir.UUID + "/testdat/" + uuid + ".json")
 	if e != nil {

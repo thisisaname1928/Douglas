@@ -1,7 +1,6 @@
 package testsvr
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,8 +12,6 @@ func (fir DouglasFir) mediaRoute(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
 	requestMedia := "media/" + v["FILE"] // remove /
 	mediaResource, e := fir.Douglas.OpenMedia(requestMedia)
-
-	fmt.Println(requestMedia)
 
 	if e != nil {
 		w.WriteHeader(404)
