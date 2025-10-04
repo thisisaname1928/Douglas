@@ -170,7 +170,8 @@ func (fir DouglasFir) OpenServer(port string) error {
 	server.HandleFunc("/rsrc/{FILE}", res)
 	server.HandleFunc("/favicon.ico", favicon)
 	server.HandleFunc("/api/{NAME}", fir.testsvrAPI)
-	server.HandleFunc("/media/{FILE}", fir.mediaRoute)
+	server.HandleFunc("/taketest/media/{FILE}", fir.mediaRoute)
+	server.HandleFunc("/taketest/{UUID}", fir.takeTestRoute)
 
 	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
 
@@ -219,6 +220,18 @@ func addResource(w http.ResponseWriter, r *http.Request, path string) {
 
 func route(w http.ResponseWriter, r *http.Request) {
 	file, e := os.Open("./testsvr/frontend/taketest/index.html")
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if e == nil {
+		w.Write(f)
+	}
+}
+
+func (fir DouglasFir) takeTestRoute(w http.ResponseWriter, r *http.Request) {
+	file, e := os.Open("./testsvr/frontend/realtaketest/index.html")
 	if e != nil {
 		w.Write([]byte{})
 	}
