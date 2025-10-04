@@ -38,6 +38,8 @@ function chooseTNDSOption(i, ansI, value) {
     }
 }
 
+let questions
+
 async function renderTest(testsvr) {
     questions = testsvr.test.questions
 
@@ -75,10 +77,10 @@ async function renderTest(testsvr) {
             Câu ${i + 1} (Trac nghiem tra loi ngan): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
-            <input class="square-input" type="text" maxlength="1">
-            <input class="square-input" type="text" maxlength="1">
-            <input class="square-input" type="text" maxlength="1">
-            <input class="square-input" type="text" maxlength="1">
+            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.0">
+            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.1">
+            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.2">
+            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.3">
         </div>
     </div>`
         } else if (questions[i].type == 0x14) {
@@ -128,4 +130,73 @@ async function getTest(uuid) {
     }
 
     renderTest(jsonRes)
+}
+
+function getTNAnswer(th) {
+    for (i = 0; i < 4; i++) {
+        item = document.getElementById(`QUES.${th}.TN.${i}`)
+        if (item.classList.contains("option-item-highlighted")) {
+            if (i == 0) {
+                return 'A'
+            }
+
+            if (i == 1) {
+                return 'B'
+            }
+
+            if (i == 2) {
+                return 'C'
+            }
+
+            if (i == 3) {
+                return 'D'
+            }
+        }
+    }
+
+    return ''
+}
+
+function getTNDSAnswer(th) {
+    // prevent smth bad
+    ans = ['', '', '', '']
+    for (i = 0; i < 4; i++) {
+        item = document.getElementById(`QUES.${th}.TNDS.${i}.R`)
+        if (item.classList.contains("tnds-ans-r-highlighted")) {
+            ans[i] = 'r'
+        }
+
+        item = document.getElementById(`QUES.${th}.TNDS.${i}.W`)
+        if (item.classList.contains("tnds-ans-w-highlighted")) {
+            ans[i] = 'w'
+        }
+    }
+
+    return ans
+}
+
+function getTLNAnswer(th) {
+    ans = ['', '', '', '']
+
+    ans[0] = document.getElementById(`QUES.${th}.TLN.0`).value
+    ans[1] = document.getElementById(`QUES.${th}.TLN.1`).value
+    ans[2] = document.getElementById(`QUES.${th}.TLN.2`).value
+    ans[3] = document.getElementById(`QUES.${th}.TLN.3`).value
+
+    return ans
+}
+
+function getAnswer() {
+    result = []
+    for (let i = 0; i < questions.length; i++) {
+        if (questions[i].type == 0x12) {
+            result.push(getTNAnswer(i))
+        } else if (questions[i].type == 0x14) {
+            result.push(getTNDSAnswer(i))
+        } else if (questions[i].type == 0x13) {
+            result.push(getTLNAnswer(i))
+        }
+    }
+
+    return result
 }

@@ -75,6 +75,7 @@ func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 		encoder.Encode(&response)
 		return
 	}
+
 	b, _ := json.Marshal(&info)
 	f.Write(b)
 	f.Close()
