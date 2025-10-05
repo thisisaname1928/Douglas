@@ -31,11 +31,14 @@ type startTestResponse struct {
 }
 
 type testsvrInfo struct {
-	Name      string          `json:"name"`
-	Class     string          `json:"class"`
-	IP        string          `json:"IP"`
-	StartTime time.Time       `json:"startTime"`
-	Questions []docx.Question `json:"questions"`
+	Name        string          `json:"name"`
+	Class       string          `json:"class"`
+	IP          string          `json:"IP"`
+	StartTime   time.Time       `json:"startTime"`
+	EndTime     time.Time       `json:"endTime"`
+	Done        bool            `json:"done"`
+	Questions   []docx.Question `json:"questions"`
+	AnswerSheet [][]string      `json:"answerSheet"`
 }
 
 func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +67,7 @@ func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	info.Name = request.Name
 	info.Questions = fir.ShuffleNewTest().Test
 	info.StartTime = time.Now()
+	info.Done = false
 
 	// save IP
 	IP, _, _ := net.SplitHostPort(r.RemoteAddr)

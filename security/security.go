@@ -69,6 +69,7 @@ func Decrypt(data []byte, key string) ([]byte, error) {
 	return decryptedData, e
 }
 
+// should use bcrypt instead
 func EncryptKey(key string) string {
 	hsh := sha256.New()
 	hsh.Write([]byte(key))

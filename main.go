@@ -2,13 +2,20 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/thisisaname1928/goParsingDocx/testsvr"
 )
 
 func main() {
+
 	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "abc")
 	fmt.Println(e)
+
+	var data testsvr.TestSessions
+	data.NewSession("31569b3a-b643-4e5e-b51c-eccaa86be19a", "??", time.Now(), 3)
+	data.UpdateAnswerSheet(0, "31569b3a-b643-4e5e-b51c-eccaa86be19a", [4]string{"a", "ok", "l", "m"})
+	data.DoneSession(s.UUID, "31569b3a-b643-4e5e-b51c-eccaa86be19a", time.Now())
 
 	fmt.Println(testsvr.GetIp())
 
