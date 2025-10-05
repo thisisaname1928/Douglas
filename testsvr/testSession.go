@@ -21,8 +21,11 @@ type TestSessions struct {
 	SessionsData map[string]TestSessionData
 }
 
-func (session *TestSessions) NewSession(UUID string, IP string, startTime time.Time, numberOfQuestions int) {
+func (session *TestSessions) Init() {
 	session.SessionsData = make(map[string]TestSessionData)
+}
+
+func (session *TestSessions) NewSession(UUID string, IP string, startTime time.Time, numberOfQuestions int) {
 	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime}
 
 	// assign 4 element to Answer sheet

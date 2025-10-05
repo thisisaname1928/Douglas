@@ -41,7 +41,7 @@ type testsvrInfo struct {
 	AnswerSheet [][]string      `json:"answerSheet"`
 }
 
-func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	var request startTestRequest
 	var response startTestResponse
 
@@ -83,6 +83,8 @@ func (fir DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	b, _ := json.Marshal(&info)
 	f.Write(b)
 	f.Close()
+
+	fir.TestSessions.NewSession(uuid, info.IP, info.StartTime, len(info.Questions))
 
 	response.Status = true
 	response.UUID = uuid
