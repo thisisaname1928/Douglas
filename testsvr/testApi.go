@@ -6,7 +6,17 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 )
+
+func (fir DouglasFir) verifyIP(uuid string, IP string) bool {
+	test, ok := fir.TestSessions.SessionsData[uuid]
+	if !ok {
+		return false
+	}
+
+	return test.IP == IP
+}
 
 func (fir DouglasFir) getTest(uuid string) ([]byte, error) {
 	b, e := os.ReadFile(fir.getTestDataPath() + uuid + ".json")
@@ -108,8 +118,8 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 
 	// COMPARING IP
 	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
-	test, ok := fir.TestSessions.SessionsData[request.UUID]
-	if !ok || test.IP != requestIP {
+
+	if fir.verifyIP(request.UUID, requestIP) {
 		response.Status = false
 		response.Msg = "TEST_ACCESS_DENIED"
 		encoder.Encode(response)
@@ -129,6 +139,46 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][2] = request.AnswerSheet[2]
 	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][3] = request.AnswerSheet[3]
 
+	response.Status = true
+	response.Msg = "ok"
+	encoder.Encode(response)
+}
+
+// done test
+
+type doneTestRequest struct {
+	UUID string `json:"uuid"`
+}
+
+type doneTestResponse struct {
+	Status bool   `json:"status"`
+	Msg    string `json:"msg"`
+}
+
+func (fir *DouglasFir) handleDoneTest(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	var request doneTestRequest
+	var response doneTestResponse
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Status = false
+		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+	if !fir.verifyIP(request.UUID, requestIP) {
+		response.Status = false
+		response.Msg = "TEST_ACCESS_DENIED"
+		encoder.Encode(response)
+		return
+	}
+
+	// verifyIP just done checking if testSession availble for us, so we dont need to check
+	fir.TestSessions.DoneSession(fir.UUID, request.UUID, time.Now())
 	response.Status = true
 	response.Msg = "ok"
 	encoder.Encode(response)
