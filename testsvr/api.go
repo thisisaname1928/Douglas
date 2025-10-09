@@ -100,5 +100,7 @@ func (fir DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.handleStartTest(w, r)
 	case "getTest":
 		fir.handleGetTest(w, r)
+	case "updateAnswer":
+		fir.handleUpdateAnswerSheet(w, r)
 	}
 }
