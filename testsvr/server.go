@@ -43,7 +43,7 @@ func copyFile(dest string, src string) {
 }
 
 // create new test server
-func NewDouglasFir(serverPort string, path string, key string) (DouglasFir, error) {
+func NewDouglasFir(serverPort string, path string, key string) (*DouglasFir, error) {
 	var fir DouglasFir
 	fir.ServerPort = serverPort
 	fir.Created = false
@@ -51,7 +51,7 @@ func NewDouglasFir(serverPort string, path string, key string) (DouglasFir, erro
 	var df dou.DouFile
 	df, e := dou.Open(path, key)
 	if e != nil {
-		return fir, e
+		return &fir, e
 	}
 
 	fir.Douglas = df
@@ -71,7 +71,7 @@ func NewDouglasFir(serverPort string, path string, key string) (DouglasFir, erro
 	fir.UUID = uuid
 	os.Mkdir("./testsvr/testdata/"+uuid+"/testdat", 0755)
 
-	return fir, nil
+	return &fir, nil
 }
 
 func isExist(path string) bool {
@@ -80,12 +80,12 @@ func isExist(path string) bool {
 	return !os.IsNotExist(e)
 }
 
-func OpenOldTest(uuid string, key string) (DouglasFir, error) {
+func OpenOldTest(uuid string, key string) (*DouglasFir, error) {
 	if !isExist(fmt.Sprintf("./testsvr/testdata/%v", uuid)) {
-		return DouglasFir{}, errors.New(ERROR_FIR_NOT_CREATED)
+		return nil, errors.New(ERROR_FIR_NOT_CREATED)
 	}
 	if !isExist(fmt.Sprintf("./testsvr/testdata/%v/test.dou", uuid)) {
-		return DouglasFir{}, errors.New(ERROR_FIR_NOT_CREATED)
+		return nil, errors.New(ERROR_FIR_NOT_CREATED)
 	}
 
 	var fir DouglasFir
@@ -94,7 +94,7 @@ func OpenOldTest(uuid string, key string) (DouglasFir, error) {
 	var df dou.DouFile
 	df, e := dou.Open(fmt.Sprintf("./testsvr/testdata/%v/test.dou", uuid), key)
 	if e != nil {
-		return DouglasFir{}, e
+		return nil, e
 	}
 	fir.Douglas = df
 
@@ -104,7 +104,7 @@ func OpenOldTest(uuid string, key string) (DouglasFir, error) {
 		os.Mkdir(fmt.Sprintf("./testsvr/testdata/%v/testdat", uuid), 0755)
 	}
 
-	return fir, nil
+	return &fir, nil
 }
 
 func GetIp() (string, error) {
@@ -182,7 +182,7 @@ func (fir *DouglasFir) OpenServer(port string) error {
 	return fir.HttpServer.ListenAndServe()
 }
 
-func (fir DouglasFir) CloseServer() {
+func (fir *DouglasFir) CloseServer() {
 	fir.HttpServer.Close()
 }
 
@@ -234,7 +234,7 @@ func route(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (fir DouglasFir) takeTestRoute(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) takeTestRoute(w http.ResponseWriter, r *http.Request) {
 	file, e := os.Open("./testsvr/frontend/realtaketest/index.html")
 	if e != nil {
 		w.Write([]byte{})

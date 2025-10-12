@@ -26,7 +26,7 @@ type DouglasTest struct {
 	Test []docx.Question `json:"test"`
 }
 
-func (fir DouglasFir) GetNumberOfQuestions() int {
+func (fir *DouglasFir) GetNumberOfQuestions() int {
 	c := 0
 
 	for _, v := range fir.Douglas.Data.TestStruct {
@@ -36,7 +36,7 @@ func (fir DouglasFir) GetNumberOfQuestions() int {
 	return c
 }
 
-func (fir DouglasFir) ShuffleNewTest() DouglasTest {
+func (fir *DouglasFir) ShuffleNewTest() DouglasTest {
 	var test []docx.Question
 	// load teststruct into a map
 	testStructure := make(map[string]dou.TestStructure)

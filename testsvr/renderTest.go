@@ -11,7 +11,7 @@ import (
 
 // this file is not using but preserved for some functions
 
-func (fir DouglasFir) getTestDataPath() string {
+func (fir *DouglasFir) getTestDataPath() string {
 	return "./testsvr/testdata/" + fir.UUID + "/testdat/"
 }
 
@@ -44,7 +44,7 @@ func loadTemplate(es []templateElement, path string) (string, error) {
 	return content, nil
 }
 
-func (fir DouglasFir) RenderTest(uuid string) (string, error) {
+func (fir *DouglasFir) RenderTest(uuid string) (string, error) {
 	output := ""
 
 	b, e := os.ReadFile(fir.getTestDataPath() + uuid + ".json")

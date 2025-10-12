@@ -92,7 +92,7 @@ func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(&response)
 }
 
-func (fir DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
 
 	switch v["NAME"] {

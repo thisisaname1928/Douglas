@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -19,6 +20,7 @@ type TestSessionData struct {
 // Resume session by lookup this TestSessions
 type TestSessions struct {
 	SessionsData map[string]TestSessionData
+	mutex        sync.Mutex
 }
 
 func (session *TestSessions) Init() {
@@ -26,6 +28,9 @@ func (session *TestSessions) Init() {
 }
 
 func (session *TestSessions) NewSession(UUID string, IP string, startTime time.Time, numberOfQuestions int) {
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
 	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime}
 
 	// assign 4 element to Answer sheet
@@ -37,6 +42,9 @@ func (session *TestSessions) NewSession(UUID string, IP string, startTime time.T
 }
 
 func (session *TestSessions) UpdateAnswerSheet(i int, UUID string, Answer [4]string) {
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
 	if i < len(session.SessionsData[UUID].AnswerSheet) {
 		for k := 0; k < 4; k++ {
 			session.SessionsData[UUID].AnswerSheet[i][k] = Answer[k] // do a copy

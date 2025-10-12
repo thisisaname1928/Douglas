@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (fir DouglasFir) mediaRoute(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) mediaRoute(w http.ResponseWriter, r *http.Request) {
 	// NOTE: should add a check on user uuid
 	v := mux.Vars(r)
 	requestMedia := "media/" + v["FILE"] // remove /

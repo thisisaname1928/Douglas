@@ -9,7 +9,9 @@ import (
 	"time"
 )
 
-func (fir DouglasFir) verifyIP(uuid string, IP string) bool {
+func (fir *DouglasFir) verifyIP(uuid string, IP string) bool {
+	fir.TestSessions.mutex.Lock()
+	defer fir.TestSessions.mutex.Unlock()
 	test, ok := fir.TestSessions.SessionsData[uuid]
 	if !ok {
 		return false
@@ -18,7 +20,7 @@ func (fir DouglasFir) verifyIP(uuid string, IP string) bool {
 	return test.IP == IP
 }
 
-func (fir DouglasFir) getTest(uuid string) ([]byte, error) {
+func (fir *DouglasFir) getTest(uuid string) ([]byte, error) {
 	b, e := os.ReadFile(fir.getTestDataPath() + uuid + ".json")
 	if e != nil {
 		return []byte{}, e
@@ -38,7 +40,7 @@ type getTestResponse struct {
 	TestInfo testsvrInfo `json:"test"`
 }
 
-func (fir DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
 	var response getTestResponse
 	encoder := json.NewEncoder(w)
 	response.Status = false
@@ -134,10 +136,7 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	}
 
 	// copy
-	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][0] = request.AnswerSheet[0]
-	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][1] = request.AnswerSheet[1]
-	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][2] = request.AnswerSheet[2]
-	fir.TestSessions.SessionsData[request.UUID].AnswerSheet[request.Index][3] = request.AnswerSheet[3]
+	fir.TestSessions.UpdateAnswerSheet(request.Index, request.UUID, [4]string(request.AnswerSheet))
 
 	response.Status = true
 	response.Msg = "ok"
