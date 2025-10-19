@@ -96,6 +96,7 @@ type updateAnswerSheetRequest struct {
 	Index       int      `json:"index"`
 	AnswerIndex int      `json:"answerIndex"`
 	AnswerData  string   `json:"data"`
+	ShouldClear bool     `json:"shouldClear"`
 	AnswerSheet []string `json:"answerSheet"`
 }
 
@@ -151,9 +152,12 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// copy
-	//fir.TestSessions.UpdateAnswerSheet(request.Index, request.UUID, [4]string(request.AnswerSheet))
-	fir.TestSessions.UpdateAnswer(request.UUID, request.Index, request.AnswerIndex, request.AnswerData)
+	// update
+	if request.ShouldClear { // update and clear all of the
+		fir.TestSessions.UpdateAnswerSheet(request.Index, request.UUID, [4]string(request.AnswerSheet))
+	} else {
+		fir.TestSessions.UpdateAnswer(request.UUID, request.Index, request.AnswerIndex, request.AnswerData)
+	}
 
 	response.Status = true
 	response.Msg = "ok"
@@ -187,7 +191,6 @@ func (fir *DouglasFir) handleDoneTest(w http.ResponseWriter, r *http.Request) {
 
 	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 	if !fir.verifyIP(request.UUID, requestIP) {
-		fmt.Println(requestIP, " != ", fir.TestSessions.SessionsData[request.UUID].IP)
 		response.Status = false
 		response.Msg = "TEST_ACCESS_DENIED"
 		encoder.Encode(response)
@@ -197,6 +200,29 @@ func (fir *DouglasFir) handleDoneTest(w http.ResponseWriter, r *http.Request) {
 	// verifyIP just done checking if testSession availble for us, so we dont need to check
 	fir.TestSessions.DoneSession(fir.UUID, request.UUID, time.Now())
 	response.Status = true
+	response.Msg = "ok"
+	encoder.Encode(response)
+
+	fmt.Print("PPP: ")
+	fmt.Println(fir.CalculateMark(request.UUID))
+}
+
+func (fir *DouglasFir) getTestStatus(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	// they are the same so
+	var request doneTestRequest
+	var response doneTestResponse
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Status = false
+		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	response.Status = fir.CheckIfTestDone(request.UUID)
 	response.Msg = "ok"
 	encoder.Encode(response)
 }

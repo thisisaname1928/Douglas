@@ -1,8 +1,10 @@
 package testsvr
 
 import (
-	"fmt"
+	"encoding/json"
+	"errors"
 	"math/rand"
+	"os"
 
 	"github.com/thisisaname1928/goParsingDocx/docx"
 	"github.com/thisisaname1928/goParsingDocx/dou"
@@ -33,8 +35,6 @@ func (fir *DouglasFir) GetNumberOfQuestions() int {
 	for _, v := range fir.Douglas.Data.TestStruct {
 		c += int(v.N)
 	}
-
-	fmt.Println(c)
 
 	return c
 }
@@ -75,4 +75,111 @@ func (fir *DouglasFir) ShuffleNewTest() DouglasTest {
 	testdg.Test = make([]docx.Question, len(test))
 	copy(testdg.Test, test)
 	return testdg
+}
+
+// get file that store the data of test sessions uuid
+func (fir *DouglasFir) Route2UUID(UUID string) string {
+	return "./testsvr/testdata/" + fir.UUID + "/testdat/" + UUID + ".json"
+}
+
+func (fir *DouglasFir) CheckIfTestDone(UUID string) bool {
+	// this can causes a bug!!! <W:BUG>
+	if fir.TestSessions.CheckSession(UUID) {
+		return true
+	}
+
+	// check if test haven't available in test sessions
+	buf, e := os.ReadFile(fir.Route2UUID(UUID))
+
+	if e != nil {
+		return false
+	}
+
+	var testInfo testsvrInfo
+	e = json.Unmarshal(buf, &testInfo)
+	if e != nil {
+		return false
+	}
+
+	return testInfo.Done
+}
+
+func calcTNQuestion(point float64, trueAns [4]bool, userAns string) float64 {
+	index := -1
+	switch userAns {
+	case "A":
+		index = 0
+	case "B":
+		index = 1
+	case "C":
+		index = 2
+	case "D":
+		index = 3
+	}
+
+	if index == -1 {
+		return 0
+	}
+
+	if trueAns[index] {
+		return point
+	}
+
+	return 0
+}
+
+func calcTLNQuestion(point float64, trueAns [4]string, userAns [4]string) float64 {
+	if trueAns == userAns {
+		return point
+	}
+
+	return 0
+}
+
+func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64 {
+	// convert
+	var uAns [4]bool
+	for i := range userAns {
+		uAns[i] = (userAns[i] == "T")
+	}
+
+	if trueAns == uAns {
+		return point
+	}
+
+	return 0
+}
+
+func (fir *DouglasFir) CalculateMark(UUID string) (float64, error) {
+	var mark float64 = 0
+	// load
+	buf, e := os.ReadFile(fir.Route2UUID(UUID))
+
+	if e != nil {
+		return 0, errors.New("TEST_NOT_FOUND")
+	}
+
+	var testInfo testsvrInfo
+	e = json.Unmarshal(buf, &testInfo)
+	if e != nil {
+		return 0, errors.New("BAD_TEST")
+	}
+
+	// check if test done
+	if !testInfo.Done {
+		return 0, errors.New("TEST_IS_NOT_DONE")
+	}
+
+	for i := range testInfo.AnswerSheet {
+		switch testInfo.Questions[i].Type {
+		case docx.TN:
+			mark += calcTNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, testInfo.AnswerSheet[i][0])
+		case docx.TLN:
+			mark += calcTLNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TLNA, [4]string(testInfo.AnswerSheet[i]))
+		case docx.TNDS:
+			mark += calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+		}
+	}
+
+	return mark, nil
 }

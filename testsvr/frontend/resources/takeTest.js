@@ -9,8 +9,9 @@ window.addEventListener('load', function () {
 
 async function chooseTNOption(i, ans) {
 
-    //result = await updateAnswerSheet(i, [String.fromCharCode('A'.charCodeAt(0) + ans), '', '', ''])
-    result = await updateAnswerSheet2(i, ans, String.fromCharCode('A'.charCodeAt(0) + ans))
+    result = await updateAnswerSheet(i, [String.fromCharCode('A'.charCodeAt(0) + ans), '', '', ''])
+    //result = await updateAnswerSheet2(i, ans, String.fromCharCode('A'.charCodeAt(0) + ans))
+
     if (!result) {
         return
     }
@@ -33,14 +34,26 @@ async function chooseTNOption(i, ans) {
     }
 }
 
-function chooseTNDSOption(i, ansI, value) {
+async function chooseTNDSOption(i, ansI, value) {
     rightAns = document.getElementById(`QUES.${i}.TNDS.${ansI}.R`)
     wrongAns = document.getElementById(`QUES.${i}.TNDS.${ansI}.W`)
 
     if (value) {
+        result = await updateAnswerSheet2(i, ansI, "T")
+
+        if (!result) {
+            return
+        }
+
         rightAns.classList.replace("tnds-ans-r", "tnds-ans-r-highlighted")
         wrongAns.classList.replace("tnds-ans-w-highlighted", "tnds-ans-w")
     } else {
+        result = await updateAnswerSheet2(i, ansI, "F")
+
+        if (!result) {
+            return
+        }
+
         wrongAns.classList.replace("tnds-ans-w", "tnds-ans-w-highlighted")
         rightAns.classList.replace("tnds-ans-r-highlighted", "tnds-ans-r")
     }
@@ -167,7 +180,7 @@ async function doneTest() {
 
 // update single answer in answerSheet array
 async function updateAnswerSheet2(index, answerIndex, data) {
-    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: index, answerIndex: answerIndex, data: data }) })
+    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: index, answerIndex: answerIndex, data: data, shouldClear: false }) })
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
@@ -179,7 +192,8 @@ async function updateAnswerSheet2(index, answerIndex, data) {
 }
 
 async function updateAnswerSheet(i, answers) {
-    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: i, answerSheet: answers }) })
+    // add data field just to patch
+    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: i, answerSheet: answers, data: "?", shouldClear: true }) })
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
