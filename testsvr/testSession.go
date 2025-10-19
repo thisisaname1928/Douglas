@@ -52,7 +52,21 @@ func (session *TestSessions) UpdateAnswerSheet(i int, UUID string, Answer [4]str
 	}
 }
 
+// update single answer
+func (session *TestSessions) UpdateAnswer(UUID string, index int, answerIndex int, data string) {
+	if !session.CheckSession(UUID) {
+		return
+	}
+
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
+	session.SessionsData[UUID].AnswerSheet[index][answerIndex] = data
+}
+
 func (session *TestSessions) DoneSession(testUUID string, UUID string, endTime time.Time) {
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
 	// check if session available
 	if _, there := session.SessionsData[UUID]; !there {
 		return
@@ -90,4 +104,11 @@ func (session *TestSessions) DoneSession(testUUID string, UUID string, endTime t
 	}
 	// destroy
 	delete(session.SessionsData, UUID)
+}
+
+func (session *TestSessions) CheckSession(UUID string) bool {
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+	_, ok := session.SessionsData[UUID]
+	return ok
 }

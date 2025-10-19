@@ -20,12 +20,13 @@ const (
 )
 
 type DouglasFir struct {
-	ServerPort   string
-	Douglas      dou.DouFile // test file
-	Created      bool        // check for if init success
-	UUID         string
-	HttpServer   *http.Server
-	TestSessions TestSessions
+	ServerPort        string
+	Douglas           dou.DouFile // test file
+	Created           bool        // check for if init success
+	UUID              string
+	HttpServer        *http.Server
+	TestSessions      TestSessions
+	NumberOfQuestions int
 }
 
 func copyFile(dest string, src string) {

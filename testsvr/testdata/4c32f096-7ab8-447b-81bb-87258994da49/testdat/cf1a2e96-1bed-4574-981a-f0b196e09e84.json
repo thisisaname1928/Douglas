@@ -1,33 +1,11 @@
 {
-    "name": "a",
-    "class": "a",
-    "IP": "[",
-    "startTime": "2025-10-04T16:37:07.922788886+07:00",
+    "name": "bvc",
+    "class": "aaa",
+    "IP": "::1",
+    "startTime": "2025-10-17T21:14:10.778621376+07:00",
+    "endTime": "2025-10-17T21:33:03.554882082+07:00",
+    "done": true,
     "questions": [
-        {
-            "type": 20,
-            "stype": "TN/NB",
-            "content": "\u003clabel class=\"ques_content\"\u003e noi dung DS \u003c/label\u003e\u003cbr\u003e",
-            "answers": [
-                "\u003clabel class=\"ques_content\"\u003e dap an b \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an c dung \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an a \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an d \u003c/label\u003e"
-            ],
-            "TNAnswers": [
-                false,
-                true,
-                false,
-                false
-            ],
-            "TLNAnswers": [
-                "",
-                "",
-                "",
-                ""
-            ],
-            "point": 0
-        },
         {
             "type": 19,
             "stype": "NONE",
@@ -50,22 +28,22 @@
                 "0",
                 "9"
             ],
-            "point": 0
+            "point": 1
         },
         {
             "type": 18,
             "stype": "TN/NB",
             "content": "\u003clabel class=\"ques_content\"\u003e noi dung \u003c/label\u003e\u003cbr\u003e",
             "answers": [
+                "\u003clabel class=\"ques_content\"\u003e dap an d \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an b \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an c \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an d \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an a \u003c/label\u003e"
             ],
             "TNAnswers": [
                 false,
-                true,
                 false,
+                true,
                 false
             ],
             "TLNAnswers": [
@@ -74,7 +52,21 @@
                 "",
                 ""
             ],
-            "point": 0
+            "point": 1
         }
+    ],
+    "answerSheet": [
+        [
+            "1",
+            "1",
+            "1",
+            "1"
+        ],
+        [
+            "A",
+            "",
+            "",
+            ""
+        ]
     ]
 }

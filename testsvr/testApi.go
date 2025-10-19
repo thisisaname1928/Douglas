@@ -67,6 +67,11 @@ func (fir *DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// create new test session
+	if !fir.TestSessions.CheckSession(req.UUID) {
+		fir.TestSessions.NewSession(req.UUID, test.IP, test.StartTime, fir.GetNumberOfQuestions())
+	}
+
 	// remove test answer
 	for i := range test.Questions {
 		for j := range test.Questions[i].TrueAnswer {
@@ -89,6 +94,8 @@ func (fir *DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
 type updateAnswerSheetRequest struct {
 	UUID        string   `json:"UUID"`
 	Index       int      `json:"index"`
+	AnswerIndex int      `json:"answerIndex"`
+	AnswerData  string   `json:"data"`
 	AnswerSheet []string `json:"answerSheet"`
 }
 
@@ -98,6 +105,7 @@ type updateAnswerSheetResponse struct {
 }
 
 func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Request) {
+
 	var request updateAnswerSheetRequest
 	var response updateAnswerSheetResponse
 	encoder := json.NewEncoder(w)
@@ -111,7 +119,15 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	}
 
 	// check if AnswerSheet valid
-	if len(request.AnswerSheet) != 4 {
+	// if len(request.AnswerSheet) != 4 {
+	// 	response.Status = false
+	// 	response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+	// 	encoder.Encode(response)
+	// 	return
+	// }
+
+	// check if answer data isn't bad
+	if len(request.AnswerData) != 1 || request.AnswerIndex > 3 {
 		response.Status = false
 		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
 		encoder.Encode(response)
@@ -121,14 +137,14 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	// COMPARING IP
 	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 
-	if fir.verifyIP(request.UUID, requestIP) {
+	if !fir.verifyIP(request.UUID, requestIP) {
 		response.Status = false
 		response.Msg = "TEST_ACCESS_DENIED"
 		encoder.Encode(response)
 		return
 	}
 
-	if request.Index < len(fir.TestSessions.SessionsData[request.UUID].AnswerSheet) {
+	if request.Index > fir.GetNumberOfQuestions() {
 		response.Status = false
 		response.Msg = "OUT_OF_RANGE"
 		encoder.Encode(response)
@@ -136,7 +152,8 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	}
 
 	// copy
-	fir.TestSessions.UpdateAnswerSheet(request.Index, request.UUID, [4]string(request.AnswerSheet))
+	//fir.TestSessions.UpdateAnswerSheet(request.Index, request.UUID, [4]string(request.AnswerSheet))
+	fir.TestSessions.UpdateAnswer(request.UUID, request.Index, request.AnswerIndex, request.AnswerData)
 
 	response.Status = true
 	response.Msg = "ok"
@@ -170,6 +187,7 @@ func (fir *DouglasFir) handleDoneTest(w http.ResponseWriter, r *http.Request) {
 
 	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 	if !fir.verifyIP(request.UUID, requestIP) {
+		fmt.Println(requestIP, " != ", fir.TestSessions.SessionsData[request.UUID].IP)
 		response.Status = false
 		response.Msg = "TEST_ACCESS_DENIED"
 		encoder.Encode(response)

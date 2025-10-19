@@ -1,4 +1,5 @@
 const testContent = document.getElementById("testContent")
+const summitBtn = document.getElementById("summitTest")
 
 window.addEventListener('load', function () {
     a = this.window.location.href.split("/")
@@ -6,7 +7,14 @@ window.addEventListener('load', function () {
     getTest(uuid)
 })
 
-function chooseTNOption(i, ans) {
+async function chooseTNOption(i, ans) {
+
+    //result = await updateAnswerSheet(i, [String.fromCharCode('A'.charCodeAt(0) + ans), '', '', ''])
+    result = await updateAnswerSheet2(i, ans, String.fromCharCode('A'.charCodeAt(0) + ans))
+    if (!result) {
+        return
+    }
+
     if (ans > 3) {
         return;
     }
@@ -35,6 +43,17 @@ function chooseTNDSOption(i, ansI, value) {
     } else {
         wrongAns.classList.replace("tnds-ans-w", "tnds-ans-w-highlighted")
         rightAns.classList.replace("tnds-ans-r-highlighted", "tnds-ans-r")
+    }
+}
+
+async function chooseTLNAnswer(index, answerIndex) {
+    inp = document.getElementById(`QUES.${index}.TLN.${answerIndex}`)
+
+    console.log(index)
+    result = await updateAnswerSheet2(index, answerIndex, inp.value)
+    if (!result) {
+        // reset value
+        inp.value = ""
     }
 }
 
@@ -77,10 +96,10 @@ async function renderTest(testsvr) {
             Câu ${i + 1} (Trac nghiem tra loi ngan): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
-            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.0">
-            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.1">
-            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.2">
-            <input class="square-input" type="text" maxlength="1" id="QUES.${i}.TLN.3">
+            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 0)" id="QUES.${i}.TLN.0">
+            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 1)" id="QUES.${i}.TLN.1">
+            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 2)" id="QUES.${i}.TLN.2">
+            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 3)" id="QUES.${i}.TLN.3">
         </div>
     </div>`
         } else if (questions[i].type == 0x14) {
@@ -130,6 +149,45 @@ async function getTest(uuid) {
     }
 
     renderTest(jsonRes)
+
+    summitBtn.addEventListener("click", function () { doneTest() })
+}
+
+async function doneTest() {
+    res = await fetch("/api/handleDoneTest", { method: "POST", body: JSON.stringify({ UUID: uuid }) })
+    jsonRes = await res.json()
+
+    if (!jsonRes.status) {
+        alert(jsonRes.msg)
+        return false
+    }
+
+    return true
+}
+
+// update single answer in answerSheet array
+async function updateAnswerSheet2(index, answerIndex, data) {
+    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: index, answerIndex: answerIndex, data: data }) })
+    jsonRes = await res.json()
+
+    if (!jsonRes.status) {
+        alert(jsonRes.msg)
+        return false
+    }
+
+    return true
+}
+
+async function updateAnswerSheet(i, answers) {
+    res = await fetch("/api/updateAnswer", { method: "POST", body: JSON.stringify({ UUID: uuid, index: i, answerSheet: answers }) })
+    jsonRes = await res.json()
+
+    if (!jsonRes.status) {
+        alert(jsonRes.msg)
+        return false
+    }
+
+    return true
 }
 
 function getTNAnswer(th) {

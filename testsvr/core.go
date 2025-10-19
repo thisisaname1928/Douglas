@@ -1,6 +1,7 @@
 package testsvr
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/thisisaname1928/goParsingDocx/docx"
@@ -33,6 +34,8 @@ func (fir *DouglasFir) GetNumberOfQuestions() int {
 		c += int(v.N)
 	}
 
+	fmt.Println(c)
+
 	return c
 }
 
@@ -53,7 +56,7 @@ func (fir *DouglasFir) ShuffleNewTest() DouglasTest {
 
 		// get first N questions
 		for i, v := range curQuestionList[i].Question {
-			if i > int(testStructure[v.Stype].N) {
+			if i >= int(testStructure[v.Stype].N) {
 				break
 			}
 
