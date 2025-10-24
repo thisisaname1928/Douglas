@@ -226,3 +226,47 @@ func (fir *DouglasFir) getTestStatus(w http.ResponseWriter, r *http.Request) {
 	response.Msg = "ok"
 	encoder.Encode(response)
 }
+
+type getPointResponse struct {
+	Status        bool    `json:"status"`
+	Msg           string  `json:"msg"`
+	Point         float64 `json:"point"`
+	TrueQuesCount int     `json:"trueQuesCount"`
+}
+
+func (fir *DouglasFir) getTestPoint(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	// they are the same so
+	var request doneTestRequest
+	var response getPointResponse
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Status = false
+		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	if !fir.CheckIfTestDone(request.UUID) {
+		response.Status = false
+		response.Msg = "TEST_NOT_DONE"
+		encoder.Encode(response)
+		return
+	}
+
+	c, p, e := fir.CalculateMark(request.UUID)
+	if e != nil {
+		response.Status = false
+		response.Msg = "TEST_NOT_DONE"
+		encoder.Encode(response)
+		return
+	}
+
+	response.Status = true
+	response.TrueQuesCount = c
+	response.Msg = "ok"
+	response.Point = p
+	encoder.Encode(response)
+}

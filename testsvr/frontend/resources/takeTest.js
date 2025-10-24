@@ -1,10 +1,27 @@
 const testContent = document.getElementById("testContent")
 const summitBtn = document.getElementById("summitTest")
 
-window.addEventListener('load', function () {
+async function checkIfTestDone() {
+    res = await fetch("/api/getTestStatus", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
+    jsonRes = await res.json()
+
+    return jsonRes.status
+}
+
+window.addEventListener('load', async function () {
     a = this.window.location.href.split("/")
     uuid = a[a.length - 1]
-    getTest(uuid)
+
+    isDone = await checkIfTestDone()
+
+    if (!isDone) {
+        getTest(uuid)
+    } else {
+        res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
+        jsonRes = await res.json()
+
+        testContent.innerHTML = JSON.stringify(jsonRes)
+    }
 })
 
 async function chooseTNOption(i, ans) {
@@ -115,7 +132,7 @@ async function renderTest(testsvr) {
             <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 3)" id="QUES.${i}.TLN.3">
         </div>
     </div>`
-        } else if (questions[i].type == 0x14) {
+        } else if (questions[i].type == 0x15) {
             testContent.innerHTML += `
 <div class="question-card">
     <div class="question-text">
@@ -163,7 +180,7 @@ async function getTest(uuid) {
 
     renderTest(jsonRes)
 
-    summitBtn.addEventListener("click", function () { doneTest() })
+    summitBtn.addEventListener("click", function () { doneTest(); location.reload() })
 }
 
 async function doneTest() {
@@ -263,7 +280,7 @@ function getAnswer() {
     for (let i = 0; i < questions.length; i++) {
         if (questions[i].type == 0x12) {
             result.push(getTNAnswer(i))
-        } else if (questions[i].type == 0x14) {
+        } else if (questions[i].type == 0x15) {
             result.push(getTNDSAnswer(i))
         } else if (questions[i].type == 0x13) {
             result.push(getTLNAnswer(i))

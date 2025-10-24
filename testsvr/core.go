@@ -85,7 +85,7 @@ func (fir *DouglasFir) Route2UUID(UUID string) string {
 func (fir *DouglasFir) CheckIfTestDone(UUID string) bool {
 	// this can causes a bug!!! <W:BUG>
 	if fir.TestSessions.CheckSession(UUID) {
-		return true
+		return false
 	}
 
 	// check if test haven't available in test sessions
@@ -150,36 +150,52 @@ func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64
 	return 0
 }
 
-func (fir *DouglasFir) CalculateMark(UUID string) (float64, error) {
+func (fir *DouglasFir) CalculateMark(UUID string) (int, float64, error) {
 	var mark float64 = 0
+	var trueQuesCount = 0
 	// load
 	buf, e := os.ReadFile(fir.Route2UUID(UUID))
 
 	if e != nil {
-		return 0, errors.New("TEST_NOT_FOUND")
+		return 0, 0, errors.New("TEST_NOT_FOUND")
 	}
 
 	var testInfo testsvrInfo
 	e = json.Unmarshal(buf, &testInfo)
 	if e != nil {
-		return 0, errors.New("BAD_TEST")
+		return 0, 0, errors.New("BAD_TEST")
 	}
 
 	// check if test done
 	if !testInfo.Done {
-		return 0, errors.New("TEST_IS_NOT_DONE")
+		return 0, 0, errors.New("TEST_IS_NOT_DONE")
 	}
 
 	for i := range testInfo.AnswerSheet {
 		switch testInfo.Questions[i].Type {
 		case docx.TN:
-			mark += calcTNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, testInfo.AnswerSheet[i][0])
+			point := calcTNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, testInfo.AnswerSheet[i][0])
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
 		case docx.TLN:
-			mark += calcTLNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TLNA, [4]string(testInfo.AnswerSheet[i]))
+			point := calcTLNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TLNA, [4]string(testInfo.AnswerSheet[i]))
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
 		case docx.TNDS:
-			mark += calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
 		}
 	}
 
-	return mark, nil
+	return trueQuesCount, mark, nil
 }
