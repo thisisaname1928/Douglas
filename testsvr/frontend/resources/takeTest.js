@@ -89,8 +89,14 @@ async function chooseTNDSOption(i, ansI, value, shouldUpdate) {
 async function chooseTLNAnswer(index, answerIndex) {
     inp = document.getElementById(`QUES.${index}.TLN.${answerIndex}`)
 
-    console.log(index)
-    result = await updateAnswerSheet2(index, answerIndex, inp.value)
+    data = inp.value
+    // add space to it
+    if (data == "") {
+        inp.value = " "
+        data = " "
+    }
+
+    result = await updateAnswerSheet2(index, answerIndex, data)
     if (!result) {
         // reset value
         inp.value = ""

@@ -135,7 +135,7 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	}
 
 	// check if test sessions is locked
-	if fir.TestSessions.CheckSession(request.UUID) {
+	if fir.TestSessions.CheckSessionLock(request.UUID) {
 		response.Status = false
 		response.Msg = "TEST_SESSION_LOCKED"
 		encoder.Encode(response)
