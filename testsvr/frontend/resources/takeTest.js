@@ -13,14 +13,14 @@ window.addEventListener('load', async function () {
     uuid = a[a.length - 1]
 
     isDone = await checkIfTestDone()
-
+    await getTest(uuid)
     if (!isDone) {
-        await getTest(uuid)
+
     } else {
         res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
         jsonRes = await res.json()
 
-        testContent.innerHTML = JSON.stringify(jsonRes)
+        document.getElementById("test").innerHTML = JSON.stringify(jsonRes)
     }
 
     // load question sheet data
@@ -247,7 +247,7 @@ async function updateAnswerSheet2(index, answerIndex, data) {
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
-        alert(jsonRes.msg)
+        if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }
         return false
     }
 
@@ -260,7 +260,7 @@ async function updateAnswerSheet(i, answers) {
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
-        alert(jsonRes.msg)
+        if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }
         return false
     }
 

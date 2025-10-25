@@ -83,11 +83,6 @@ func (fir *DouglasFir) Route2UUID(UUID string) string {
 }
 
 func (fir *DouglasFir) CheckIfTestDone(UUID string) bool {
-	// this can causes a bug!!! <W:BUG>
-	if fir.TestSessions.CheckSession(UUID) {
-		return false
-	}
-
 	// check if test haven't available in test sessions
 	buf, e := os.ReadFile(fir.Route2UUID(UUID))
 

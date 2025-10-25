@@ -14,6 +14,7 @@ type TestSessionData struct {
 	AnswerSheet [][]string `json:"AnswerSheet"` // Ans[0]=["1", "1", "1", "1"] example
 	IP          string     `json:"IP"`
 	StartTime   time.Time  `json:"StartTime"`
+	IsLocked    bool
 }
 
 // access Sessions data by uuid
@@ -32,7 +33,7 @@ func (session *TestSessions) NewSession(UUID string, IP string, startTime time.T
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
 
-	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime}
+	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime, false}
 
 	// assign 4 element to Answer sheet
 	for i := 0; i < numberOfQuestions; i++ {
@@ -45,6 +46,11 @@ func (session *TestSessions) NewSession(UUID string, IP string, startTime time.T
 func (session *TestSessions) UpdateAnswerSheet(i int, UUID string, Answer [4]string) {
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
+
+	if session.SessionsData[UUID].IsLocked {
+		fmt.Println("MEET A LOCK")
+		return
+	}
 
 	if i < len(session.SessionsData[UUID].AnswerSheet) {
 		for k := 0; k < 4; k++ {
@@ -62,6 +68,10 @@ func (session *TestSessions) UpdateAnswer(UUID string, index int, answerIndex in
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
 
+	if session.SessionsData[UUID].IsLocked {
+		return
+	}
+
 	session.SessionsData[UUID].AnswerSheet[index][answerIndex] = data
 }
 
@@ -70,6 +80,10 @@ func (session *TestSessions) DoneSession(testUUID string, UUID string, endTime t
 	defer session.mutex.Unlock()
 	// check if session available
 	if _, there := session.SessionsData[UUID]; !there {
+		return
+	}
+
+	if session.SessionsData[UUID].IsLocked {
 		return
 	}
 
@@ -131,4 +145,29 @@ func (session *TestSessions) CopyAnsSheet(UUID string) ([][]string, error) {
 
 	session.mutex.Unlock()
 	return arr, nil
+}
+
+func (session *TestSessions) LockSession(UUID string) {
+	if !session.CheckSession(UUID) {
+		return
+	}
+
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
+	tmp := session.SessionsData[UUID]
+	tmp.IsLocked = true
+	session.SessionsData[UUID] = tmp
+}
+
+func (session *TestSessions) CheckSessionLock(UUID string) bool {
+	// if not exist, better return true
+	if !session.CheckSession(UUID) {
+		return true
+	}
+
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
+	return session.SessionsData[UUID].IsLocked
 }

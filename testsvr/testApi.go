@@ -75,6 +75,16 @@ func (fir *DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
 	// create new test session
 	if !fir.TestSessions.CheckSession(req.UUID) {
 		fir.TestSessions.NewSession(req.UUID, test.IP, test.StartTime, fir.GetNumberOfQuestions())
+
+		// reload answer from testdats
+		for i := range test.AnswerSheet {
+			fir.TestSessions.UpdateAnswerSheet(i, req.UUID, [4]string(test.AnswerSheet[i]))
+		}
+
+		// if test already done
+		if test.Done {
+			fir.TestSessions.LockSession(req.UUID)
+		}
 	}
 
 	// remove test answer
@@ -120,6 +130,14 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 	if e != nil {
 		response.Status = false
 		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	// check if test sessions is locked
+	if fir.TestSessions.CheckSession(request.UUID) {
+		response.Status = false
+		response.Msg = "TEST_SESSION_LOCKED"
 		encoder.Encode(response)
 		return
 	}
@@ -314,3 +332,12 @@ func (fir *DouglasFir) getCurrentAnsSheet(w http.ResponseWriter, r *http.Request
 
 	encoder.Encode(response)
 }
+
+// func (fir *DouglasFir) startSession(w http.ResponseWriter, r *http.Request) {
+// 	encoder := json.NewEncoder(w)
+// 	decoder := json.NewDecoder(r.Body)
+
+// 	var request doneTestRequest
+// 	var response doneTestResponse
+
+// }
