@@ -15,22 +15,27 @@ window.addEventListener('load', async function () {
     isDone = await checkIfTestDone()
 
     if (!isDone) {
-        getTest(uuid)
+        await getTest(uuid)
     } else {
         res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
         jsonRes = await res.json()
 
         testContent.innerHTML = JSON.stringify(jsonRes)
     }
+
+    // load question sheet data
+    loadUpAnsSheet()
 })
 
-async function chooseTNOption(i, ans) {
+async function chooseTNOption(i, ans, shouldUpdate) {
+    // check if update client side or both client and server
+    if (shouldUpdate) {
+        result = await updateAnswerSheet(i, [String.fromCharCode('A'.charCodeAt(0) + ans), '', '', ''])
+        //result = await updateAnswerSheet2(i, ans, String.fromCharCode('A'.charCodeAt(0) + ans))
 
-    result = await updateAnswerSheet(i, [String.fromCharCode('A'.charCodeAt(0) + ans), '', '', ''])
-    //result = await updateAnswerSheet2(i, ans, String.fromCharCode('A'.charCodeAt(0) + ans))
-
-    if (!result) {
-        return
+        if (!result) {
+            return
+        }
     }
 
     if (ans > 3) {
@@ -51,24 +56,29 @@ async function chooseTNOption(i, ans) {
     }
 }
 
-async function chooseTNDSOption(i, ansI, value) {
+async function chooseTNDSOption(i, ansI, value, shouldUpdate) {
     rightAns = document.getElementById(`QUES.${i}.TNDS.${ansI}.R`)
     wrongAns = document.getElementById(`QUES.${i}.TNDS.${ansI}.W`)
 
     if (value) {
-        result = await updateAnswerSheet2(i, ansI, "T")
 
-        if (!result) {
-            return
+        if (shouldUpdate) {
+            result = await updateAnswerSheet2(i, ansI, "T")
+
+            if (!result) {
+                return
+            }
         }
 
         rightAns.classList.replace("tnds-ans-r", "tnds-ans-r-highlighted")
         wrongAns.classList.replace("tnds-ans-w-highlighted", "tnds-ans-w")
     } else {
-        result = await updateAnswerSheet2(i, ansI, "F")
+        if (shouldUpdate) {
+            result = await updateAnswerSheet2(i, ansI, "F")
 
-        if (!result) {
-            return
+            if (!result) {
+                return
+            }
         }
 
         wrongAns.classList.replace("tnds-ans-w", "tnds-ans-w-highlighted")
@@ -101,19 +111,19 @@ async function renderTest(testsvr) {
         Câu ${i + 1} (Trac nghiem): ${questions[i].content}
     </div>
     <div class="options-list">
-        <div class="option-item" id="QUES.${i}.TN.0" onclick="chooseTNOption(${i}, 0)">
+        <div class="option-item" id="QUES.${i}.TN.0" onclick="chooseTNOption(${i}, 0, true)">
             <div class="option-letter">A.</div>
             <div class="option-text">${questions[i].answers[0]}</div>
         </div>
-        <div class="option-item" id="QUES.${i}.TN.1" onclick="chooseTNOption(${i}, 1)">
+        <div class="option-item" id="QUES.${i}.TN.1" onclick="chooseTNOption(${i}, 1, true)">
             <div class="option-letter">B.</div>
             <div class="option-text">${questions[i].answers[1]}</div>
         </div>
-        <div class="option-item" id="QUES.${i}.TN.2" onclick="chooseTNOption(${i}, 2)">
+        <div class="option-item" id="QUES.${i}.TN.2" onclick="chooseTNOption(${i}, 2, true)">
             <div class="option-letter">C.</div>
             <div class="option-text">${questions[i].answers[2]}</div>
         </div>
-        <div class="option-item" id="QUES.${i}.TN.3" onclick="chooseTNOption(${i}, 3)">
+        <div class="option-item" id="QUES.${i}.TN.3" onclick="chooseTNOption(${i}, 3, true)">
             <div class="option-letter">D.</div>
             <div class="option-text">${questions[i].answers[3]}</div>
         </div>
@@ -140,26 +150,26 @@ async function renderTest(testsvr) {
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TNDS.0">
-            <button class="tnds-ans-r" id="QUES.${i}.TNDS.0.R" onclick="chooseTNDSOption(${i}, 0, true)" >D</button>
-            <button class="tnds-ans-w" id="QUES.${i}.TNDS.0.W" onclick="chooseTNDSOption(${i}, 0, false)">S</button>
+            <button class="tnds-ans-r" id="QUES.${i}.TNDS.0.R" onclick="chooseTNDSOption(${i}, 0, true, true)" >D</button>
+            <button class="tnds-ans-w" id="QUES.${i}.TNDS.0.W" onclick="chooseTNDSOption(${i}, 0, false, true)">S</button>
             <div class="option-letter">a) </div>
             <div class="option-text">${questions[i].answers[0]}</div>
         </div>
         <div class="option-item" id="QUES.${i}.TNDS.1">
-            <button class="tnds-ans-r" id="QUES.${i}.TNDS.1.R" onclick="chooseTNDSOption(${i}, 1, true)">D</button>
-            <button class="tnds-ans-w" id="QUES.${i}.TNDS.1.W" onclick="chooseTNDSOption(${i}, 1, false)">S</button>
+            <button class="tnds-ans-r" id="QUES.${i}.TNDS.1.R" onclick="chooseTNDSOption(${i}, 1, true, true)">D</button>
+            <button class="tnds-ans-w" id="QUES.${i}.TNDS.1.W" onclick="chooseTNDSOption(${i}, 1, false, true)">S</button>
             <div class="option-letter">b) </div>
             <div class="option-text">${questions[i].answers[1]}</div>
         </div>
         <div class="option-item" id="QUES.${i}.TNDS.2">
-            <button class="tnds-ans-r" id="QUES.${i}.TNDS.2.R" onclick="chooseTNDSOption(${i}, 2, true)">D</button>
-            <button class="tnds-ans-w" id="QUES.${i}.TNDS.2.W" onclick="chooseTNDSOption(${i}, 2, false)">S</button>
+            <button class="tnds-ans-r" id="QUES.${i}.TNDS.2.R" onclick="chooseTNDSOption(${i}, 2, true, true)">D</button>
+            <button class="tnds-ans-w" id="QUES.${i}.TNDS.2.W" onclick="chooseTNDSOption(${i}, 2, false, true)">S</button>
             <div class="option-letter">c) </div>
             <div class="option-text">${questions[i].answers[2]}</div>
         </div>
         <div class="option-item" id="QUES.${i}.TNDS.3">
-            <button class="tnds-ans-r" id="QUES.${i}.TNDS.3.R" onclick="chooseTNDSOption(${i}, 3, true)">D</button>
-            <button class="tnds-ans-w" id="QUES.${i}.TNDS.3.W" onclick="chooseTNDSOption(${i}, 3, false)">S</button>
+            <button class="tnds-ans-r" id="QUES.${i}.TNDS.3.R" onclick="chooseTNDSOption(${i}, 3, true, true)">D</button>
+            <button class="tnds-ans-w" id="QUES.${i}.TNDS.3.W" onclick="chooseTNDSOption(${i}, 3, false, true)">S</button>
             <div class="option-letter">d) </div>
             <div class="option-text">${questions[i].answers[3]}</div>
         </div>
@@ -178,9 +188,45 @@ async function getTest(uuid) {
         return
     }
 
-    renderTest(jsonRes)
+    await renderTest(jsonRes)
 
     summitBtn.addEventListener("click", function () { doneTest(); location.reload() })
+}
+
+// load reload answer sheet
+async function loadUpAnsSheet() {
+    res = await fetch("/api/getCurrentAnsSheet", { method: "POST", body: JSON.stringify({ UUID: uuid }) })
+    jsonRes = await res.json()
+
+    if (!jsonRes.status) {
+        alert(jsonRes.msg)
+        return false
+    }
+
+    for (i = 0; i < questions.length; i++) {
+        // TN
+
+        if (questions[i].type == 18) {
+            console.log(jsonRes.ansSheet[i])
+            if (jsonRes.ansSheet[i][0] != "") {
+                chooseTNOption(i, jsonRes.ansSheet[i][0].charCodeAt(0) - 'A'[0].charCodeAt(0), false)
+            }
+        } else if (questions[i].type == 21) {
+            for (j = 0; j < 4; j++) {
+                if (jsonRes.ansSheet[i][j] != "") {
+                    chooseTNDSOption(i, j, jsonRes.ansSheet[i][j] == "T", false)
+                }
+            }
+        } else if (questions[i].type == 19) {
+            for (j = 0; j < 4; j++) {
+                if (jsonRes.ansSheet[i][j] != "") {
+                    // manually copy
+                    inp = document.getElementById(`QUES.${i}.TLN.${j}`)
+                    inp.value = jsonRes.ansSheet[i][j]
+                }
+            }
+        }
+    }
 }
 
 async function doneTest() {

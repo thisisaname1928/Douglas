@@ -108,5 +108,7 @@ func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.getTestStatus(w, r)
 	case "getPoint":
 		fir.getTestPoint(w, r)
+	case "getCurrentAnsSheet":
+		fir.getCurrentAnsSheet(w, r)
 	}
 }

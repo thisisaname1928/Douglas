@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+func getIP(r *http.Request) string {
+	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+	return requestIP
+}
+
 func (fir *DouglasFir) verifyIP(uuid string, IP string) bool {
 	fir.TestSessions.mutex.Lock()
 	defer fir.TestSessions.mutex.Unlock()
@@ -268,5 +273,44 @@ func (fir *DouglasFir) getTestPoint(w http.ResponseWriter, r *http.Request) {
 	response.TrueQuesCount = c
 	response.Msg = "ok"
 	response.Point = p
+	encoder.Encode(response)
+}
+
+type getCurrentAnsSheetResponse struct {
+	Status   bool       `json:"status"`
+	Msg      string     `json:"msg"`
+	AnsSheet [][]string `json:"ansSheet"`
+}
+
+func (fir *DouglasFir) getCurrentAnsSheet(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	decoder := json.NewDecoder(r.Body)
+
+	var request doneTestRequest
+	var response getCurrentAnsSheetResponse
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Status = false
+		response.Msg = "CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	if !fir.verifyIP(request.UUID, getIP(r)) {
+		response.Status = false
+		response.Msg = "ACCESS_DENIED"
+		encoder.Encode(response)
+		return
+	}
+
+	response.Status = true
+	response.Msg = "ok"
+	response.AnsSheet, e = fir.TestSessions.CopyAnsSheet(request.UUID)
+
+	if e != nil {
+		response.Status = false
+		response.Msg = "ACCESS_DENIED"
+	}
+
 	encoder.Encode(response)
 }

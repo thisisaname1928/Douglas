@@ -2,6 +2,7 @@ package testsvr
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -111,4 +112,23 @@ func (session *TestSessions) CheckSession(UUID string) bool {
 	defer session.mutex.Unlock()
 	_, ok := session.SessionsData[UUID]
 	return ok
+}
+
+// convert test sessions answer sheet into json
+func (session *TestSessions) CopyAnsSheet(UUID string) ([][]string, error) {
+	if !session.CheckSession(UUID) {
+		return [][]string{}, errors.New("ACCESS_DENIED")
+	}
+
+	session.mutex.Lock()
+	arr := make([][]string, len(session.SessionsData[UUID].AnswerSheet))
+
+	// do a deep & manual copy
+	for i := range arr {
+		arr[i] = make([]string, len(session.SessionsData[UUID].AnswerSheet[i]))
+		copy(arr[i], session.SessionsData[UUID].AnswerSheet[i])
+	}
+
+	session.mutex.Unlock()
+	return arr, nil
 }
