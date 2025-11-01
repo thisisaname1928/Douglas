@@ -15,6 +15,8 @@ func main() {
 
 	s.OpenServer("5999")
 
+	//app.StartApp()
+
 	// for _, val := range v {
 	// 	val.Text += " "
 	// 	for i, c := range val.Text {

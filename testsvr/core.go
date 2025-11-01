@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"math/rand"
+	"net"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/thisisaname1928/goParsingDocx/docx"
 	"github.com/thisisaname1928/goParsingDocx/dou"
@@ -193,4 +196,45 @@ func (fir *DouglasFir) CalculateMark(UUID string) (int, float64, error) {
 	}
 
 	return trueQuesCount, mark, nil
+}
+
+func currentServerTime() time.Time {
+	return time.Now()
+}
+
+type getCurrentServerTimeRequest struct {
+	UUID string `json:"uuid"`
+}
+
+func (fir *DouglasFir) getCurrentServerTime(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var request getCurrentServerTimeRequest
+	decoder.Decode(&request)
+
+	// done test
+	if !fir.checkTestTime(request.UUID) {
+		st, _ := fir.TestSessions.GetSessionStartTime(request.UUID)
+		requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+		if fir.verifyIP(request.UUID, requestIP) {
+			fir.TestSessions.DoneSession(fir.UUID, request.UUID, st.Add(time.Minute*time.Duration(fir.Douglas.Data.TestDuration)))
+		}
+
+		w.Write([]byte(currentServerTime().Format(time.RFC3339)))
+		return
+	}
+
+	w.Write([]byte(currentServerTime().Format(time.RFC3339)))
+}
+
+// return false if test end of time
+func (fir *DouglasFir) checkTestTime(UUID string) bool {
+	st, e := fir.TestSessions.GetSessionStartTime(UUID)
+
+	if e != nil {
+		return false
+	}
+
+	duration := currentServerTime().Sub(st)
+
+	return duration.Seconds() <= float64(fir.Douglas.Data.TestDuration*60)
 }

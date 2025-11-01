@@ -1,5 +1,6 @@
 const testContent = document.getElementById("testContent")
 const summitBtn = document.getElementById("summitTest")
+const testResult = document.getElementById("testResult")
 
 async function checkIfTestDone() {
     res = await fetch("/api/getTestStatus", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
@@ -15,13 +16,32 @@ window.addEventListener('load', async function () {
     isDone = await checkIfTestDone()
     await getTest(uuid)
     if (!isDone) {
-
+        setUpTimer(glbTestsvr.test.startTime, glbTestsvr.test.testDuration)
     } else {
         res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
         jsonRes = await res.json()
 
         document.getElementById("test").innerHTML = JSON.stringify(jsonRes)
+
+        bgTime = new Date(glbTestsvr.test.startTime)
+        edTime = new Date(glbTestsvr.test.endTime)
+        duration = edTime - bgTime
+
+        testResult.innerHTML = `<h1>Diem: ${jsonRes.point}</h1><p>So cau dung hoan toan: ${jsonRes.trueQuesCount}/${questions.length}<br><br>Ten hoc sinh: ${glbTestsvr.test.name}<br>Lop: ${glbTestsvr.test.class}
+        <br><br>
+        Thoi gian lam bai: ${Math.trunc(duration / 60000)} phut ${Math.round(((duration % 60000) / 1000))} giay
+        <br>Thoi gian bat dau: ${bgTime.toLocaleTimeString("en-us", {
+            hour: '2-digit',
+            minute: '2-digit', hour12: false
+        })}<br>Thoi gian ket thuc: ${edTime.toLocaleTimeString("en-us", {
+            hour: '2-digit',
+            minute: '2-digit', hour12: false
+        })}<br><br>Ma bai lam: ${uuid}</p>`
+
+        setEndTime()
     }
+
+
 
     // load question sheet data
     loadUpAnsSheet()
@@ -92,7 +112,6 @@ async function chooseTLNAnswer(index, answerIndex) {
     data = inp.value
     // add space to it
     if (data == "") {
-        inp.value = " "
         data = " "
     }
 
@@ -104,9 +123,11 @@ async function chooseTLNAnswer(index, answerIndex) {
 }
 
 let questions
+let glbTestsvr
 
 async function renderTest(testsvr) {
     questions = testsvr.test.questions
+    glbTestsvr = testsvr
 
     // render questions
     for (i = 0; i < questions.length; i++) {
@@ -213,7 +234,6 @@ async function loadUpAnsSheet() {
         // TN
 
         if (questions[i].type == 18) {
-            console.log(jsonRes.ansSheet[i])
             if (jsonRes.ansSheet[i][0] != "") {
                 chooseTNOption(i, jsonRes.ansSheet[i][0].charCodeAt(0) - 'A'[0].charCodeAt(0), false)
             }
@@ -253,6 +273,10 @@ async function updateAnswerSheet2(index, answerIndex, data) {
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
+        if (jsonRes.msg == "OUT_OF_TIME") {
+            location.reload()
+            return
+        }
         if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }
         return false
     }

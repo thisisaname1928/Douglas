@@ -31,14 +31,15 @@ type startTestResponse struct {
 }
 
 type testsvrInfo struct {
-	Name        string          `json:"name"`
-	Class       string          `json:"class"`
-	IP          string          `json:"IP"`
-	StartTime   time.Time       `json:"startTime"`
-	EndTime     time.Time       `json:"endTime"`
-	Done        bool            `json:"done"`
-	Questions   []docx.Question `json:"questions"`
-	AnswerSheet [][]string      `json:"answerSheet"`
+	Name            string          `json:"name"`
+	Class           string          `json:"class"`
+	IP              string          `json:"IP"`
+	StartTime       time.Time       `json:"startTime"`
+	EndTime         time.Time       `json:"endTime"`
+	Done            bool            `json:"done"`
+	MaxTestDuration uint64          `json:"testDuration"`
+	Questions       []docx.Question `json:"questions"`
+	AnswerSheet     [][]string      `json:"answerSheet"`
 }
 
 func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
@@ -68,6 +69,7 @@ func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	info.Questions = fir.ShuffleNewTest().Test
 	info.StartTime = time.Now()
 	info.Done = false
+	info.MaxTestDuration = fir.Douglas.Data.TestDuration
 
 	// save IP
 	IP, _, _ := net.SplitHostPort(r.RemoteAddr)
@@ -110,5 +112,7 @@ func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.getTestPoint(w, r)
 	case "getCurrentAnsSheet":
 		fir.getCurrentAnsSheet(w, r)
+	case "getCurrentServerTime":
+		fir.getCurrentServerTime(w, r)
 	}
 }

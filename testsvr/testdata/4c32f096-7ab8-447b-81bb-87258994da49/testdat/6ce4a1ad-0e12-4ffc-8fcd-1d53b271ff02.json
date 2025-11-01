@@ -1,23 +1,23 @@
 {
-    "name": "Ngô Phước Khánh",
-    "class": "11A1",
-    "IP": "127.149.150.82",
-    "startTime": "2025-10-24T21:33:44.27513929+07:00",
-    "endTime": "2025-10-24T21:34:22.436624666+07:00",
-    "done": true,
+    "name": "bb",
+    "class": "bb",
+    "IP": "::1",
+    "startTime": "2025-10-31T18:16:09.313491454+07:00",
+    "endTime": "0001-01-01T00:00:00Z",
+    "done": false,
     "questions": [
         {
-            "type": 18,
+            "type": 21,
             "stype": "TN/NB",
             "content": "\u003clabel class=\"ques_content\"\u003e noi dung \u003c/label\u003e\u003cbr\u003e",
             "answers": [
-                "\u003clabel class=\"ques_content\"\u003e dap an a \u003c/label\u003e",
+                "\u003clabel class=\"ques_content\"\u003e dap an a dung \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an b \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an d \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an c \u003c/label\u003e"
+                "\u003clabel class=\"ques_content\"\u003e dap an c dung \u003c/label\u003e"
             ],
             "TNAnswers": [
-                false,
+                true,
                 false,
                 false,
                 true
@@ -55,19 +55,19 @@
             "point": 2
         },
         {
-            "type": 21,
+            "type": 18,
             "stype": "TN/NB",
             "content": "\u003clabel class=\"ques_content\"\u003e noi dung \u003c/label\u003e\u003cbr\u003e",
             "answers": [
-                "\u003clabel class=\"ques_content\"\u003e dap an a dung \u003c/label\u003e",
+                "\u003clabel class=\"ques_content\"\u003e dap an a \u003c/label\u003e",
+                "\u003clabel class=\"ques_content\"\u003e dap an c \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an b \u003c/label\u003e",
-                "\u003clabel class=\"ques_content\"\u003e dap an c dung \u003c/label\u003e",
                 "\u003clabel class=\"ques_content\"\u003e dap an d \u003c/label\u003e"
             ],
             "TNAnswers": [
-                true,
                 false,
                 true,
+                false,
                 false
             ],
             "TLNAnswers": [
@@ -79,24 +79,5 @@
             "point": 1
         }
     ],
-    "answerSheet": [
-        [
-            "A",
-            "",
-            "",
-            ""
-        ],
-        [
-            "2",
-            "1",
-            "1",
-            "1"
-        ],
-        [
-            "T",
-            "F",
-            "T",
-            "F"
-        ]
-    ]
+    "answerSheet": null
 }

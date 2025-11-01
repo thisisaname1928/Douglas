@@ -142,6 +142,28 @@ func (fir *DouglasFir) handleUpdateAnswerSheet(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	// check for time
+	if !fir.checkTestTime(request.UUID) {
+		// get start Time
+		st, _ := fir.TestSessions.GetSessionStartTime(request.UUID)
+		// done test
+		requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+		if !fir.verifyIP(request.UUID, requestIP) {
+			response.Status = false
+			response.Msg = "TEST_ACCESS_DENIED"
+			encoder.Encode(response)
+			return
+		}
+
+		// calculate end time 'cause this is when the test get block by ....
+		fir.TestSessions.DoneSession(fir.UUID, request.UUID, st.Add(time.Minute*time.Duration(fir.Douglas.Data.TestDuration)))
+		response.Status = true
+		response.Msg = "OUT_OF_TIME"
+		encoder.Encode(response)
+
+		return
+	}
+
 	// check if AnswerSheet valid
 	// if len(request.AnswerSheet) != 4 {
 	// 	response.Status = false

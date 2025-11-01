@@ -171,3 +171,14 @@ func (session *TestSessions) CheckSessionLock(UUID string) bool {
 
 	return session.SessionsData[UUID].IsLocked
 }
+
+func (session *TestSessions) GetSessionStartTime(UUID string) (time.Time, error) {
+	if !session.CheckSession(UUID) {
+		return time.Now(), errors.New("ACCESS_DENIED")
+	}
+
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
+	return session.SessionsData[UUID].StartTime, nil
+}
