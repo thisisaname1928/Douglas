@@ -219,8 +219,6 @@ func (fir *DouglasFir) getCurrentServerTime(w http.ResponseWriter, r *http.Reque
 			fir.TestSessions.DoneSession(fir.UUID, request.UUID, st.Add(time.Minute*time.Duration(fir.Douglas.Data.TestDuration)))
 		}
 
-		w.Write([]byte(currentServerTime().Format(time.RFC3339)))
-		return
 	}
 
 	w.Write([]byte(currentServerTime().Format(time.RFC3339)))

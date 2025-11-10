@@ -1,21 +1,17 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/thisisaname1928/goParsingDocx/testsvr"
-)
+import "github.com/thisisaname1928/goParsingDocx/app"
 
 func main() {
 
-	s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "abc")
-	fmt.Println(e)
+	// s, e := testsvr.OpenOldTest("4c32f096-7ab8-447b-81bb-87258994da49", "abc")
+	// fmt.Println(e)
 
-	fmt.Println(testsvr.GetIp())
+	// fmt.Println(testsvr.GetIp())
 
-	s.OpenServer("5999")
+	// s.OpenServer("5999")
 
-	//app.StartApp()
+	app.StartApp()
 
 	// for _, val := range v {
 	// 	val.Text += " "

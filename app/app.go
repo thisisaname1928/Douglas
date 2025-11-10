@@ -32,7 +32,8 @@ func addResource(w http.ResponseWriter, r *http.Request, path string) {
 	vars := mux.Vars(r)
 	file, e := os.Open(path + vars["FILE"])
 	if e != nil {
-		w.Write([]byte{})
+		w.Write([]byte("NOT FOUND"))
+		return
 	}
 	f, e := io.ReadAll(file)
 
@@ -63,6 +64,9 @@ func StartApp() {
 	server.HandleFunc("/Export/Config/{FILE}", exportConfigRouteRes)
 	server.HandleFunc("/Export/Config/UUID/{UUID}", exportConfigRoute)
 	server.HandleFunc("/Export/Download/UUID/{UUID}", downloadTestRoute)
+	server.HandleFunc("/StartTest", startTest)
+	server.HandleFunc("/StartTest/{FILE}", startTestRes)
+	server.HandleFunc("/StartTest/API/{NAME}", startTestAPI)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }

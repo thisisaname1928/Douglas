@@ -29,7 +29,11 @@ async function timerLoop() {
 
         if (durationSec < 0) {
             timer.innerHTML = `Da het thoi gian`
-            break
+            if (!isDone) {
+                await doneTest()
+                location.reload()
+            }
+            continue
         }
 
         currentTestTimeMin = Math.trunc(durationSec / 60)

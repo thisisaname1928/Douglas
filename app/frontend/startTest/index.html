@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Douglas</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/LivePreview/styles.css">
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
+                <label class="page-header">Bat dau kiem tra</label>
+            </div>
+
+            <button id="modeToggleButton" class="mode-toggle-button">Chế độ tối</button>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1>HI BLAH BLAH BLAH</h1>
+            </div>
+            <div class="button-container-left">
+                <input type="file" id="fileInput" hidden>
+                <button class="btn" id="uploadFile">Tai de len</button>
+            </div>
+            <div id="testList">
+                <div class="test-card">
+                    <b>testname</b> 10<br> so luot lam: 1
+                </div>
+            </div>
+            <div>
+                <div class="overlay-layer hidden-element" id="blackLayer"></div>
+                <div class="popup-card hidden-element" id="popup">
+                    <center>
+                        <h4>Tuy chinh de thi</h4>
+                    </center>
+                    <br>
+                    <div>
+                        Ten de thi: <input id="name" class="config-input"><br><br>
+                        Mat khau (Neu co): <input id="key" class="config-input">
+                    </div>
+                    <br>
+                    <br>
+                    <div>
+                        <center><button id="doneButton" class="btn">Xong</button></center>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/StartTest/startTest.js"></script>
+
+</body>
+
+</html>

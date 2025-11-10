@@ -1,6 +1,7 @@
 const testContent = document.getElementById("testContent")
 const summitBtn = document.getElementById("summitTest")
 const testResult = document.getElementById("testResult")
+let isDone = false
 
 async function checkIfTestDone() {
     res = await fetch("/api/getTestStatus", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
@@ -290,6 +291,10 @@ async function updateAnswerSheet(i, answers) {
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
+        if (jsonRes.msg == "OUT_OF_TIME") {
+            location.reload()
+            return
+        }
         if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }
         return false
     }
