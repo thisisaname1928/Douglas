@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -161,7 +162,23 @@ func GetIp() (string, error) {
 	return "", errors.New("cant detect wlan ip")
 }
 
-func (fir *DouglasFir) OpenServer(port string) error {
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+
+	port := l.Addr().(*net.TCPAddr).Port
+	return port, nil
+}
+
+func (fir *DouglasFir) OpenServer() error {
 	// init testSession
 	fir.TestSessions.Init()
 
@@ -178,9 +195,21 @@ func (fir *DouglasFir) OpenServer(port string) error {
 	server.HandleFunc("/taketest/media/{FILE}", fir.mediaRoute)
 	server.HandleFunc("/taketest/{UUID}", fir.takeTestRoute)
 
-	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + port, Handler: server}
+	p, e := GetFreePort()
+	if e != nil {
+		panic(e)
+	}
+
+	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + strconv.Itoa(p), Handler: server}
+
+	fmt.Println(fir.GetServerPort())
 
 	return fir.HttpServer.ListenAndServe()
+}
+
+func (fir *DouglasFir) GetServerPort() string {
+	_, p, _ := net.SplitHostPort(fir.HttpServer.Addr)
+	return p
 }
 
 func (fir *DouglasFir) CloseServer() {

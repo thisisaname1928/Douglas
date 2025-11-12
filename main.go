@@ -9,7 +9,7 @@ func main() {
 
 	// fmt.Println(testsvr.GetIp())
 
-	// s.OpenServer("5999")
+	// s.OpenServer()
 
 	app.StartApp()
 

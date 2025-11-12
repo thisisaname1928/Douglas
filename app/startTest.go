@@ -104,5 +104,60 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		loadTestAPI(w, r)
 	case "getTestInfo":
 		getTestInfo(w, r)
+	case "startATest":
+		startATest(w, r)
+	case "stopATest":
+		stopATest(w, r)
 	}
+}
+
+func startATest(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	var request struct {
+		TestUUID string `json:"uuid"`
+	}
+
+	var response struct {
+		Status bool   `json:"status"`
+		Msg    string `json:"msg"`
+	}
+
+	decoder.Decode(&request)
+
+	e := testPool.OpenNewTest(request.TestUUID, getTestKey(request.TestUUID))
+
+	if e != nil {
+		response.Msg = e.Error()
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	response.Msg = ""
+	response.Status = true
+	encoder.Encode(response)
+}
+
+func stopATest(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	var request struct {
+		TestUUID string `json:"uuid"`
+	}
+
+	var response struct {
+		Status bool   `json:"status"`
+		Msg    string `json:"msg"`
+	}
+
+	decoder.Decode(&request)
+
+	testPool.CloseTest(request.TestUUID)
+
+	response.Msg = ""
+	response.Status = true
+	encoder.Encode(response)
 }

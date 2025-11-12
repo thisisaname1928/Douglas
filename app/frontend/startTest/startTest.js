@@ -88,9 +88,16 @@ async function updateTestList() {
     testListBox = document.getElementById('testListBox')
     testListBox.innerHTML = ''
 
+
+
     for (i = 0; i < testList.list.length; i++) {
+        customNameStyle = ""
+        if (testList.list[i].isStarted) {
+            customNameStyle = "color: lightgreen;"
+        }
+
         testListBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick="quickRedirect('StartTest.TestInfo/uuid/${testList.list[i].uuid}')">
-                        <b>${testList.list[i].name}</b> <br>Ma de thi: ${testList.list[i].uuid}<br>So luot lam: ${testList.list[i].numberOfCandinate}
+                        <b style='${customNameStyle}'>${testList.list[i].name}</b> <br>Ma de thi: ${testList.list[i].uuid}<br>So luot lam: ${testList.list[i].numberOfCandinate}
                     </div>`
     }
 }

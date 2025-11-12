@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/thisisaname1928/goParsingDocx/testsvr"
 )
+
+var testPool testsvr.DouglasPool
 
 func checkIsTestFolder(path string) bool {
 	r, e := os.Stat(path)
@@ -66,16 +70,30 @@ type testInfo struct {
 	TestUUID          string `json:"uuid"`
 	NumberOfCandinate int    `json:"numberOfCandinate"`
 	Name              string `json:"name"`
+	IsStarted         bool   `json:"isStarted"`
 }
 
 type testInfoJson struct {
 	Name string `json:"name"`
+	Key  string `json:"key"`
 }
 
 func getTestName(path string) string {
 	var testInf testInfoJson
 
 	b, e := os.ReadFile(path + "/info.json")
+	if e != nil {
+		return ""
+	}
+
+	json.Unmarshal(b, &testInf)
+	return testInf.Name
+}
+
+func getTestKey(uuid string) string {
+	var testInf testInfoJson
+
+	b, e := os.ReadFile("./testsvr/testdata/" + uuid + "/info.json")
 	if e != nil {
 		return ""
 	}
@@ -95,7 +113,7 @@ func getTestInfo(w http.ResponseWriter, r *http.Request) {
 	decoder.Decode(&request)
 
 	var path = request.UUID
-	var testInf = testInfo{path, getNumberOfSubFolder("./testsvr/testdata/" + path + "/testdat"), getTestName("./testsvr/testdata/" + path)}
+	var testInf = testInfo{path, getNumberOfSubFolder("./testsvr/testdata/" + path + "/testdat"), getTestName("./testsvr/testdata/" + path), testPool.CheckTestStatus(path)}
 
 	encoder.Encode(testInf)
 }
@@ -112,7 +130,7 @@ func listTest() ([]testInfo, error) {
 	// loop through and check
 	for _, v := range f {
 		if checkIsTestFolder("./testsvr/testdata/" + v.Name()) {
-			var tmp = testInfo{v.Name(), getNumberOfSubFolder("./testsvr/testdata/" + v.Name() + "/testdat"), getTestName("./testsvr/testdata/" + v.Name())}
+			var tmp = testInfo{v.Name(), getNumberOfSubFolder("./testsvr/testdata/" + v.Name() + "/testdat"), getTestName("./testsvr/testdata/" + v.Name()), testPool.CheckTestStatus(v.Name())}
 			res = append(res, tmp)
 		}
 	}
