@@ -84,6 +84,22 @@ func getTestName(path string) string {
 	return testInf.Name
 }
 
+func getTestInfo(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	decoder := json.NewDecoder(r.Body)
+
+	var request struct {
+		UUID string `json:"uuid"`
+	}
+
+	decoder.Decode(&request)
+
+	var path = request.UUID
+	var testInf = testInfo{path, getNumberOfSubFolder("./testsvr/testdata/" + path + "/testdat"), getTestName("./testsvr/testdata/" + path)}
+
+	encoder.Encode(testInf)
+}
+
 func listTest() ([]testInfo, error) {
 	f, e := os.ReadDir("./testsvr/testdata")
 

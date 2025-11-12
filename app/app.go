@@ -64,6 +64,8 @@ func StartApp() {
 	server.HandleFunc("/Export/Config/{FILE}", exportConfigRouteRes)
 	server.HandleFunc("/Export/Config/UUID/{UUID}", exportConfigRoute)
 	server.HandleFunc("/Export/Download/UUID/{UUID}", downloadTestRoute)
+	server.HandleFunc("/StartTest.TestInfo/uuid/{UUID}", testIn4)
+	server.HandleFunc("/StartTest.TestInfo/{FILE}", testInfoRes)
 	server.HandleFunc("/StartTest", startTest)
 	server.HandleFunc("/StartTest/{FILE}", startTestRes)
 	server.HandleFunc("/StartTest/API/{NAME}", startTestAPI)

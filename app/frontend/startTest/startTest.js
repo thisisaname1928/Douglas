@@ -66,6 +66,8 @@ async function loadTest() {
         return false
     }
 
+    updateTestList()
+
     return true
 }
 
@@ -75,6 +77,23 @@ async function uploadFile(data) {
     return await fetch("/StartTest/API/upload", { method: "POST", headers: hdrs, body: data })
 }
 
+async function getTestList() {
+    res = await fetch("/StartTest/API/getTestList",)
+    return res.json()
+}
+
+async function updateTestList() {
+    testList = await getTestList()
+
+    testListBox = document.getElementById('testListBox')
+    testListBox.innerHTML = ''
+
+    for (i = 0; i < testList.list.length; i++) {
+        testListBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick="quickRedirect('StartTest.TestInfo/uuid/${testList.list[i].uuid}')">
+                        <b>${testList.list[i].name}</b> <br>Ma de thi: ${testList.list[i].uuid}<br>So luot lam: ${testList.list[i].numberOfCandinate}
+                    </div>`
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const savedMode = localStorage.getItem('theme');
@@ -84,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         modeToggleButton.textContent = 'Chế độ tối';
     }
+
+    updateTestList()
 })
 
 modeToggleButton.addEventListener('click', () => {
@@ -115,4 +136,9 @@ function delay(ms) {
         setTimeout(resolve, ms);
     });
 }
+
+function quickRedirect(path) {
+    window.location.pathname = path
+}
+
 

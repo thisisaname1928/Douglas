@@ -26,6 +26,21 @@ func startTest(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
+func testInfoRes(w http.ResponseWriter, r *http.Request) {
+	addResource(w, r, "./app/frontend/startTest/testInfo/")
+}
+
+func testIn4(w http.ResponseWriter, r *http.Request) {
+	b, e := os.ReadFile("./app/frontend/startTest/testInfo/index.html")
+
+	if e != nil {
+		w.WriteHeader(404)
+		return
+	}
+
+	w.Write(b)
+}
+
 func uploadTestAPI(_ http.ResponseWriter, r *http.Request) {
 	b, _ := io.ReadAll(r.Body)
 
@@ -87,5 +102,7 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		uploadTestAPI(w, r)
 	case "load":
 		loadTestAPI(w, r)
+	case "getTestInfo":
+		getTestInfo(w, r)
 	}
 }

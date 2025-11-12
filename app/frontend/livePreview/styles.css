@@ -567,9 +567,9 @@
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            padding: 15px 20px;
+            padding: 10px 20px;
             border: 1px solid #e0e0e0;
-            margin-top: 20px;
+            margin-top: 5px;
         }
 
         body.dark-mode .test-card {
@@ -578,6 +578,20 @@
             box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
         }
 
+        body.dark-mode .test-card:hover {
+            background-color: #444;
+            border-color: #c0daff;
+        }
+
+        .test-card:hover {
+            background-color: #edf5ff;
+            border-color: #c0daff;
+        }
+
         .text-pad {
             padding-bottom: 4px;
+        }
+
+        .a-noDec {
+            text-decoration: none;
         }
