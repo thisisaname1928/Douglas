@@ -84,6 +84,7 @@ func loadTestAPI(w http.ResponseWriter, r *http.Request) {
 
 	var info testInfoJson
 	info.Name = request.Name
+	info.Key = request.Key
 
 	b, _ := json.Marshal(info)
 	os.WriteFile("./testsvr/testdata/"+t.UUID+"/info.json", b, 0666)
@@ -110,7 +111,46 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		stopATest(w, r)
 	case "getTestIp":
 		getTestIP(w, r)
+	case "getCandinateList":
+		getCandinateListAPI(w, r)
 	}
+}
+
+func getCandinateListAPI(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	decoder := json.NewDecoder(r.Body)
+
+	var request struct {
+		TestUUID string `json:"uuid"`
+	}
+
+	var response struct {
+		Status     bool        `json:"status"`
+		Msg        string      `json:"string"`
+		Candinates []candinate `json:"candinates"`
+	}
+
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Status = false
+		response.Msg = "ERR_CLIENT_MAKE_A_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	can, e := getCandinateList(request.TestUUID)
+	if e != nil {
+		response.Status = false
+		response.Msg = e.Error()
+		encoder.Encode(response)
+		return
+	}
+
+	response.Candinates = can
+	response.Status = true
+	response.Msg = "ok"
+	encoder.Encode(response)
+
 }
 
 func startATest(w http.ResponseWriter, r *http.Request) {

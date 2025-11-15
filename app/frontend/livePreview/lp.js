@@ -30,6 +30,16 @@ function fetchAPI(name, obj) {
     return fetch('/LivePreview/API/' + name, { method: 'POST', body: JSON.stringify(obj) })
 }
 
+function getTnAns(sheet) {
+    for (i = 0; i < 4; i++) {
+        if (sheet[i]) {
+            return String.fromCharCode(65 + i)
+        }
+    }
+
+    return "Chua co"
+}
+
 function prepareQuestions(json) {
     if (!json.status) {
         msg.innerText = json.error
@@ -91,7 +101,7 @@ function sleep(ms) {
 livePreviewLoop()
 async function livePreviewLoop() {
     while (true) {
-        await sleep(500);
+        await sleep(700);
         fetchForQuestions()
     }
 }

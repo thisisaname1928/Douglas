@@ -42,6 +42,9 @@ type testsvrInfo struct {
 	AnswerSheet     [][]string      `json:"answerSheet"`
 }
 
+// I forgot to export it:)
+type TestsvrInfo testsvrInfo
+
 func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	var request startTestRequest
 	var response startTestResponse

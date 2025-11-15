@@ -1,6 +1,7 @@
 package testsvr
 
 import (
+	"errors"
 	"slices"
 	"sync"
 )
@@ -63,4 +64,22 @@ func (pool *DouglasPool) GetServerIP(uuid string) string {
 	}
 
 	return "NaN"
+}
+
+func (pool *DouglasPool) GetMark(testUUID string, candinateUUID string) (float64, error) {
+	pool.mutex.Lock()
+	defer pool.mutex.Unlock()
+
+	for _, v := range pool.Firs {
+		if v.UUID == testUUID {
+			_, f, e := v.CalculateMark(candinateUUID)
+			if e != nil {
+				return 0, e
+			}
+
+			return f, nil
+		}
+	}
+
+	return 0, errors.New("ERR_NO_SUCH_TEST")
 }

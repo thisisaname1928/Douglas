@@ -2,9 +2,11 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/thisisaname1928/goParsingDocx/testsvr"
 )
@@ -99,7 +101,7 @@ func getTestKey(uuid string) string {
 	}
 
 	json.Unmarshal(b, &testInf)
-	return testInf.Name
+	return testInf.Key
 }
 
 func getTestInfo(w http.ResponseWriter, r *http.Request) {
@@ -136,4 +138,50 @@ func listTest() ([]testInfo, error) {
 	}
 
 	return res, nil
+}
+
+type candinate struct {
+	Name   string  `json:"name"`
+	Class  string  `json:"class"`
+	IsDone bool    `json:"isDone"`
+	Mark   float64 `json:"mark"`
+}
+
+func getCandinateList(uuid string) ([]candinate, error) {
+	path := "./testsvr/testdata/" + uuid
+
+	if !checkIsTestFolder(path) {
+		return []candinate{}, errors.New("ERR_BAD_TEST")
+	}
+
+	f, e := os.ReadDir(path + "/testdat/")
+	if e != nil {
+		return []candinate{}, errors.New("ERR_INTERNAL_ERROR")
+	}
+
+	var candinates []candinate
+
+	for _, v := range f {
+		var info testsvr.TestsvrInfo
+
+		b, e := os.ReadFile(path + "/testdat/" + v.Name())
+
+		if e != nil {
+			return []candinate{}, errors.New("ERR_INTERNAL_ERROR")
+		}
+
+		e = json.Unmarshal(b, &info)
+		if e != nil {
+			return []candinate{}, errors.New("ERR_INTERNAL_ERROR")
+		}
+
+		_, mark, e := testsvr.CalculateMarkNoOpen(uuid, strings.ReplaceAll(v.Name(), ".json", ""))
+		if e != nil {
+			return []candinate{}, e
+		}
+		var cur = candinate{info.Name, info.Class, info.Done, mark}
+		candinates = append(candinates, cur)
+	}
+
+	return candinates, nil
 }

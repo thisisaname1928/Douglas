@@ -198,6 +198,56 @@ func (fir *DouglasFir) CalculateMark(UUID string) (int, float64, error) {
 	return trueQuesCount, mark, nil
 }
 
+func CalculateMarkNoOpen(TestUUID string, UUID string) (int, float64, error) {
+	var mark float64 = 0
+	var trueQuesCount = 0
+	// load
+	buf, e := os.ReadFile("./testsvr/testdata/" + TestUUID + "/testdat/" + UUID + ".json")
+
+	if e != nil {
+		return 0, 0, errors.New("TEST_NOT_FOUND")
+	}
+
+	var testInfo testsvrInfo
+	e = json.Unmarshal(buf, &testInfo)
+	if e != nil {
+		return 0, 0, errors.New("BAD_TEST")
+	}
+
+	// check if test done
+	if !testInfo.Done {
+		return 0, 0, nil
+	}
+
+	for i := range testInfo.AnswerSheet {
+		switch testInfo.Questions[i].Type {
+		case docx.TN:
+			point := calcTNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, testInfo.AnswerSheet[i][0])
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
+		case docx.TLN:
+			point := calcTLNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TLNA, [4]string(testInfo.AnswerSheet[i]))
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
+		case docx.TNDS:
+			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+
+			mark += point
+			if point == testInfo.Questions[i].Point {
+				trueQuesCount++
+			}
+		}
+	}
+
+	return trueQuesCount, mark, nil
+}
+
 func currentServerTime() time.Time {
 	return time.Now()
 }
