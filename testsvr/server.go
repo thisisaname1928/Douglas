@@ -110,8 +110,7 @@ func OpenOldTest(uuid string, key string) (*DouglasFir, error) {
 }
 
 func GetIp() (string, error) {
-	it, e := net.Interfaces()
-	fmt.Println(e)
+	it, _ := net.Interfaces()
 
 	for _, v := range it {
 		if v.Flags&net.FlagUp == 0 || v.Flags&net.FlagLoopback != 0 || v.Flags&net.FlagMulticast == 0 {

@@ -206,6 +206,13 @@ type getCurrentServerTimeRequest struct {
 	UUID string `json:"uuid"`
 }
 
+func (fir *DouglasFir) GetServerIP() string {
+	ip, _ := GetIp()
+	p := fir.GetServerPort()
+
+	return ip + ":" + p
+}
+
 func (fir *DouglasFir) getCurrentServerTime(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var request getCurrentServerTimeRequest

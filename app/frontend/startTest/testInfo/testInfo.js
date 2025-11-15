@@ -22,6 +22,12 @@ async function stopATest() {
     return await res.json()
 }
 
+async function getTestIp() {
+    res = await fetch("/StartTest/API/getTestIp", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
+
+    return await res.text()
+}
+
 async function updateTestInfo() {
     testInfo = await getTestInfo()
 
@@ -30,9 +36,12 @@ async function updateTestInfo() {
     document.getElementById("testUUID").innerHTML = `Ma de thi: ${testInfo.uuid}`
 
     if (testInfo.isStarted) {
+        ip = await getTestIp()
+        document.getElementById("testName").innerHTML += ` <a style="text-decoration:none ;color: lightgreen; cursor: pointer;" onclick="window.open('http:///${ip}', '_blank');">${ip}</a>`
         document.getElementById("testName").style = "color: lightgreen;"
         document.getElementById("testStatus").innerHTML = "Trang thai bai kiem tra: dang duoc mo"
         justAButton.innerHTML = "Dung bai kiem tra"
+        document.getElementById("candinateBox").classList.remove("hidden-element")
         justAButton.addEventListener('click', async () => {
             stopATest()
             location.reload()

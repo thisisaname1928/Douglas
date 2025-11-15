@@ -51,3 +51,16 @@ func (pool *DouglasPool) CloseTest(uuid string) {
 		}
 	}
 }
+
+func (pool *DouglasPool) GetServerIP(uuid string) string {
+	pool.mutex.Lock()
+	defer pool.mutex.Unlock()
+
+	for _, v := range pool.Firs {
+		if v.UUID == uuid {
+			return v.GetServerIP()
+		}
+	}
+
+	return "NaN"
+}

@@ -108,6 +108,8 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		startATest(w, r)
 	case "stopATest":
 		stopATest(w, r)
+	case "getTestIp":
+		getTestIP(w, r)
 	}
 }
 
@@ -160,4 +162,20 @@ func stopATest(w http.ResponseWriter, r *http.Request) {
 	response.Msg = ""
 	response.Status = true
 	encoder.Encode(response)
+}
+
+func getTestIP(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	var request struct {
+		TestUUID string `json:"uuid"`
+	}
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		w.Write([]byte("NaN"))
+	} else {
+		w.Write([]byte(testPool.GetServerIP(request.TestUUID)))
+	}
 }
