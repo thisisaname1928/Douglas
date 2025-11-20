@@ -13,3 +13,4 @@ output.dou
 *.dat
 *.dou
 go.sum
+test.csv

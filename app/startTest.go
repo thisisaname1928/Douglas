@@ -113,7 +113,41 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		getTestIP(w, r)
 	case "getCandinateList":
 		getCandinateListAPI(w, r)
+	case "exportCsv":
+		exportCsvAPI(w, r)
 	}
+}
+
+func exportCsvAPI(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	var request struct {
+		UUID string `json:"uuid"`
+	}
+
+	var response struct {
+		Status bool   `json:"status"`
+		Csv    string `json:"csvData"`
+	}
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	response.Csv, e = exportCsv(request.UUID)
+	if e != nil {
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	response.Status = true
+	encoder.Encode(response)
 }
 
 func getCandinateListAPI(w http.ResponseWriter, r *http.Request) {

@@ -145,6 +145,7 @@ type candinate struct {
 	Class  string  `json:"class"`
 	IsDone bool    `json:"isDone"`
 	Mark   float64 `json:"mark"`
+	UUID   string  `json:"uuid"`
 }
 
 func getCandinateList(uuid string) ([]candinate, error) {
@@ -179,9 +180,29 @@ func getCandinateList(uuid string) ([]candinate, error) {
 		if e != nil {
 			return []candinate{}, e
 		}
-		var cur = candinate{info.Name, info.Class, info.Done, mark}
+		var cur = candinate{info.Name, info.Class, info.Done, mark, strings.ReplaceAll(v.Name(), ".json", "")}
 		candinates = append(candinates, cur)
 	}
 
 	return candinates, nil
+}
+
+func exportCsv(uuid string) (string, error) {
+	candinates, e := getCandinateList(uuid)
+
+	if e != nil {
+		return "", e
+	}
+
+	output := "STT,Ten hoc sinh,Lop,Diem,Ma bai lam"
+
+	c := 1
+	for _, v := range candinates {
+		if v.IsDone {
+			output += "\n" + fmt.Sprintf("%v,\"%v\",\"%v\",%v,\"%v\"", c, v.Name, v.Class, v.Mark, v.UUID)
+			c++
+		}
+	}
+
+	return output, nil
 }

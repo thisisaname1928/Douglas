@@ -1,11 +1,30 @@
 let uuid = "NONE"
 const justAButton = document.getElementById("justAButton")
+const exportCsv = document.getElementById("exportCsv")
 
 document.addEventListener('DOMContentLoaded', () => {
     uuid = window.location.pathname.replace("/StartTest.TestInfo/uuid/", "")
 
     updateTestInfo()
 })
+
+exportCsv.addEventListener('click', async () => {
+    csvDat = await exportFileCSV()
+
+    const fileContent = csvDat.csvData;
+    const filename = "diem_thi.csv";
+    const mimeType = "text/csv";
+
+    const blob = new Blob([fileContent], { type: mimeType });
+
+    const downloadLink = document.createElement("a")
+    downloadLink.download = filename
+    downloadLink.href = window.URL.createObjectURL(blob);
+
+    downloadLink.click()
+    window.URL.revokeObjectURL(downloadLink.href);
+})
+
 
 async function getTestInfo() {
     res = await fetch("/StartTest/API/getTestInfo", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
@@ -27,6 +46,12 @@ async function getTestIp() {
 
     return await res.text()
 }
+async function exportFileCSV() {
+    res = await fetch("/StartTest/API/exportCsv", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
+
+    return await res.json()
+}
+
 
 async function getCandinateList() {
     res = await fetch("/StartTest/API/getCandinateList", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
@@ -44,7 +69,7 @@ async function updateTestCandinate() {
     candinateBox = document.getElementById("candinateBox")
 
     for (i = 0; i < candinates.length; i++) {
-        candinateBox.innerHTML += `<div class="test-card" style="cursor: pointer;">
+        candinateBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick='viewTest("${candinates[i].uuid}")'>
                     <b>Ten: ${candinates[i].name}, Lop: ${candinates[i].class}</b><br>
                     Diem: ${checkCanMark(candinates[i].mark, candinates[i].isDone)}
                 </div>`
