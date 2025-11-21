@@ -88,13 +88,15 @@ func (fir *DouglasFir) handleGetTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// remove test answer
-	for i := range test.Questions {
-		for j := range test.Questions[i].TrueAnswer {
-			test.Questions[i].TrueAnswer[j] = false
-		}
+	if !test.Done {
+		for i := range test.Questions {
+			for j := range test.Questions[i].TrueAnswer {
+				test.Questions[i].TrueAnswer[j] = false
+			}
 
-		for j := range test.Questions[i].TLNA {
-			test.Questions[i].TLNA[j] = ""
+			for j := range test.Questions[i].TLNA {
+				test.Questions[i].TLNA[j] = ""
+			}
 		}
 	}
 
@@ -336,7 +338,10 @@ func (fir *DouglasFir) getCurrentAnsSheet(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if !fir.verifyIP(request.UUID, getIP(r)) {
+	clientIP := getIP(r)
+	serverIP, _ := GetIp()
+
+	if !fir.verifyIP(request.UUID, clientIP) && clientIP != serverIP {
 		response.Status = false
 		response.Msg = "ACCESS_DENIED"
 		encoder.Encode(response)

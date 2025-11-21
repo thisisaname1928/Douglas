@@ -39,6 +39,8 @@ window.addEventListener('load', async function () {
             minute: '2-digit', hour12: false
         })}<br><br>Ma bai lam: ${uuid}</p>`
 
+        loadUpTrueAns()
+
         setEndTime()
     }
 
@@ -47,6 +49,25 @@ window.addEventListener('load', async function () {
     // load question sheet data
     loadUpAnsSheet()
 })
+
+function loadUpTrueAns() {
+    for (i = 0; i < questions.length; i++) {
+        if (questions[i].type == 0x12) {
+            const e = getTNQuesElement(i)
+            a = questions[i].TNAnswers
+            e.innerHTML += "<br>Dap an dung: " + transTNAnswer(a)
+        }
+        else if (questions[i].type == 0x15) {
+            const e = getTNDSQuesElement(i)
+            a = questions[i].TNAnswers
+            e.innerHTML += "<br>Dap an dung: " + transTNDSAnswer(a)
+        } else if (questions[i].type == 0x13) {
+            const e = getTLNQuesElement(i)
+            a = questions[i].TLNAnswers
+            e.innerHTML += "<br>Dap an dung: " + transTLNAnswers(a)
+        }
+    }
+}
 
 async function chooseTNOption(i, ans, shouldUpdate) {
     // check if update client side or both client and server
@@ -123,6 +144,18 @@ async function chooseTLNAnswer(index, answerIndex) {
     }
 }
 
+function getTNQuesElement(i) {
+    return document.getElementById(`QUES.${i}.TN`)
+}
+
+function getTLNQuesElement(i) {
+    return document.getElementById(`QUES.${i}.TLN`)
+}
+
+function getTNDSQuesElement(i) {
+    return document.getElementById(`QUES.${i}.TNDS`)
+}
+
 let questions
 let glbTestsvr
 
@@ -134,7 +167,7 @@ async function renderTest(testsvr) {
     for (i = 0; i < questions.length; i++) {
         if (questions[i].type == 0x12) { // TN
             testContent.innerHTML += `
-<div class="question-card">
+<div class="question-card" id="QUES.${i}.TN">
     <div class="question-text">
         Câu ${i + 1} (Trac nghiem): ${questions[i].content}
     </div>
@@ -159,7 +192,7 @@ async function renderTest(testsvr) {
 </div>`
         } else if (questions[i].type == 0x13) {
             testContent.innerHTML += `    
-    <div class="question-card">
+    <div class="question-card" id="QUES.${i}.TLN">
         <div class="question-text">
             Câu ${i + 1} (Trac nghiem tra loi ngan): ${questions[i].content}
         </div>
@@ -172,8 +205,8 @@ async function renderTest(testsvr) {
     </div>`
         } else if (questions[i].type == 0x15) {
             testContent.innerHTML += `
-<div class="question-card">
-    <div class="question-text">
+<div class="question-card" id="QUES.${i}.TNDS">
+    <div class="question-text" >
         Câu ${i + 1} (Trac nghiem dung sai): ${questions[i].content}
     </div>
     <div class="options-list">
@@ -300,6 +333,35 @@ async function updateAnswerSheet(i, answers) {
     }
 
     return true
+}
+
+function transTNAnswer(a) {
+    for (j = 0; j < 4; j++) {
+        if (a[j]) {
+            return String.fromCharCode('A'.charCodeAt(0) + j)
+        }
+    }
+}
+
+function transTNDSAnswer(a) {
+    res = ''
+    for (j = 0; j < 4; j++) {
+        if (a[j]) {
+            res += 'D'
+        } else
+            res += 'S'
+    }
+
+    return res
+}
+
+function transTLNAnswers(a) {
+    res = ''
+    for (j = 0; j < 4; j++) {
+        res += a[j]
+    }
+
+    return res
 }
 
 function getTNAnswer(th) {

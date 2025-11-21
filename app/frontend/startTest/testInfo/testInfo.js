@@ -1,6 +1,7 @@
 let uuid = "NONE"
 const justAButton = document.getElementById("justAButton")
 const exportCsv = document.getElementById("exportCsv")
+let curIP = ""
 
 document.addEventListener('DOMContentLoaded', () => {
     uuid = window.location.pathname.replace("/StartTest.TestInfo/uuid/", "")
@@ -44,8 +45,10 @@ async function stopATest() {
 async function getTestIp() {
     res = await fetch("/StartTest/API/getTestIp", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
 
-    return await res.text()
+    curIP = await res.text()
+    return curIP
 }
+
 async function exportFileCSV() {
     res = await fetch("/StartTest/API/exportCsv", { method: 'POST', body: JSON.stringify({ uuid: uuid }) })
 
@@ -76,6 +79,13 @@ async function updateTestCandinate() {
     }
 }
 
+async function viewTest(uuid) {
+    if (testInfo.isStarted)
+        window.open("http://" + curIP + "/taketest/" + uuid, "blank_")
+    else alert("Bat dau bai kiem tra de co the xem duoc ket qua")
+}
+
+let testInfo
 async function updateTestInfo() {
     testInfo = await getTestInfo()
 
