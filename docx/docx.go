@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -98,6 +99,9 @@ func Parse(path string) (Document, error) {
 	invalidDocxFile := errors.New("invalid docx file")
 
 	documentXML, e := DecompressFile(path, "word/document.xml")
+	documentXML = []byte(StripTag(string(documentXML)))
+
+	os.WriteFile("./test.xml", documentXML, os.ModePerm.Perm())
 
 	if e != nil {
 		return doc, invalidDocxFile
@@ -110,6 +114,7 @@ func Parse(path string) (Document, error) {
 	e = xml.Unmarshal(documentXML, &doc)
 
 	if e != nil {
+		fmt.Println(e)
 		return doc, invalidDocxFile
 	}
 
