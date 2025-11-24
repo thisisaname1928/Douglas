@@ -29,7 +29,7 @@ func searchIsXmlTag(s []rune, index int) (bool, []rune) {
 
 var keepableTag = []string{"?xml", "pic:nvPicPr", "pic:blipFill", "a:blip", "w:i", "w:iCs", "w:shd",
 	"w:document", "w:body", "w:p", "w:r", "w:pPr", "a:graphicData", "pic:pic", "w:inline",
-	"w:rPr", "w:t", "w:drawing", "wp:anchor", "a:graphic", "w:highlight"}
+	"w:rPr", "w:t", "w:drawing", "wp:anchor", "a:graphic", "w:highlight", "w:b"}
 
 func isKeepable(tag string) bool {
 	for i := range keepableTag {

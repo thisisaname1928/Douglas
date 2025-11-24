@@ -275,3 +275,51 @@ func ParseFluid2HtmlNonMark(str FluidString) string {
 	}
 	return output
 }
+
+// a1, a2 as source index, b1 b2 as chop index
+func chopRange(a1 int, a2 int, b1 int, b2 int) (int, int) {
+	c1, c2 := -1, -1
+
+	if b1 <= a1 && b2 >= a2 {
+
+		c1, c2 = a1, a2
+	} else if b1 <= a1 && b2 <= a2 && b2 >= a1 { // b2 in range [a1,a2] and b1 not in
+		c1, c2 = a1, b2
+
+	} else if b1 >= a1 && b1 <= a2 && b2 >= a2 { // b1 in range [a1,a2] and b2 not in
+		c1, c2 = b1, a2
+
+	} else if b1 > a1 && b2 < a2 {
+		c1, c2 = b1, b2
+
+	}
+
+	return c1, c2
+}
+
+func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
+	var res FluidString
+	aRune := []rune(fluid.Text)
+
+	for i := beginIndex; i <= endIndex; i++ {
+		if i >= len(aRune) {
+			break
+		}
+
+		res.Text += string(aRune[i])
+	}
+
+	//check 4 property
+	for i := range fluid.Properties {
+		b, e := chopRange(beginIndex, endIndex, fluid.Properties[i].Start, fluid.Properties[i].End)
+
+		if min(b, e) != -1 {
+			var prop FluidProperty
+			prop.Property = fluid.Properties[i].Property
+			prop.Start, prop.End = b, e
+			res.Properties = append(res.Properties, prop)
+		}
+	}
+
+	return res
+}
