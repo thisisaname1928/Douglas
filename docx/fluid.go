@@ -309,7 +309,7 @@ func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
 		res.Text += string(aRune[i])
 	}
 
-	//check 4 property
+	// check 4 property
 	for i := range fluid.Properties {
 		b, e := chopRange(beginIndex, endIndex, fluid.Properties[i].Start, fluid.Properties[i].End)
 
@@ -319,6 +319,28 @@ func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
 			prop.Start, prop.End = b, e
 			res.Properties = append(res.Properties, prop)
 		}
+	}
+
+	return res
+}
+
+func ConcatFluid(fluid1 FluidString, fluid2 FluidString) FluidString {
+	concatIndex := len(fluid1.Text)
+	var res FluidString
+	res.Text = fluid1.Text + fluid2.Text
+
+	// add fluid 1 properties
+	res.Properties = append(res.Properties, fluid1.Properties...)
+
+	// add fluid 1 properties
+	for i := range fluid2.Properties {
+		var prop FluidProperty
+
+		prop.Property = append(prop.Property, fluid2.Properties[i].Property...)
+		prop.End += concatIndex
+		prop.Start += concatIndex
+
+		res.Properties = append(res.Properties, prop)
 	}
 
 	return res
