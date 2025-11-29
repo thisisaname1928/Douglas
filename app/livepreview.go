@@ -77,7 +77,9 @@ func livePreviewAPI(w http.ResponseWriter, r *http.Request) {
 		var request GenJsonAPIRequest
 		decoder.Decode(&request)
 
-		res, e := GenQues(request.Path)
+		//res, e := GenQues(request.Path)
+		fluid, e := docx.Parse2Fluid(request.Path)
+		res := docx.BetterParse(docx.Lex(fluid))
 
 		var response GenJsonResponse
 		encoder := json.NewEncoder(w)
@@ -115,14 +117,8 @@ func GenQues(path string) ([]docx.Question, error) {
 		return []docx.Question{}, e
 	}
 
-	var index uint64 = 0
-	var ques []docx.Question
-	i, q := docx.ParseFluid2Question(&index, fluid)
-
-	for i == 0 {
-		ques = append(ques, q)
-		i, q = docx.ParseFluid2Question(&index, fluid)
-	}
+	tokens := docx.Lex(fluid)
+	var ques []docx.Question = docx.BetterParse(tokens)
 	return ques, nil
 }
 

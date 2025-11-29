@@ -21,11 +21,12 @@ const (
 )
 
 const (
-	TOKEN_QUES_VALUE     = "Câu"
-	TOKEN_ANSWER_A_VALUE = "A."
-	TOKEN_ANSWER_B_VALUE = "B."
-	TOKEN_ANSWER_C_VALUE = "C."
-	TOKEN_ANSWER_D_VALUE = "D."
+	TOKEN_QUES_VALUE       = "Câu"
+	TOKEN_TLN_ANSWER_VALUE = "tln_ans:"
+	TOKEN_ANSWER_A_VALUE   = "A."
+	TOKEN_ANSWER_B_VALUE   = "B."
+	TOKEN_ANSWER_C_VALUE   = "C."
+	TOKEN_ANSWER_D_VALUE   = "D."
 )
 
 func isTNAnswerKey(src []rune, index int) bool {
@@ -42,6 +43,43 @@ func isTNAnswerKey(src []rune, index int) bool {
 	}
 
 	return false
+}
+
+func isTNDSAnswerKey(src []rune, index int) bool {
+	if index+2 >= len(src) {
+		return false
+	}
+
+	if src[index+1] != ')' {
+		return false
+	}
+
+	if src[index] == 'a' || src[index] == 'b' || src[index] == 'c' || src[index] == 'd' {
+		return true
+	}
+
+	return false
+}
+
+var TLN_RUNE_VAL = []rune(TOKEN_TLN_ANSWER_VALUE)
+
+func isTLNAnswerKey(src []rune, index int) bool {
+
+	if index+1+len(TOKEN_TLN_ANSWER_VALUE) >= len(src) {
+		return false
+	}
+
+	if src[index+len(TOKEN_TLN_ANSWER_VALUE)+1] != ':' {
+		return false
+	}
+
+	for i := 0; i < len(TLN_RUNE_VAL); i++ {
+		if src[i+index] != TLN_RUNE_VAL[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 func HasPrefix(src []rune, index int, pref string) bool {
@@ -81,7 +119,7 @@ func Lex(src []FluidString) []Token {
 				currentTokenBeginIndex = k
 				currentTokenType = TOKEN_QUES
 
-				k += len(TOKEN_QUES_VALUE) - 1
+				k += 3
 				continue
 			} else if isTNAnswerKey(aRune, k) {
 				// finish last token
@@ -94,6 +132,30 @@ func Lex(src []FluidString) []Token {
 				currentTokenType = TOKEN_TN_ANSWER_KEY
 
 				k += 2
+				continue
+			} else if isTNDSAnswerKey(aRune, k) {
+				// finish last token
+				if currentTokenType != TOKEN_NONE {
+					var curTok = Token{CopyFluid(src[i], currentTokenBeginIndex, k-1), currentTokenType}
+					tokens = append(tokens, curTok)
+				}
+
+				currentTokenBeginIndex = k
+				currentTokenType = TOKEN_TNDS_ANSWER_KEY
+
+				k += 2
+				continue
+			} else if HasPrefix(aRune, k, TOKEN_TLN_ANSWER_VALUE) {
+				// finish last token
+				if currentTokenType != TOKEN_NONE {
+					var curTok = Token{CopyFluid(src[i], currentTokenBeginIndex, k-1), currentTokenType}
+					tokens = append(tokens, curTok)
+				}
+
+				currentTokenBeginIndex = k
+				currentTokenType = TOKEN_TLN_ANSWER_KEY
+
+				k += len(TLN_RUNE_VAL)
 				continue
 			} else { // TOKEN_TEXT_CONTENT
 				// finish last token
@@ -116,6 +178,7 @@ func Lex(src []FluidString) []Token {
 		// finish last token again
 		var curTok = Token{CopyFluid(src[i], currentTokenBeginIndex, len(aRune)-1), currentTokenType}
 		tokens = append(tokens, curTok)
+
 		// append NEW_LINE TOKEN
 
 		tokens = append(tokens, Token{FluidString{"<br>", []FluidProperty{}}, TOKEN_NEW_LINE})

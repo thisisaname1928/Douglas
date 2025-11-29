@@ -5,6 +5,12 @@ import (
 	"testing"
 )
 
+func TestCopyFluid(t *testing.T) {
+	var f = FluidString{"abc", []FluidProperty{{0, 2, []Prop{{1, "ABC"}}}}}
+
+	fmt.Println(CopyFluid(f, 1, 2))
+}
+
 func TestDocx(t *testing.T) {
 
 	fluid, e := Parse2Fluid("/home/ngqt/projs/goParsingDocx/test.docx")
@@ -13,6 +19,7 @@ func TestDocx(t *testing.T) {
 		panic(e)
 	}
 
+	//return
 	//sf := CopyFluid(fluid[0], 0, 5)
 	tokens := Lex(fluid)
 
@@ -36,8 +43,20 @@ func TestDocx(t *testing.T) {
 			fmt.Println("TOKEN_NEW_LINE ")
 		case TOKEN_TN_ANSWER_KEY:
 			fmt.Print("TOKEN_TN_ANSWER_KEY ")
+		case TOKEN_TLN_ANSWER_KEY:
+			fmt.Print("TOKEN_TLN_ANSWER_KEY ")
+		case TOKEN_TNDS_ANSWER_KEY:
+			fmt.Print("TOKEN_TNDS_ANSWER_KEY ")
 		}
 	}
 
-	fmt.Println("\n", BetterParse(tokens)[0].Content)
+	ques := BetterParse(tokens)
+	ex := ques[0]
+
+	fmt.Println("\n", ex.Content)
+	fmt.Println("\n", ex.TrueAnswer)
+	fmt.Println("\nA.", ex.Answer[0])
+	fmt.Println("\nB.", ex.Answer[1])
+	fmt.Println("\nC.", ex.Answer[2])
+	fmt.Println("\nD.", ex.Answer[3])
 }

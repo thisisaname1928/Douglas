@@ -28,6 +28,25 @@ func calLen(inp string) int {
 	return len([]rune(inp))
 }
 
+func MakeFluidStringInstance(fluid FluidString) FluidString {
+	var res FluidString
+	res.Text = fluid.Text[:]
+
+	res.Properties = make([]FluidProperty, len(fluid.Properties))
+	for i := range res.Properties {
+		res.Properties[i].Property = make([]Prop, len(fluid.Properties[i].Property))
+		res.Properties[i].Start = fluid.Properties[i].Start
+		res.Properties[i].End = fluid.Properties[i].End
+
+		for j := range res.Properties[i].Property {
+			res.Properties[i].Property[j].Type = fluid.Properties[i].Property[j].Type
+			res.Properties[i].Property[j].Value = fluid.Properties[i].Property[j].Value
+		}
+	}
+
+	return res
+}
+
 func Parse2Fluid(path string) ([]FluidString, error) {
 	var str []FluidString
 
@@ -190,7 +209,7 @@ func ParseFluid2Html(str FluidString) string {
 				}
 			}
 
-			if prop.End == i {
+			if prop.End == i && i != 0 {
 				for _, pr := range prop.Property {
 					if pr.Type == Bold && pr.Value != "false" {
 						output += "</b>"
@@ -208,7 +227,9 @@ func ParseFluid2Html(str FluidString) string {
 			}
 
 		}
+
 		output += string(c)
+
 	}
 
 	if addLabel {
@@ -252,7 +273,7 @@ func ParseFluid2HtmlNonMark(str FluidString) string {
 				}
 			}
 
-			if prop.End == i {
+			if prop.End == i && i != 0 {
 				for _, pr := range prop.Property {
 					if pr.Type == Bold && pr.Value != "false" {
 						output += "</b>"
@@ -280,17 +301,16 @@ func ParseFluid2HtmlNonMark(str FluidString) string {
 func chopRange(a1 int, a2 int, b1 int, b2 int) (int, int) {
 	c1, c2 := -1, -1
 
-	if b1 <= a1 && b2 >= a2 {
-
-		c1, c2 = a1, a2
-	} else if b1 <= a1 && b2 <= a2 && b2 >= a1 { // b2 in range [a1,a2] and b1 not in
+	if b1 >= a1 && b2 <= a2 {
+		c1, c2 = b1, b2
+	} else if b1 < a1 && b2 <= a2 && b2 >= a1 { // b2 in range [a1,a2] and b1 not in
 		c1, c2 = a1, b2
 
-	} else if b1 >= a1 && b1 <= a2 && b2 >= a2 { // b1 in range [a1,a2] and b2 not in
+	} else if b1 >= a1 && b1 <= a2 && b2 > a2 { // b1 in range [a1,a2] and b2 not in
 		c1, c2 = b1, a2
 
-	} else if b1 > a1 && b2 < a2 {
-		c1, c2 = b1, b2
+	} else if b1 < a1 && b2 > a2 {
+		c1, c2 = a1, a2
 
 	}
 
@@ -300,6 +320,7 @@ func chopRange(a1 int, a2 int, b1 int, b2 int) (int, int) {
 func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
 	var res FluidString
 	aRune := []rune(fluid.Text)
+	nonCopyLen := beginIndex
 
 	for i := beginIndex; i <= endIndex; i++ {
 		if i >= len(aRune) {
@@ -311,12 +332,12 @@ func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
 
 	// check 4 property
 	for i := range fluid.Properties {
-		b, e := chopRange(beginIndex, endIndex, fluid.Properties[i].Start, fluid.Properties[i].End)
-
+		b, e := chopRange(fluid.Properties[i].Start, fluid.Properties[i].End, beginIndex, endIndex)
 		if min(b, e) != -1 {
 			var prop FluidProperty
-			prop.Property = fluid.Properties[i].Property
-			prop.Start, prop.End = b, e
+			prop.Property = make([]Prop, len(fluid.Properties[i].Property))
+			copy(prop.Property, fluid.Properties[i].Property)
+			prop.Start, prop.End = b-nonCopyLen, e-nonCopyLen
 			res.Properties = append(res.Properties, prop)
 		}
 	}
@@ -327,20 +348,27 @@ func CopyFluid(fluid FluidString, beginIndex int, endIndex int) FluidString {
 func ConcatFluid(fluid1 FluidString, fluid2 FluidString) FluidString {
 	concatIndex := len(fluid1.Text)
 	var res FluidString
-	res.Text = fluid1.Text + fluid2.Text
+	res.Text = fluid1.Text[:] + fluid2.Text[:]
 
 	// add fluid 1 properties
-	res.Properties = append(res.Properties, fluid1.Properties...)
+	for i := range fluid1.Properties {
+		var prop = make([]Prop, len(fluid1.Properties[i].Property))
 
-	// add fluid 1 properties
+		copy(prop, fluid1.Properties[i].Property)
+
+		res.Properties = append(res.Properties, FluidProperty{fluid1.Properties[i].Start, fluid1.Properties[i].End, prop})
+	}
+
+	// add fluid 2 properties
 	for i := range fluid2.Properties {
-		var prop FluidProperty
+		var prop = make([]Prop, len(fluid2.Properties[i].Property))
 
-		prop.Property = append(prop.Property, fluid2.Properties[i].Property...)
-		prop.End += concatIndex
-		prop.Start += concatIndex
+		Start := fluid2.Properties[i].Start + concatIndex
+		End := fluid2.Properties[i].End + concatIndex
 
-		res.Properties = append(res.Properties, prop)
+		copy(prop, fluid2.Properties[i].Property)
+
+		res.Properties = append(res.Properties, FluidProperty{Start, End, prop})
 	}
 
 	return res

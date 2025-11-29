@@ -74,7 +74,7 @@ function prepareQuestions(json) {
                         <div>Đáp án: ${json.questions[i].TNAnswers}</div>
                     </div>
                 </div>`
-        } else {
+        } else if (json.questions[i].type == 0x13) {
             ques += `<div class="question-card">
                     <div class="question-text">
                         Câu loại ${json.questions[i].stype}: ${json.questions[i].content}
@@ -85,7 +85,31 @@ function prepareQuestions(json) {
                         </div>
                     </div>
                 </div>`
-        }
+        } else if (json.questions[i].type == 0x15) {
+            ques += `<div class="question-card">
+                    <div class="question-text">
+                        Câu loại ${json.questions[i].stype} : ${json.questions[i].content}
+                    </div>
+                    <div class="options-list">
+                        <div class="option-item">
+                            <div class="option-letter">A.</div>
+                            <div class="option-text">${json.questions[i].answers[0]}</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-letter">B.</div>
+                            <div class="option-text">${json.questions[i].answers[1]}</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-letter">C.</div>
+                            <div class="option-text">${json.questions[i].answers[2]}</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-letter">D.</div>
+                            <div class="option-text">${json.questions[i].answers[3]}</div>
+                        </div>
+                        <div>Đáp án: ${json.questions[i].TNAnswers}</div>
+                    </div>
+                </div>`}
     }
     questions.innerHTML = ques;
 }

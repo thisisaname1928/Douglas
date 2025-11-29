@@ -87,13 +87,7 @@ func Export(input string, output string, author string, testDuration uint64, use
 		return e
 	}
 
-	var ques []docx.Question
-	var index uint64 = 0
-	i, q := docx.ParseFluid2Question(&index, fluid)
-	for i == 0 {
-		ques = append(ques, q)
-		i, q = docx.ParseFluid2Question(&index, fluid)
-	}
+	var ques []docx.Question = docx.BetterParse(docx.Lex(fluid))
 
 	// parse questions into better type
 	var douQues []DouQuestion
