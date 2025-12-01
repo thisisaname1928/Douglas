@@ -13,7 +13,7 @@ func TestCopyFluid(t *testing.T) {
 
 func TestDocx(t *testing.T) {
 
-	fluid, e := Parse2Fluid("/home/ngqt/projs/goParsingDocx/test.docx")
+	fluid, e := Parse2Fluid("/home/ngqt/Downloads/BÀI 1 TRÍ TUỆ NHÂN TẠO_HS (1).docx")
 
 	if e != nil {
 		panic(e)
@@ -28,7 +28,7 @@ func TestDocx(t *testing.T) {
 		case TOKEN_QUES:
 			fmt.Print("TOKEN_QUES ")
 		case TOKEN_TEXT_CONTENT:
-			fmt.Print("TOKEN_TEXT_CONTENT ")
+			fmt.Print("TOKEN_TEXT_CONTENT:", v.Value.Text, " ")
 		case TOKEN_ANSWER_A:
 			fmt.Print("TOKEN_ANSWER_A ")
 		case TOKEN_ANSWER_B:
@@ -51,7 +51,7 @@ func TestDocx(t *testing.T) {
 	}
 
 	ques := BetterParse(tokens)
-	ex := ques[0]
+	ex := ques[3]
 
 	fmt.Println("\n", ex.Content)
 	fmt.Println("\n", ex.TrueAnswer)

@@ -77,9 +77,7 @@ func livePreviewAPI(w http.ResponseWriter, r *http.Request) {
 		var request GenJsonAPIRequest
 		decoder.Decode(&request)
 
-		//res, e := GenQues(request.Path)
-		fluid, e := docx.Parse2Fluid(request.Path)
-		res := docx.BetterParse(docx.Lex(fluid))
+		res, e := GenQues(request.Path)
 
 		var response GenJsonResponse
 		encoder := json.NewEncoder(w)

@@ -107,7 +107,6 @@ func BetterParse(tokens []Token) []Question {
 
 			i++
 			currentQuesContent = CopyFluid(textContent, j, len(anaRune)-1)
-
 		}
 
 		// get whole question content
@@ -132,6 +131,7 @@ func BetterParse(tokens []Token) []Question {
 		if CurrentQuestion.Type == TN {
 			for tokens[i].Type != TOKEN_EOF {
 				// parse content
+
 				if tokens[i].Type == TOKEN_TN_ANSWER_KEY {
 					ansIndx := getTNAnswerIndex([]rune(tokens[i].Value.Text)[0])
 					if checkIfTokenMarked(tokens[i]) {
@@ -148,7 +148,7 @@ func BetterParse(tokens []Token) []Question {
 
 					i++
 
-					for ; tokens[i].Type != TOKEN_TN_ANSWER_KEY && tokens[i].Type != TOKEN_EOF && tokens[i].Type != TOKEN_QUES; i++ {
+					for ; (tokens[i].Type != TOKEN_TN_ANSWER_KEY || ansIndx >= getTNAnswerIndex([]rune(tokens[i].Value.Text)[0])) && tokens[i].Type != TOKEN_EOF && tokens[i].Type != TOKEN_QUES; i++ {
 						ansContent = ConcatFluid(ansContent, tokens[i].Value)
 					}
 
