@@ -105,6 +105,11 @@ func Parse2Fluid(path string) ([]FluidString, error) {
 							if pr.Fill != nil {
 								p.Value = *pr.Fill
 							}
+						case "highlight":
+							p.Type = Marked
+							if pr.Fill != nil {
+								p.Value = *pr.Fill
+							}
 						}
 						currentProperty.Property = append(currentProperty.Property, p)
 

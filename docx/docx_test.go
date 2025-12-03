@@ -13,7 +13,7 @@ func TestCopyFluid(t *testing.T) {
 
 func TestDocx(t *testing.T) {
 
-	fluid, e := Parse2Fluid("/home/ngqt/Downloads/BÀI 1 TRÍ TUỆ NHÂN TẠO_HS (1).docx")
+	fluid, e := Parse2Fluid("C:\\Users\\nguye\\Downloads\\Document 1 (1).docx")
 
 	if e != nil {
 		panic(e)
@@ -50,13 +50,13 @@ func TestDocx(t *testing.T) {
 		}
 	}
 
-	ques := BetterParse(tokens)
-	ex := ques[3]
+	// ques := BetterParse(tokens)
+	// ex := ques[3]
 
-	fmt.Println("\n", ex.Content)
-	fmt.Println("\n", ex.TrueAnswer)
-	fmt.Println("\nA.", ex.Answer[0])
-	fmt.Println("\nB.", ex.Answer[1])
-	fmt.Println("\nC.", ex.Answer[2])
-	fmt.Println("\nD.", ex.Answer[3])
+	// fmt.Println("\n", ex.Content)
+	// fmt.Println("\n", ex.TrueAnswer)
+	// fmt.Println("\nA.", ex.Answer[0])
+	// fmt.Println("\nB.", ex.Answer[1])
+	// fmt.Println("\nC.", ex.Answer[2])
+	// fmt.Println("\nD.", ex.Answer[3])
 }

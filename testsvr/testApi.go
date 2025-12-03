@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+func (fir *DouglasFir) isAdmin(w http.ResponseWriter, r *http.Request) {
+	requestIP := getIP(r)
+	serverIP, _ := GetIp()
+
+	if requestIP == serverIP {
+		w.Write([]byte("true"))
+	} else {
+		w.Write([]byte("false"))
+	}
+
+	w.WriteHeader(200)
+}
+
 func getIP(r *http.Request) string {
 	requestIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 	return requestIP

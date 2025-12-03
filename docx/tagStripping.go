@@ -28,7 +28,7 @@ func searchIsXmlTag(s []rune, index int) (bool, []rune) {
 }
 
 var keepableTag = []string{"?xml", "pic:nvPicPr", "pic:blipFill", "a:blip", "w:i", "w:iCs", "w:shd",
-	"w:document", "w:body", "w:p", "w:r", "w:pPr", "a:graphicData", "pic:pic", "w:inline",
+	"w:document", "w:body", "w:p", "w:r", "w:pPr", "a:graphicData", "pic:pic", "wp:inline",
 	"w:rPr", "w:t", "w:drawing", "wp:anchor", "a:graphic", "w:highlight", "w:b"}
 
 func isKeepable(tag string) bool {
@@ -49,8 +49,15 @@ func StripTag(s string) string {
 	var currentTag []string
 	res := ""
 	anaRune := []rune(s)
+	i := 0
 
-	for i := 0; i < len(anaRune); {
+	for ; i < len(anaRune); i++ {
+		if anaRune[i] == '<' {
+			break
+		}
+	}
+
+	for i < len(anaRune) {
 		isTag, tag := searchIsXmlTag(anaRune, i)
 
 		if !isTag {

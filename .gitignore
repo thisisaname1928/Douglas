@@ -16,3 +16,4 @@ go.sum
 test.csv
 testraw.xml
 res.xml
+venv

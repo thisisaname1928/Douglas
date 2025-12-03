@@ -50,6 +50,25 @@ window.addEventListener('load', async function () {
     loadUpAnsSheet()
 })
 
+async function isAdmin() {
+    res = await fetch("/api/getTest", { method: "GET" })
+    textRes = res.text()
+
+    if (textRes == 'true') {
+        return true
+    } else {
+        return false
+    }
+}
+
+async function okAdminNoReload() {
+    if (await isAdmin()) {
+
+    } else {
+        location.reload()
+    }
+}
+
 function loadUpTrueAns() {
     for (i = 0; i < questions.length; i++) {
         if (questions[i].type == 0x12) {
@@ -308,7 +327,7 @@ async function updateAnswerSheet2(index, answerIndex, data) {
 
     if (!jsonRes.status) {
         if (jsonRes.msg == "OUT_OF_TIME") {
-            location.reload()
+            okAdminNoReload()
             return
         }
         if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }
@@ -325,7 +344,7 @@ async function updateAnswerSheet(i, answers) {
 
     if (!jsonRes.status) {
         if (jsonRes.msg == "OUT_OF_TIME") {
-            location.reload()
+            okAdminNoReload()
             return
         }
         if (jsonRes.msg != "TEST_SESSION_LOCKED") { alert(jsonRes.msg) }

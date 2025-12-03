@@ -127,7 +127,7 @@ func GetIp() (string, error) {
 				continue
 			}
 		} else if runtime.GOOS == "windows" {
-			if !strings.HasPrefix(v.Name, "Wireless LAN adapter	Wi-Fi") {
+			if !strings.HasPrefix(v.Name, "Wi-Fi") {
 				continue
 			}
 		}
