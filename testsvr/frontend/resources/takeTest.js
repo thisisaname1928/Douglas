@@ -28,16 +28,16 @@ window.addEventListener('load', async function () {
         edTime = new Date(glbTestsvr.test.endTime)
         duration = edTime - bgTime
 
-        testResult.innerHTML = `<h1>Diem: ${jsonRes.point}</h1><p>So cau dung hoan toan: ${jsonRes.trueQuesCount}/${questions.length}<br><br>Ten hoc sinh: ${glbTestsvr.test.name}<br>Lop: ${glbTestsvr.test.class}
+        testResult.innerHTML = `<h1>Điểm: ${jsonRes.point}</h1><p>Số câu đúng hoàn toàn: ${jsonRes.trueQuesCount}/${questions.length}<br><br>Tên học sinh: ${glbTestsvr.test.name}<br>Lớp: ${glbTestsvr.test.class}
         <br><br>
-        Thoi gian lam bai: ${Math.trunc(duration / 60000)} phut ${Math.round(((duration % 60000) / 1000))} giay
-        <br>Thoi gian bat dau: ${bgTime.toLocaleTimeString("en-us", {
+        Thời gian làm bài: ${Math.trunc(duration / 60000)} phut ${Math.round(((duration % 60000) / 1000))} giay
+        <br>Thời gian bắt đầu: ${bgTime.toLocaleTimeString("en-us", {
             hour: '2-digit',
             minute: '2-digit', hour12: false
-        })}<br>Thoi gian ket thuc: ${edTime.toLocaleTimeString("en-us", {
+        })}<br>Thời gian kết thúc: ${edTime.toLocaleTimeString("en-us", {
             hour: '2-digit',
             minute: '2-digit', hour12: false
-        })}<br><br>Ma bai lam: ${uuid}</p>`
+        })}<br><br>Mã bài làm: ${uuid}</p>`
 
         loadUpTrueAns()
 
@@ -74,16 +74,16 @@ function loadUpTrueAns() {
         if (questions[i].type == 0x12) {
             const e = getTNQuesElement(i)
             a = questions[i].TNAnswers
-            e.innerHTML += "<br>Dap an dung: " + transTNAnswer(a)
+            e.innerHTML += "<br>Đáp án đúng: " + transTNAnswer(a)
         }
         else if (questions[i].type == 0x15) {
             const e = getTNDSQuesElement(i)
             a = questions[i].TNAnswers
-            e.innerHTML += "<br>Dap an dung: " + transTNDSAnswer(a)
+            e.innerHTML += "<br>Đáp án đúng: " + transTNDSAnswer(a)
         } else if (questions[i].type == 0x13) {
             const e = getTLNQuesElement(i)
             a = questions[i].TLNAnswers
-            e.innerHTML += "<br>Dap an dung: " + transTLNAnswers(a)
+            e.innerHTML += "<br>Đáp án đúng: " + transTLNAnswers(a)
         }
     }
 }
@@ -188,7 +188,7 @@ async function renderTest(testsvr) {
             testContent.innerHTML += `
 <div class="question-card" id="QUES.${i}.TN">
     <div class="question-text">
-        Câu ${i + 1} (Trac nghiem): ${questions[i].content}
+        Câu ${i + 1} (Trắc nghiệm): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TN.0" onclick="chooseTNOption(${i}, 0, true)">
@@ -213,7 +213,7 @@ async function renderTest(testsvr) {
             testContent.innerHTML += `    
     <div class="question-card" id="QUES.${i}.TLN">
         <div class="question-text">
-            Câu ${i + 1} (Trac nghiem tra loi ngan): ${questions[i].content}
+            Câu ${i + 1} (Trắc nghiệm trả lời ngắn): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
             <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 0)" id="QUES.${i}.TLN.0">
@@ -226,7 +226,7 @@ async function renderTest(testsvr) {
             testContent.innerHTML += `
 <div class="question-card" id="QUES.${i}.TNDS">
     <div class="question-text" >
-        Câu ${i + 1} (Trac nghiem dung sai): ${questions[i].content}
+        Câu ${i + 1} (Trắc nghiệm đúng sai): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TNDS.0">

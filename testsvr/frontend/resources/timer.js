@@ -14,7 +14,7 @@ function delay(ms) {
     });
 }
 
-function setEndTime() { timer.innerHTML = `Da het thoi gian` }
+function setEndTime() { timer.innerHTML = `Đã hết thời gian` }
 
 async function timerLoop() {
     duration = 0
@@ -28,7 +28,7 @@ async function timerLoop() {
         durationSec = maxDuration * 60 - Math.round(duration / 1000)
 
         if (durationSec < 0) {
-            timer.innerHTML = `Da het thoi gian`
+            timer.innerHTML = `Đã hết thời gian`
             if (!isDone) {
                 await doneTest()
                 location.reload()
@@ -39,7 +39,7 @@ async function timerLoop() {
         currentTestTimeMin = Math.trunc(durationSec / 60)
         currentTestTimeSec = Math.round(((durationSec % 60)))
 
-        timer.innerHTML = `Thoi gian con lai: ${String(currentTestTimeMin).padStart(2, '0')}:${String(currentTestTimeSec).padStart(2, '0')}`
+        timer.innerHTML = `Thời gian còn lại: ${String(currentTestTimeMin).padStart(2, '0')}:${String(currentTestTimeSec).padStart(2, '0')}`
 
         // set timeout
         await delay(1010)

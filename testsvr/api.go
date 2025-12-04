@@ -119,5 +119,7 @@ func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.getCurrentServerTime(w, r)
 	case "isAdmin":
 		fir.isAdmin(w, r)
+	case "getTestName":
+		fir.getTestName(w, r)
 	}
 }

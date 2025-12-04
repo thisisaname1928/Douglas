@@ -75,10 +75,7 @@ type testInfo struct {
 	IsStarted         bool   `json:"isStarted"`
 }
 
-type testInfoJson struct {
-	Name string `json:"name"`
-	Key  string `json:"key"`
-}
+type testInfoJson testsvr.TestInfoJson
 
 func getTestName(path string) string {
 	var testInf testInfoJson
@@ -194,7 +191,7 @@ func exportCsv(uuid string) (string, error) {
 		return "", e
 	}
 
-	output := "STT,Ten hoc sinh,Lop,Diem,Ma bai lam"
+	output := "Số thứ tự,Tên,Lớp,Điểm,Mã bài làm"
 
 	c := 1
 	for _, v := range candinates {

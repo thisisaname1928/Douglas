@@ -1,6 +1,7 @@
 package testsvr
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -20,6 +21,11 @@ const (
 	ERROR_FIR_NOT_CREATED = "ERROR_FIR_NOT_CREATED"
 )
 
+type TestInfoJson struct {
+	Name string `json:"name"`
+	Key  string `json:"key"`
+}
+
 type DouglasFir struct {
 	ServerPort        string
 	Douglas           dou.DouFile // test file
@@ -27,6 +33,7 @@ type DouglasFir struct {
 	UUID              string
 	HttpServer        *http.Server
 	TestSessions      TestSessions
+	ExtraInfo         TestInfoJson
 	NumberOfQuestions int
 }
 
@@ -186,6 +193,13 @@ func (fir *DouglasFir) OpenServer() error {
 	}
 	server := mux.NewRouter()
 
+	// get Extra test info
+	b, e := os.ReadFile("./testsvr/testdata/" + fir.UUID + "/info.json")
+
+	if e == nil {
+		json.Unmarshal(b, &fir.ExtraInfo)
+	}
+
 	// ROUTING
 	server.HandleFunc("/", route)
 	server.HandleFunc("/rsrc/{FILE}", res)
@@ -296,4 +310,8 @@ func favicon(w http.ResponseWriter, r *http.Request) {
 	if e == nil {
 		w.Write(f)
 	}
+}
+
+func (fir *DouglasFir) getTestName(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(fir.ExtraInfo.Name))
 }

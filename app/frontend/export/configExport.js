@@ -62,18 +62,18 @@ async function initConf() {
     }
 
     configBox.innerHTML += `<div class="config-container">
-                <label class="config-label">Tac gia:</label>
-                <input id="author" type="text" class="config-input" placeholder="Ten nguoi ra de">
+                <label class="config-label">Tác giả:</label>
+                <input id="author" type="text" class="config-input" placeholder="Tên người ra đề">
             </div>`
 
     configBox.innerHTML += `<div class="config-container">
-                <label class="config-label">Mat khau cho de:</label>
-                <input id="key" type="text" class="config-input" placeholder="De trong neu khong dung ma hoa">
+                <label class="config-label">Mật khẩu cho đề:</label>
+                <input id="key" type="text" class="config-input" placeholder="Để trống nếu không dùng mã hóa">
             </div>`
 
     configBox.innerHTML += `<div class="config-container">
-                <label class="config-label">Thoi gian lam bai (giay):</label>
-                <input id="testDuration" type="text" class="config-input" placeholder="Dat 0 neu khong co thoi gian co dinh">
+                <label class="config-label">Thời gian làm bài (phút):</label>
+                <input id="testDuration" type="text" class="config-input" placeholder="Đặt 0 nếu không có thời gian cố định">
             </div>`
 
     for (i = 0; i < obj.stype.length; i++) {
@@ -88,7 +88,7 @@ function getConfig() {
     if (Number.isNaN(testDuration)) testDuration = 0;
     stype = []
 
-    if (key.length > 16) { return { status: false, UUID: UUID, testDuration: testDuration, msg: "key qua dai", author: author, key: key, stype: stype } }
+    if (key.length > 16) { return { status: false, UUID: UUID, testDuration: testDuration, msg: "Mật khẩu quá dài", author: author, key: key, stype: stype } }
 
 
     for (i = 0; i < confObj.stype.length; i++) {
@@ -96,11 +96,11 @@ function getConfig() {
         pointPerQues = Math.abs(Number(document.getElementById(`${confObj.stype[i].stype}.Point`).value))
 
         if (Number.isNaN(numberOfQuesPerTest) || Number.isNaN(pointPerQues)) {
-            return { status: false, UUID: UUID, testDuration: testDuration, msg: `du lieu nhap cho loai cau ${confObj.stype[i].stype} khong hop le!`, author: author, key: key, stype: stype }
+            return { status: false, UUID: UUID, testDuration: testDuration, msg: `Dữ liệu nhập cho loại câu ${confObj.stype[i].stype} không hợp lệ!`, author: author, key: key, stype: stype }
         }
 
         if (numberOfQuesPerTest > confObj.stype[i].N) {
-            return { status: false, UUID: UUID, testDuration: testDuration, msg: `so cau moi de cua loai ${confObj.stype[i].stype} lon hon so cau ton tai`, author: author, key: key, stype: stype }
+            return { status: false, UUID: UUID, testDuration: testDuration, msg: `Số câu mỗi đề của loại ${confObj.stype[i].stype} lớn hơn số câu tồn tại`, author: author, key: key, stype: stype }
         }
 
         stype.push({ stype: confObj.stype[i].stype, N: numberOfQuesPerTest, Point: pointPerQues })
@@ -117,7 +117,7 @@ async function exportTest(obj) {
         return
     }
 
-    alert('Xuat de thanh cong!')
+    alert('Xuất đề thành công!')
     const link = document.createElement("a")
     link.href = "/Export/Download/UUID/" + UUID
     link.download = 'exported.dou'
