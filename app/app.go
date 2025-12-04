@@ -49,6 +49,10 @@ func addResource(w http.ResponseWriter, r *http.Request, path string) {
 	}
 }
 
+func check(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("ok"))
+}
+
 func StartApp() {
 	server := mux.NewRouter()
 	server.HandleFunc("/LivePreview", livePreview)
@@ -69,6 +73,7 @@ func StartApp() {
 	server.HandleFunc("/StartTest", startTest)
 	server.HandleFunc("/StartTest/{FILE}", startTestRes)
 	server.HandleFunc("/StartTest/API/{NAME}", startTestAPI)
+	server.HandleFunc("/check", check)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }
