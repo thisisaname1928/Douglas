@@ -26,6 +26,58 @@ modeToggleButton.addEventListener('click', () => {
     }
 });
 
+function transTNAnswer(A, B, C, D) {
+    if (A) {
+        return 'A'
+    }
+
+    if (B) {
+        return 'B'
+    }
+
+    if (C) {
+        return 'C'
+    }
+
+    if (D) {
+        return 'D'
+    }
+}
+
+function transTNDSAnswer(A, B, C, D) {
+    output = ""
+
+    if (A) {
+        output += 'Đ'
+    } else {
+        output += 'S'
+    }
+
+    if (B) {
+        output += 'Đ'
+    } else {
+        output += 'S'
+    }
+
+    if (C) {
+        output += 'Đ'
+    } else {
+        output += 'S'
+    }
+
+    if (D) {
+        output += 'Đ'
+    } else {
+        output += 'S'
+    }
+
+    return output
+}
+
+function transTLNAnswer(a1, a2, a3, a4) {
+    return a1 + a2 + a3 + a4
+}
+
 function fetchAPI(name, obj) {
     return fetch('/LivePreview/API/' + name, { method: 'POST', body: JSON.stringify(obj) })
 }
@@ -52,7 +104,7 @@ function prepareQuestions(json) {
         if (json.questions[i].type == 0x12) {
             ques += `<div class="question-card">
                     <div class="question-text">
-                        Câu loại ${json.questions[i].stype} : ${json.questions[i].content}
+                        Câu trắc loại ${json.questions[i].stype} : ${json.questions[i].content}
                     </div>
                     <div class="options-list">
                         <div class="option-item">
@@ -71,24 +123,24 @@ function prepareQuestions(json) {
                             <div class="option-letter">D.</div>
                             <div class="option-text">${json.questions[i].answers[3]}</div>
                         </div>
-                        <div>Đáp án: ${json.questions[i].TNAnswers}</div>
+                        <div>Đáp án: ${transTNAnswer(json.questions[i].TNAnswers[0], json.questions[i].TNAnswers[1], json.questions[i].TNAnswers[2], json.questions[i].TNAnswers[3])}</div>
                     </div>
-                </div>`
+                </div > `
         } else if (json.questions[i].type == 0x13) {
             ques += `<div class="question-card">
                     <div class="question-text">
-                        Câu loại ${json.questions[i].stype}: ${json.questions[i].content}
+                        Câu trắc nghiệm trả lời ngắn loại ${json.questions[i].stype}: ${json.questions[i].content}
                     </div>
                     <div class="options-list">
                         <div class="option-item">
-                            <div class="option-text">Đáp án: ${json.questions[i].TLNAnswers}</div>
+                            <div class="option-text">Đáp án: ${transTLNAnswer(json.questions[i].TLNAnswers[0], json.questions[i].TLNAnswers[1], json.questions[i].TLNAnswers[2], json.questions[i].TLNAnswers[3])}</div>
                         </div>
                     </div>
-                </div>`
+                </div> `
         } else if (json.questions[i].type == 0x15) {
             ques += `<div class="question-card">
                     <div class="question-text">
-                        Câu loại ${json.questions[i].stype} : ${json.questions[i].content}
+                        Câu trắc nghiệm đúng sai loại ${json.questions[i].stype} : ${json.questions[i].content}
                     </div>
                     <div class="options-list">
                         <div class="option-item">
@@ -107,9 +159,9 @@ function prepareQuestions(json) {
                             <div class="option-letter">D.</div>
                             <div class="option-text">${json.questions[i].answers[3]}</div>
                         </div>
-                        <div>Đáp án: ${json.questions[i].TNAnswers}</div>
+                        <div>Đáp án: ${transTNDSAnswer(json.questions[i].TNAnswers[0], json.questions[i].TNAnswers[1], json.questions[i].TNAnswers[2], json.questions[i].TNAnswers[3])}</div>
                     </div>
-                </div>`}
+                </div> `}
     }
     questions.innerHTML = ques;
 }

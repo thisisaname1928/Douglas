@@ -226,7 +226,9 @@ func (fir *DouglasFir) GetServerPort() string {
 }
 
 func (fir *DouglasFir) CloseServer() {
+	fmt.Println("Server beginning to stop")
 	fir.HttpServer.Close()
+	fir.TestSessions.CloseAllTestSessions(fir.UUID)
 }
 
 func detectFileExt(path string) string {

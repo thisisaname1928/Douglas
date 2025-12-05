@@ -73,6 +73,8 @@ func StartApp() {
 	server.HandleFunc("/StartTest", startTest)
 	server.HandleFunc("/StartTest/{FILE}", startTestRes)
 	server.HandleFunc("/StartTest/API/{NAME}", startTestAPI)
+	server.HandleFunc("/TutorialPage", tutorialPage)
+	server.HandleFunc("/TutorialPage/{FILE}", tutorialPageRes)
 	server.HandleFunc("/check", check)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)

@@ -15,6 +15,7 @@ type TestSessionData struct {
 	IP          string     `json:"IP"`
 	StartTime   time.Time  `json:"StartTime"`
 	IsLocked    bool
+	UUID        string
 }
 
 // access Sessions data by uuid
@@ -33,7 +34,7 @@ func (session *TestSessions) NewSession(UUID string, IP string, startTime time.T
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
 
-	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime, false}
+	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime, false, UUID}
 
 	// assign 4 element to Answer sheet
 	for i := 0; i < numberOfQuestions; i++ {
@@ -181,4 +182,17 @@ func (session *TestSessions) GetSessionStartTime(UUID string) (time.Time, error)
 	defer session.mutex.Unlock()
 
 	return session.SessionsData[UUID].StartTime, nil
+}
+
+func (session *TestSessions) CloseAllTestSessions(testUUID string) {
+	// fetch for all UUIDs
+	var UUIDsList []string
+
+	for v := range session.SessionsData {
+		UUIDsList = append(UUIDsList, v)
+	}
+
+	for i := 0; len(session.SessionsData) > 0; i++ {
+		session.DoneSession(testUUID, UUIDsList[i], time.Now())
+	}
 }
