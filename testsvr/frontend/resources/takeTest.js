@@ -434,6 +434,13 @@ function getTLNAnswer(th) {
     ans[2] = document.getElementById(`QUES.${th}.TLN.2`).value
     ans[3] = document.getElementById(`QUES.${th}.TLN.3`).value
 
+    // remove space
+    for (i = 0; i < 4; i++) {
+        if (ans[0] == ' ') {
+            ans[0] = ''
+        }
+    }
+
     return ans
 }
 

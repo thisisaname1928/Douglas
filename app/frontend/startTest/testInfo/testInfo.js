@@ -63,7 +63,7 @@ async function getCandinateList() {
 }
 
 function checkCanMark(mark, done) {
-    if (done) { return mark } else { return "chua nop bai" }
+    if (done) { return mark } else { return "Chưa nộp bài" }
 }
 
 async function updateTestCandinate() {
@@ -73,8 +73,8 @@ async function updateTestCandinate() {
 
     for (i = 0; i < candinates.length; i++) {
         candinateBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick='viewTest("${candinates[i].uuid}")'>
-                    <b>Ten: ${candinates[i].name}, Lop: ${candinates[i].class}</b><br>
-                    Diem: ${checkCanMark(candinates[i].mark, candinates[i].isDone)}
+                    <b>Tên: ${candinates[i].name}, Lớp: ${candinates[i].class}</b><br>
+                    Điểm: ${checkCanMark(candinates[i].mark, candinates[i].isDone)}
                 </div>`
     }
 }
@@ -82,7 +82,7 @@ async function updateTestCandinate() {
 async function viewTest(uuid) {
     if (testInfo.isStarted)
         window.open("http://" + curIP + "/taketest/" + uuid, "blank_")
-    else alert("Bat dau bai kiem tra de co the xem duoc ket qua")
+    else alert("Bắt đầu bài kiểm tra để có thể xem được kết quả")
 }
 
 let testInfo
@@ -90,8 +90,8 @@ async function updateTestInfo() {
     testInfo = await getTestInfo()
 
     document.getElementById("testName").innerHTML = `${testInfo.name}`
-    document.getElementById("candinate").innerHTML = `So luot lam bai: ${testInfo.numberOfCandinate}`
-    document.getElementById("testUUID").innerHTML = `Ma de thi: ${testInfo.uuid}`
+    document.getElementById("candinate").innerHTML = `Số lượt làm bài: ${testInfo.numberOfCandinate}`
+    document.getElementById("testUUID").innerHTML = `Mã đề thi: ${testInfo.uuid}`
 
     updateTestCandinate()
 
@@ -99,15 +99,15 @@ async function updateTestInfo() {
         ip = await getTestIp()
         document.getElementById("testName").innerHTML += ` <a style="text-decoration:none ;color: lightgreen; cursor: pointer;" onclick="window.open('http:///${ip}', '_blank');">${ip}</a>`
         document.getElementById("testName").style = "color: lightgreen;"
-        document.getElementById("testStatus").innerHTML = "Trang thai bai kiem tra: dang duoc mo"
-        justAButton.innerHTML = "Dung bai kiem tra"
+        document.getElementById("testStatus").innerHTML = "Trạng thái bài kiểm tra: đang được mở"
+        justAButton.innerHTML = "Dừng bài kiểm tra"
 
         justAButton.addEventListener('click', async () => {
             stopATest()
             location.reload()
         })
     } else {
-        document.getElementById("testStatus").innerHTML = "Trang thai bai kiem tra: chua duoc mo"
+        document.getElementById("testStatus").innerHTML = "Trạng thái bài kiểm tra: chưa được mở"
         justAButton.addEventListener('click', async () => {
             startATest()
             location.reload()

@@ -192,7 +192,7 @@ func (session *TestSessions) CloseAllTestSessions(testUUID string) {
 		UUIDsList = append(UUIDsList, v)
 	}
 
-	for i := 0; len(session.SessionsData) > 0; i++ {
+	for i := 0; i < len(UUIDsList); i++ {
 		session.DoneSession(testUUID, UUIDsList[i], time.Now())
 	}
 }

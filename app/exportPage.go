@@ -207,7 +207,7 @@ func getExportConfig(UUID string) (ExportConfigResponse, error) {
 
 func downloadTestRoute(w http.ResponseWriter, r *http.Request) {
 	v := mux.Vars(r)
-	path := "./app/tests/" + v["UUID"] + ".dou"
+	path := "./app/tests/" + v["UUID"]
 
 	b, e := os.ReadFile(path)
 	fmt.Println(path)

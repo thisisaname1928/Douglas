@@ -127,6 +127,12 @@ func calcTNQuestion(point float64, trueAns [4]bool, userAns string) float64 {
 }
 
 func calcTLNQuestion(point float64, trueAns [4]string, userAns [4]string) float64 {
+	for i := range trueAns {
+		if trueAns[i] == " " {
+			trueAns[i] = ""
+		}
+	}
+
 	if trueAns == userAns {
 		return point
 	}
@@ -141,11 +147,17 @@ func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64
 		uAns[i] = (userAns[i] == "T")
 	}
 
-	if trueAns == uAns {
-		return point
+	var res float64
+	var n = 0
+
+	for i := range trueAns {
+		if trueAns[i] == uAns[i] {
+			n++
+		}
 	}
 
-	return 0
+	res = point * float64(float64(n)/4)
+	return res
 }
 
 func (fir *DouglasFir) CalculateMark(UUID string) (int, float64, error) {

@@ -20,7 +20,8 @@ if __name__ == '__main__':
             time.sleep(0.5)
     
     webview.settings['ALLOW_DOWNLOADS'] = True
-    webview.create_window("Douglas", f'http://{host}:{port}/Home')
+    webview.create_window(title="Douglas", url=f'http://{host}:{port}/Home')
+
     webview.start()
 
     if sys.platform == "win32":

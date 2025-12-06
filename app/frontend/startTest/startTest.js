@@ -97,7 +97,7 @@ async function updateTestList() {
         }
 
         testListBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick="quickRedirect('StartTest.TestInfo/uuid/${testList.list[i].uuid}')">
-                        <b style='${customNameStyle}'>${testList.list[i].name}</b> <br>Ma de thi: ${testList.list[i].uuid}<br>So luot lam: ${testList.list[i].numberOfCandinate}
+                        <b style='${customNameStyle}'>${testList.list[i].name}</b> <br>Mã đề thi: ${testList.list[i].uuid}<br>Số lượt làm bài: ${testList.list[i].numberOfCandinate}
                     </div>`
     }
 }

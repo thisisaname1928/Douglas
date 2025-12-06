@@ -119,7 +119,7 @@ async function exportTest(obj) {
 
     alert('Xuất đề thành công!')
     const link = document.createElement("a")
-    link.href = "/Export/Download/UUID/" + UUID
+    link.href = "/Export/Download/UUID/" + UUID + ".dou"
     link.download = 'exported.dou'
     document.body.appendChild(link)
     link.click()
