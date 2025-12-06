@@ -187,6 +187,7 @@ func GetFreePort() (int, error) {
 func (fir *DouglasFir) OpenServer() error {
 	// init testSession
 	fir.TestSessions.Init()
+	fir.TestSessions.SessionTestUUID = fir.UUID
 
 	if !fir.Created {
 		return errors.New(ERROR_FIR_NOT_CREATED)

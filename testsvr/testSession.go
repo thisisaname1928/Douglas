@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var MAX_WARN_TIME = 5
+
 // this for temporary saving sessions data
 type TestSessionData struct {
 	AnswerSheet [][]string `json:"AnswerSheet"` // Ans[0]=["1", "1", "1", "1"] example
@@ -16,14 +18,16 @@ type TestSessionData struct {
 	StartTime   time.Time  `json:"StartTime"`
 	IsLocked    bool
 	UUID        string
+	WarnTimes   int
 }
 
 // access Sessions data by uuid
 // Session Data should be saved and destroyed after the test is done
 // Resume session by lookup this TestSessions
 type TestSessions struct {
-	SessionsData map[string]TestSessionData
-	mutex        sync.Mutex
+	SessionsData    map[string]TestSessionData
+	SessionTestUUID string
+	mutex           sync.Mutex
 }
 
 func (session *TestSessions) Init() {
@@ -34,7 +38,7 @@ func (session *TestSessions) NewSession(UUID string, IP string, startTime time.T
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
 
-	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime, false, UUID}
+	session.SessionsData[UUID] = TestSessionData{make([][]string, numberOfQuestions), IP, startTime, false, UUID, 0}
 
 	// assign 4 element to Answer sheet
 	for i := 0; i < numberOfQuestions; i++ {
@@ -105,6 +109,7 @@ func (session *TestSessions) DoneSession(testUUID string, UUID string, endTime t
 	info.Done = true
 	info.EndTime = endTime
 	info.AnswerSheet = session.SessionsData[UUID].AnswerSheet // just a shallow copy, might cause a bug!
+	info.WarnTimes = session.SessionsData[UUID].WarnTimes
 
 	value, e := json.Marshal(info)
 
@@ -194,5 +199,22 @@ func (session *TestSessions) CloseAllTestSessions(testUUID string) {
 
 	for i := 0; i < len(UUIDsList); i++ {
 		session.DoneSession(testUUID, UUIDsList[i], time.Now())
+	}
+}
+
+func (session *TestSessions) Warn(UUID string) {
+	if !session.CheckSession(UUID) {
+		return
+	}
+
+	session.mutex.Lock()
+	curSS := session.SessionsData[UUID]
+	curSS.WarnTimes++
+	session.SessionsData[UUID] = curSS
+	if curSS.WarnTimes > MAX_WARN_TIME {
+		session.mutex.Unlock()
+		session.DoneSession(session.SessionTestUUID, UUID, time.Now())
+	} else {
+		session.mutex.Unlock()
 	}
 }

@@ -373,6 +373,29 @@ func (fir *DouglasFir) getCurrentAnsSheet(w http.ResponseWriter, r *http.Request
 	encoder.Encode(response)
 }
 
+func (fir *DouglasFir) warnAPI(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		UUID string `json:"uuid"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	if !fir.verifyIP(request.UUID, getIP(r)) {
+		w.WriteHeader(401)
+		return
+	}
+
+	fir.TestSessions.Warn(request.UUID)
+	w.WriteHeader(200)
+}
+
 // func (fir *DouglasFir) startSession(w http.ResponseWriter, r *http.Request) {
 // 	encoder := json.NewEncoder(w)
 // 	decoder := json.NewDecoder(r.Body)

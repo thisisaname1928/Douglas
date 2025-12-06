@@ -141,17 +141,13 @@ func calcTLNQuestion(point float64, trueAns [4]string, userAns [4]string) float6
 }
 
 func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64 {
-	// convert
-	var uAns [4]bool
-	for i := range userAns {
-		uAns[i] = (userAns[i] == "T")
-	}
-
 	var res float64
 	var n = 0
 
-	for i := range trueAns {
-		if trueAns[i] == uAns[i] {
+	for i := range userAns {
+		if userAns[i] == "T" && trueAns[i] {
+			n++
+		} else if (userAns[i] == "F") && !trueAns[i] {
 			n++
 		}
 	}

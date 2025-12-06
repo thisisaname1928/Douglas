@@ -10,16 +10,29 @@
 </head>
 
 <body>
-    <div class="question-card" id="testResult">
+    <div class="question-card hidden-element" id="testResult">
     </div>
     <div id="testContent"></div>
     <div class="center-div">
-        <button id="summitTest" class="btn">Nộp bài</button>
+        <button id="summitTest" class="btn hidden-element">Nộp bài</button>
     </div>
     <div id="test"></div>
-    <div class="float-timer" id="timer">Thời gian còn lại: không giới hạn</div>
+    <div class="float-timer hidden-element" id="timer">Thời gian còn lại: không giới hạn</div>
+
+    <div id="popup-ask" class="hidden-element">
+        <div class="overlay-layer" id="blackLayer"></div>
+        <div class="popup-card" id="popup">
+            <center>
+                <p style="color: lightcoral;">Bất kì sự kiện nào thoát ra khỏi màn làm bài đều bị ghi nhận</p>
+            </center>
+            <center><button id="okBut" class="btn" onclick="startTest()">Bắt đầu bài làm</button></center>
+        </div>
+    </div>
+    </div>
+
     <script src="/rsrc/takeTest.js"></script>
     <script src="/rsrc/timer.js"></script>
+    <script src="/rsrc/testMode.js"></script>
 </body>
 
 </html>

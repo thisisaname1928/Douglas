@@ -21,6 +21,15 @@ async function timerLoop() {
     while (true) {
         ctStr = await getCurrentServerTime()
 
+        if (await checkIfTestDone()) {
+            timer.innerHTML = `Đã hết thời gian`
+            if (!isDone) {
+                await doneTest()
+                location.reload()
+            }
+            continue
+        }
+
         t = new Date(ctStr)
         duration = t - startTestTime
         console.log(duration)

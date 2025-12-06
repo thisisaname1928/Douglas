@@ -40,6 +40,7 @@ type testsvrInfo struct {
 	MaxTestDuration uint64          `json:"testDuration"`
 	Questions       []docx.Question `json:"questions"`
 	AnswerSheet     [][]string      `json:"answerSheet"`
+	WarnTimes       int             `json:"warnTimes"`
 }
 
 // I forgot to export it:)
@@ -121,5 +122,7 @@ func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.isAdmin(w, r)
 	case "getTestName":
 		fir.getTestName(w, r)
+	case "warn":
+		fir.warnAPI(w, r)
 	}
 }

@@ -10,15 +10,42 @@ async function checkIfTestDone() {
     return jsonRes.status
 }
 
-window.addEventListener('load', async function () {
+function showElement(id) { document.getElementById(id).classList.remove("hidden-element") }
+
+function hideElement(id) { document.getElementById(id).classList.add("hidden-element") }
+
+function warnPopup() {
+    showElement("popup-ask")
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     a = this.window.location.href.split("/")
     uuid = a[a.length - 1]
-
     isDone = await checkIfTestDone()
+
+    if (!isDone) {
+        showElement('popup-ask')
+    } else {
+        startTest()
+    }
+
+    document.getElementById('okBut').addEventListener('click', () => { startTest() })
+})
+
+async function startTest() {
+    isDone = await checkIfTestDone()
+
+    document.getElementById('okBut').addEventListener('click', () => { setUpTestMode() })
+    hideElement('popup-ask')
     await getTest(uuid)
     if (!isDone) {
+        showElement('timer')
+        showElement('summitTest')
+        setUpTestMode(uuid)
         setUpTimer(glbTestsvr.test.startTime, glbTestsvr.test.testDuration)
     } else {
+        showElement('timer')
+        showElement('testResult')
         res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
         jsonRes = await res.json()
 
@@ -48,7 +75,7 @@ window.addEventListener('load', async function () {
 
     // load question sheet data
     loadUpAnsSheet()
-})
+}
 
 async function isAdmin() {
     res = await fetch("/api/getTest", { method: "GET" })
@@ -181,6 +208,8 @@ let glbTestsvr
 async function renderTest(testsvr) {
     questions = testsvr.test.questions
     glbTestsvr = testsvr
+
+    testContent.innerHTML = ''
 
     // render questions
     for (i = 0; i < questions.length; i++) {

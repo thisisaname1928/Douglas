@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -8,6 +9,30 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+type appVersion struct {
+	VersionInt int    `json:"versionInt"`
+	VersionStr string `json:"versionStr"`
+}
+
+func getVersion(w http.ResponseWriter, _ *http.Request) {
+	var response appVersion
+	encoder := json.NewEncoder(w)
+
+	response.VersionInt = -1
+	response.VersionStr = "BAD_?"
+
+	b, e := os.ReadFile("./appVersion.json")
+
+	if e != nil {
+		encoder.Encode(response)
+		return
+	}
+
+	json.Unmarshal(b, &response)
+
+	encoder.Encode(response)
+}
 
 func favicon(w http.ResponseWriter, r *http.Request) {
 	file, e := os.Open("./app/icon.ico")
@@ -76,6 +101,7 @@ func StartApp() {
 	server.HandleFunc("/TutorialPage", tutorialPage)
 	server.HandleFunc("/TutorialPage/{FILE}", tutorialPageRes)
 	server.HandleFunc("/check", check)
+	server.HandleFunc("/getVersion", getVersion)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }

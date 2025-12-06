@@ -13,3 +13,26 @@ openStButton.addEventListener('click', () => {
 openExButton.addEventListener('click', () => {
     window.location.href = window.location.href.replace("/Home", "/Export")
 });
+
+async function getAppVersion() {
+    res = await fetch("/getVersion", { method: "GET" })
+    resObj = await res.json()
+
+    return resObj
+}
+
+check4NewVersion()
+
+async function check4NewVersion() {
+    try {
+        res = await fetch("https://raw.githubusercontent.com/thisisaname1928/Douglas/refs/heads/master/appVersion.json", { method: "GET" })
+        resOb = await res.json()
+
+        let appVersion = await getAppVersion()
+
+        if (appVersion.versionInt != resOb.versionInt) {
+            document.getElementById("versionNotify").innerHTML = `Đã có phiên bản mới hơn: Douglas_${resOb.versionStr}!`
+        }
+    }
+    catch { }
+}

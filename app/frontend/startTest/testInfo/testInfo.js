@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTestInfo()
 })
 
+async function viewLoop() {
+    while (true) {
+        updateTestInfo()
+        await delay(1000)
+    }
+}
+
 exportCsv.addEventListener('click', async () => {
     csvDat = await exportFileCSV()
 
@@ -64,6 +71,12 @@ async function getCandinateList() {
 
 function checkCanMark(mark, done) {
     if (done) { return mark } else { return "Chưa nộp bài" }
+}
+
+function delay(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
 }
 
 async function updateTestCandinate() {
