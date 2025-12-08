@@ -1,14 +1,47 @@
 import webview
-import socket
+import zipfile
 import time
 import subprocess
 import sys
 import requests
+import os
+import json
 
 host = "localhost"
 port = 8080
 
+def update(path):
+    try:
+        f = zipfile.ZipFile(path, 'r')
+        flist = f.namelist()
+        for i in flist:
+            f.extract(i, path="./")
+        return True
+    except:
+        return False
+    
+def check4Update():
+    try:
+        f = open("./appVersion.json", 'r', encoding='utf-8')
+        dat = json.load(f)
+
+        if dat["shouldUpdate"]:
+            print("updatingg...")
+            r = update('update.zip')
+            if r:
+                dat["shouldUpdate"] = False
+                r = json.dumps(dat)
+                f = open("./appVersion.json", "w", encoding="utf-8")
+                f.write(r)
+                f.close()
+            print("ok")
+    except:
+        print("not ok")
+
 if __name__ == '__main__':
+    check4Update()
+    
+    os._exit(0)
     proccess = subprocess.Popen(["goParsingDocx.exe"])
 
     while True:

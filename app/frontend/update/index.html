@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Douglas</title>
+    <link href="/LivePreview/materialIcon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/LivePreview/styles.css">
+    <link rel="stylesheet" href="/quickEditor/quickEditor.css">
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
+                <label class="page-header">Tải bản cập nhật</label>
+            </div>
+            <button id="modeToggleButton" class="mode-toggle-button">Chế độ tối</button>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+            </div>
+
+
+            <h4 id="updateStatus" style="display: flex;align-items: center;"></h4>
+            <h4 id="downloadStatus" style="display: flex;align-items: center;"><i
+                    class="material-icons icon material-spinner">refresh</i>Đang tải xuống bản cập nhật</h4>
+            <h4 id="status" style="display: flex;align-items: center;"><i
+                    class="material-icons icon material-spinner">refresh</i>Đã xong</h4>
+        </div>
+    </div>
+
+    <script src="/Home/webMode.js"></script>
+    <script src="/update/update.js"></script>
+</body>
+
+</html>

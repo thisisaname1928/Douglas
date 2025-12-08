@@ -11,8 +11,10 @@ import (
 )
 
 type appVersion struct {
-	VersionInt int    `json:"versionInt"`
-	VersionStr string `json:"versionStr"`
+	VersionInt      int    `json:"versionInt"`
+	VersionStr      string `json:"versionStr"`
+	ShouldUpdate    bool   `json:"shouldUpdate"`
+	UpdatePathWin64 string `json:"updatePathWin64"`
 }
 
 func getVersion(w http.ResponseWriter, _ *http.Request) {
@@ -106,6 +108,9 @@ func StartApp() {
 	server.HandleFunc("/quickEditor/{FILE}", quickEditorRouteRes)
 	server.HandleFunc("/API/genAI", genAIAPI)
 	server.HandleFunc("/API/quickPreview", quickPreviewAPI)
+	server.HandleFunc("/update", updatePage)
+	server.HandleFunc("/update/{FILE}", updatePageRes)
+	server.HandleFunc("/downloadUpdate", downloadUpdate)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }
