@@ -234,6 +234,7 @@
             width: 100%;
             border: 1px solid #e0e0e0;
             margin-top: 20px;
+
         }
 
         .popup-card {
@@ -285,12 +286,14 @@
             color: #2c3e50;
             margin-bottom: 15px;
             line-height: 1.4;
+            overflow-wrap: break-word;
         }
 
         .options-list {
             list-style: none;
             padding: 0;
             margin: 0;
+            overflow-wrap: break-word;
         }
 
         .option-item {
@@ -303,6 +306,7 @@
             align-items: center;
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease;
+            overflow-wrap: break-word;
         }
 
         .option-item:hover {
@@ -331,6 +335,7 @@
             color: #34495e;
             font-size: 0.95em;
             line-height: 1.3;
+            overflow-wrap: break-word;
         }
 
         @media (max-width: 700px) {
@@ -644,5 +649,6 @@
         }
 
         .ques_content {
-            white-space: pre;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
         }

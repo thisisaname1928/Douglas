@@ -3,16 +3,27 @@ const createAITest = document.getElementById('createAITest')
 const blackLayer = document.getElementById('blackLayer')
 const closeButton = document.getElementById('closeBtn')
 
-AIModeButton.addEventListener('click', () => { showElement("auroraLayer"); AIMode() })
+AIModeButton.addEventListener('click', () => { AIMode() })
 createAITest.addEventListener('click', async () => {
     numberOfTNQues = parseInt(document.getElementById('numOfTNQues').value)
     numberOfTNDSQues = parseInt(document.getElementById('numOfTNDSQues').value)
     numberOfTLNQues = parseInt(document.getElementById('numOfTLNQues').value)
     testContent = document.getElementById('testContent').value
 
-    //await fetch4AITest(numberOfTNQues, numberOfTNDSQues, numberOfTLNQues, testContent)
-
     hideElement('AIPopup')
+    showElement('loadingPopup')
+    showElement("auroraLayer");
+
+    resObj = await fetch4AITest(numberOfTNQues, numberOfTNDSQues, numberOfTLNQues, testContent)
+
+    if (!resObj.status) {
+        alert(resObj.msg)
+        return
+    }
+
+    document.getElementById('textEditor').value = resObj.content
+
+    hideElement('loadingPopup')
     hideElement('auroraLayer')
 })
 
@@ -36,7 +47,7 @@ async function fetch4AITest(numberOfTNQues, numberOfTNDSQues, numberOfTLNQues, t
         })
     })
 
-    obj = await res.json()
+    return await res.json()
 }
 
 function showElement(e) {

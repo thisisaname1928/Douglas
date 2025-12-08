@@ -1,6 +1,11 @@
 package main
 
-import "github.com/thisisaname1928/goParsingDocx/app"
+import (
+	"fmt"
+
+	"github.com/thisisaname1928/goParsingDocx/app"
+	genaiwrapper "github.com/thisisaname1928/goParsingDocx/genAIWrapper"
+)
 
 func main() {
 
@@ -10,6 +15,12 @@ func main() {
 	// fmt.Println(testsvr.GetIp())
 
 	// s.OpenServer()
+
+	e := genaiwrapper.InitGenAIWrapper()
+
+	if e != nil {
+		fmt.Println("[WARNING]: missing AI API key", e)
+	}
 
 	app.StartApp()
 

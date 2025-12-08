@@ -19,4 +19,5 @@ res.xml
 venv
 *.exe
 dist
+secretKey.json
 build

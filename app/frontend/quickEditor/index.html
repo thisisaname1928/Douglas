@@ -64,7 +64,7 @@
         <div class="topbar">
             <div class="topbar-left">
                 <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
-                <label class="page-header">Trình chỉnh sửa đề AI</label>
+                <label class="page-header">Quick Editor</label>
                 <button id="exportButton" class="mode-toggle-button">Xuất đề</button>
                 <button id="AIModeButton" class="mode-toggle-button">AI Mode</button>
             </div>
@@ -123,6 +123,15 @@
                     <button id="createAITest" class="mode-toggle-button">Tạo</button>
                     <label style="padding-left: 10px;padding-right: 10px;"></label>
                     <button id="closeBtn" class="mode-toggle-button">Đóng</button>
+                </center>
+            </div>
+        </div>
+
+        <div id="loadingPopup" class="hidden-element">
+            <div class="overlay-layer"></div>
+            <div class="popup-ask">
+                <center>
+                    <h4><i class="material-icons back-icon material-spinner">refresh</i>Đang tạo, vui lòng chờ</h4>
                 </center>
             </div>
         </div>
