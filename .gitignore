@@ -21,3 +21,4 @@ venv
 dist
 secretKey.json
 build
+./tmp.json

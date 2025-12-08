@@ -1,6 +1,6 @@
 {
     "versionInt": 3,
-    "versionStr": "alpha1Test",
-    "shouldUpdate": false,
-    "updatePathWin64": "https://raw.githubusercontent.com/thisisaname1928/Douglas/refs/heads/master/appVersion.json"
+    "versionStr": "alpha2Test",
+    "shouldUpdate": true,
+    "updatePathWin64": "https://raw.githubusercontent.com/thisisaname1928/Douglas/refs/heads/master/appVerson.json"
 }

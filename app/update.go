@@ -29,6 +29,8 @@ func downloadUpdate(w http.ResponseWriter, r *http.Request) {
 		Status bool   `json:"status"`
 	}
 
+	os.WriteFile("./tmp.json", []byte{}, os.FileMode(0777))
+
 	encoder := json.NewEncoder(w)
 
 	client := getter.Client{Src: "https://raw.githubusercontent.com/thisisaname1928/Douglas/refs/heads/master/appVersion.json", Dst: "./tmp.json", Mode: getter.ClientModeFile}

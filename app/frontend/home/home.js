@@ -36,7 +36,7 @@ async function check4NewVersion() {
         let appVersion = await getAppVersion()
 
         if (appVersion.versionInt != resOb.versionInt) {
-            document.getElementById("versionNotify").innerHTML = `Đã có phiên bản mới hơn: Douglas_${resOb.versionStr}!`
+            document.getElementById("versionNotify").innerHTML = `Đã có phiên bản mới hơn: Douglas_${resOb.versionStr}!, <a style="color: lightblue;"href="/update">Nhấn vào đây để cập nhật</a>`
         }
     }
     catch { }

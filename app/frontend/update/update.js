@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!res.status) {
             statusMsg.innerHTML = `<i
-                    class="material-icons icon">close</i>Lỗi: ${res.msg}`
+                    class="material-icons icon">close</i>Cập nhật thất bại: ${res.msg}`
             return
         }
 
