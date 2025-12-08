@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/thisisaname1928/goParsingDocx/docx"
 	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
@@ -67,7 +68,8 @@ func genUUID() string {
 }
 
 type GetConfigRequest struct {
-	UUID string `json:"UUID"`
+	UUID       string `json:"UUID"`
+	ExportType string `json:"exportType"`
 }
 
 type ExportRequest struct {
@@ -78,6 +80,7 @@ type ExportRequest struct {
 	Author       string   `json:"author"`
 	Key          string   `json:"key"`
 	Stype        []StypeN `json:"stype"`
+	ExportType   string   `json:"exportType"`
 }
 
 type ExportRespone struct {
@@ -101,7 +104,12 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 			response.Status = false
 			response.Msg = "invalid request"
 		} else {
-			response, _ = getExportConfig(request.UUID)
+			switch request.ExportType {
+			case "useDocx":
+				response, _ = getExportConfig(request.UUID)
+			case "useRawText":
+				response, _ = getExportConfigRawTest(request.UUID)
+			}
 		}
 
 		encoder := json.NewEncoder(w)
@@ -115,6 +123,7 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 		if e != nil {
 			response.Status = false
 			response.Msg = fmt.Sprintf("%v", e)
+			return
 		}
 
 		var testStructure []dou.TestStructure
@@ -132,7 +141,39 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 			useEncryption = true
 		}
 
-		dou.Export("./app/tests/"+request.UUID+".dat", "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+		switch request.ExportType {
+		case "useDocx":
+			e = dou.Export("./app/tests/"+request.UUID+".dat", "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+			if e != nil {
+				response.Msg = "invalid docx file"
+				response.Status = false
+
+				encoder := json.NewEncoder(w)
+				encoder.Encode(&response)
+				return
+			}
+		case "useRawText":
+			b, e := os.ReadFile("./app/tests/" + request.UUID + ".dat")
+
+			if e != nil {
+				response.Msg = "invalid docx file"
+				response.Status = false
+
+				encoder := json.NewEncoder(w)
+				encoder.Encode(&response)
+				return
+			}
+
+			e = dou.ExportWithFluid(docx.String2Fluid(string(b)), "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+			if e != nil {
+				response.Msg = "invalid docx file"
+				response.Status = false
+
+				encoder := json.NewEncoder(w)
+				encoder.Encode(&response)
+				return
+			}
+		}
 
 		response.Msg = "ok"
 		response.Status = true
@@ -190,6 +231,33 @@ func getExportConfig(UUID string) (ExportConfigResponse, error) {
 
 		return response, e
 	}
+
+	response.Status = true
+	response.NumberOfQuestions = uint64(len(res))
+	for _, v := range res {
+		curIdx := search4Stype4Cfg(response.Stype, v.Stype)
+		if curIdx != -1 { // there are some questions already have that stype in response
+			response.Stype[curIdx].N++
+		} else {
+			response.Stype = append(response.Stype, StypeN{v.Stype, 1, 0})
+		}
+	}
+
+	return response, nil
+}
+
+func getExportConfigRawTest(UUID string) (ExportConfigResponse, error) {
+	var response ExportConfigResponse
+	resp, e := os.ReadFile("./app/tests/" + UUID + ".dat")
+	if e != nil {
+		response.Status = false
+		response.Msg = fmt.Sprintf("%v", e)
+
+		return response, e
+	}
+
+	tokens := docx.Lex(docx.String2Fluid(string(resp)))
+	res := docx.BetterParse(tokens)
 
 	response.Status = true
 	response.NumberOfQuestions = uint64(len(res))

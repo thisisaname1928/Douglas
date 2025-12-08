@@ -1,0 +1,174 @@
+package app
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+
+	"github.com/thisisaname1928/goParsingDocx/docx"
+)
+
+var GEMINI_API_KEY = "AIzaSyAqfmYjzo3lsMl_Y86TV9Hw5AZoz3xioV8"
+
+func quickEditorRouteRes(w http.ResponseWriter, r *http.Request) {
+	addResource(w, r, "./app/frontend/quickEditor/")
+}
+
+func quickEditorRoute(w http.ResponseWriter, r *http.Request) {
+	file, e := os.Open("./app/frontend/quickEditor/index.html")
+	if e != nil {
+		w.Write([]byte{})
+	}
+	f, e := io.ReadAll(file)
+
+	if e == nil {
+		w.Write(f)
+	}
+}
+
+type GeminiPart struct {
+	Texts []string `json:"text"`
+}
+
+type GeminiContent struct {
+	Parts []GeminiPart `json:"parts"`
+}
+
+type GeminiRequest struct {
+	Contents []GeminiContent `json:"contents"`
+}
+
+type GeminiCandinates struct {
+	Content GeminiContent `json:"content"`
+}
+
+type GeminiResponse struct {
+	Candinates GeminiCandinates `json:"candinates"`
+}
+
+type Root struct {
+	Candidates    []Candidate   `json:"candidates"`
+	UsageMetadata UsageMetadata `json:"usageMetadata"`
+	ModelVersion  string        `json:"modelVersion"`
+	ResponseID    string        `json:"responseId"`
+}
+
+type Candidate struct {
+	Content      Content `json:"content"`
+	FinishReason string  `json:"finishReason"`
+	AvgLogprobs  float64 `json:"avgLogprobs"`
+}
+
+type Content struct {
+	Parts []Part `json:"parts"`
+	Role  string `json:"role"`
+}
+
+type Part struct {
+	Text string `json:"text"`
+}
+
+type UsageMetadata struct {
+	PromptTokenCount     int `json:"promptTokenCount"`
+	CandidatesTokenCount int `json:"candidatesTokenCount"`
+	TotalTokenCount      int `json:"totalTokenCount"`
+}
+
+func call4AI(prompt string, key string) (string, error) {
+	jsonContent := `{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "` + prompt + `"
+          }
+        ]
+      }
+    ]
+  }`
+
+	requestBody := bytes.NewBuffer([]byte(jsonContent))
+
+	resquest, _ := http.NewRequest("POST", "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", requestBody)
+
+	resquest.Header.Add("X-goog-api-key", key)
+	resquest.Header.Add("Content-Type", "application/json")
+
+	client := http.Client{}
+
+	res, _ := client.Do(resquest)
+
+	fmt.Println(res)
+
+	decoder := json.NewDecoder(res.Body)
+
+	var response Root
+
+	decoder.Decode(&response)
+
+	fmt.Println(response)
+
+	return response.Candidates[0].Content.Parts[0].Text, nil
+}
+
+func genAIAPI(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		NumberOfQuesTN   int    `json:"numberOfQuesTN"`
+		NumberOfQuesTNDS int    `json:"numberOfQuesTNDS"`
+		NumberOfQuesTLN  int    `json:"numberOfQuesTLN"`
+		Content          string `json:"content"`
+	}
+
+	var response struct {
+		Status bool   `json:"status"`
+		Msg    string `json:"msg"`
+		Res    string `json:"content"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		response.Status = false
+		response.Msg = "ERR_BAD_REQUEST"
+		encoder.Encode(response)
+	}
+
+	response.Res, _ = call4AI("Tôi là giáo viên tôi muốn tạo "+fmt.Sprint(request.NumberOfQuesTN)+" câu trắc nghiệm, "+fmt.Sprint(request.NumberOfQuesTNDS)+" câu trắc nghiệm đúng sai, "+fmt.Sprint(request.NumberOfQuesTLN)+" câu trả lời ngắn cho học sinh bao gồm  nội dung trong kiến thức về "+request.Content+" hãy trả về cho tôi theo đúng template ko giải thích hay nói gì thêm làm lệch template. Template có dạng Tất cả câu hỏi bắt đầu bằng chữ 'Câu' và phải bắt buộc cho 'C' viết hoa.Các đáp án của câu hỏi trắc nghiệm bắt đầu bằng A. B. C. D. và bắt buộc phải có 4 đáp án.Các đáp án của câu hỏi trắc nghiệm đúng sai bắt đầu bằng a) b) c) d) và bắt buộc phải có 4 đáp án.Đáp án của trắc nghiệm trả lời ngắn nằm ở phía sau cặp từ tln_ans: ...Về đáp án đúng của câu trắc nghiệm và trắc nghiệm đúng sai được tô vàng chữ cái đại diện cho đáp án.Nội dung câu hỏi có hỗ trợ định dạng bằng html, và bắt buộc đoạn code định dạng không có bất kì định dạng nào từ trình soạn thảo văn bản.Loại câu hỏi được đặt trong ngoặc vuông phía sau số thứ tự câu hỏi. VD: Câu 1 [LOAI_1]: là câu hỏi có loại là LOAI_1.", GEMINI_API_KEY)
+	encoder.Encode(response)
+}
+
+func quickPreviewAPI(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Content string `json:"content"`
+	}
+
+	var response GenJsonResponse
+
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		response.Status = false
+		response.Msg = "ERR_BAD_REQUEST"
+		encoder.Encode(response)
+		return
+	}
+
+	fluids := docx.String2Fluid(request.Content)
+
+	tokens := docx.Lex(fluids)
+	ques := docx.BetterParse(tokens)
+
+	response.Questions = ques
+	response.Msg = "ok"
+	response.Status = true
+	encoder.Encode(response)
+}

@@ -18,6 +18,7 @@ const (
 	TOKEN_TN_ANSWER_KEY   = 9
 	TOKEN_TNDS_ANSWER_KEY = 10
 	TOKEN_TLN_ANSWER_KEY  = 11
+	TOKEN_ANSWER_MARK     = 12
 )
 
 const (
@@ -63,24 +64,24 @@ func isTNDSAnswerKey(src []rune, index int) bool {
 
 var TLN_RUNE_VAL = []rune(TOKEN_TLN_ANSWER_VALUE)
 
-func isTLNAnswerKey(src []rune, index int) bool {
+// func isTLNAnswerKey(src []rune, index int) bool {
 
-	if index+1+len(TOKEN_TLN_ANSWER_VALUE) >= len(src) {
-		return false
-	}
+// 	if index+1+len(TOKEN_TLN_ANSWER_VALUE) >= len(src) {
+// 		return false
+// 	}
 
-	if src[index+len(TOKEN_TLN_ANSWER_VALUE)+1] != ':' {
-		return false
-	}
+// 	if src[index+len(TOKEN_TLN_ANSWER_VALUE)+1] != ':' {
+// 		return false
+// 	}
 
-	for i := 0; i < len(TLN_RUNE_VAL); i++ {
-		if src[i+index] != TLN_RUNE_VAL[i] {
-			return false
-		}
-	}
+// 	for i := 0; i < len(TLN_RUNE_VAL); i++ {
+// 		if src[i+index] != TLN_RUNE_VAL[i] {
+// 			return false
+// 		}
+// 	}
 
-	return true
-}
+// 	return true
+// }
 
 func HasPrefix(src []rune, index int, pref string) bool {
 

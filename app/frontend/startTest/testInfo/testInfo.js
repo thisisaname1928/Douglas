@@ -102,17 +102,18 @@ let testInfo
 async function updateTestInfo() {
     testInfo = await getTestInfo()
 
-    document.getElementById("testName").innerHTML = `${testInfo.name}`
-    document.getElementById("candinate").innerHTML = `Số lượt làm bài: ${testInfo.numberOfCandinate}`
-    document.getElementById("testUUID").innerHTML = `Mã đề thi: ${testInfo.uuid}`
+    document.getElementById("testName").innerHTML = `<lable>${testInfo.name}</label>`
+    document.getElementById("candinate").innerHTML = `<b>Số lượt làm bài:</b> ${testInfo.numberOfCandinate}`
+    document.getElementById("testUUID").innerHTML = `<b>Mã đề thi:</b> ${testInfo.uuid}`
 
     updateTestCandinate()
 
     if (testInfo.isStarted) {
         ip = await getTestIp()
-        document.getElementById("testName").innerHTML += ` <a style="text-decoration:none ;color: lightgreen; cursor: pointer;" onclick="window.open('http:///${ip}', '_blank');">${ip}</a>`
-        document.getElementById("testName").style = "color: lightgreen;"
-        document.getElementById("testStatus").innerHTML = "Trạng thái bài kiểm tra: đang được mở"
+        document.getElementById("testName").innerHTML = `<lable style="color:lightgreen;">${testInfo.name}</label>`
+        document.getElementById("testStatus").innerHTML = "<b>Trạng thái bài kiểm tra:</b> đang được mở"
+        document.getElementById("testAddress").innerHTML = `<a style="cursor: pointer;" onclick="window.open('http:///${ip}', '_blank');"><b>Làm bài tại:</b> <u style="color: lightblue;">${ip}</u></a> <i id="copyButton" onclick="copyToClipBoard('${ip}')" class="material-icons" style="font-size: 18px;cursor: pointer;margin-top:3px;">content_copy</i>`
+
         justAButton.innerHTML = "Dừng bài kiểm tra"
 
         justAButton.addEventListener('click', async () => {
@@ -120,10 +121,18 @@ async function updateTestInfo() {
             location.reload()
         })
     } else {
-        document.getElementById("testStatus").innerHTML = "Trạng thái bài kiểm tra: chưa được mở"
+        document.getElementById("testStatus").innerHTML = "<b>Trạng thái bài kiểm tra:</b> chưa được mở"
         justAButton.addEventListener('click', async () => {
             startATest()
             location.reload()
         })
     }
+}
+
+async function copyToClipBoard(address) {
+    navigator.clipboard.writeText(address);
+
+    document.getElementById("copyButton").innerText = "check"
+    await delay(1000)
+    document.getElementById("copyButton").innerText = "content_copy"
 }

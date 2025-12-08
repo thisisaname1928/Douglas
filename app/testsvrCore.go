@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/thisisaname1928/goParsingDocx/testsvr"
 )
@@ -138,11 +139,13 @@ func listTest() ([]testInfo, error) {
 }
 
 type candinate struct {
-	Name   string  `json:"name"`
-	Class  string  `json:"class"`
-	IsDone bool    `json:"isDone"`
-	Mark   float64 `json:"mark"`
-	UUID   string  `json:"uuid"`
+	Name      string    `json:"name"`
+	Class     string    `json:"class"`
+	IsDone    bool      `json:"isDone"`
+	Mark      float64   `json:"mark"`
+	UUID      string    `json:"uuid"`
+	StartTime time.Time `json:"startTime"`
+	EndTime   time.Time `json:"endTime"`
 }
 
 func getCandinateList(uuid string) ([]candinate, error) {
@@ -177,7 +180,7 @@ func getCandinateList(uuid string) ([]candinate, error) {
 		if e != nil {
 			return []candinate{}, e
 		}
-		var cur = candinate{info.Name, info.Class, info.Done, mark, strings.ReplaceAll(v.Name(), ".json", "")}
+		var cur = candinate{info.Name, info.Class, info.Done, mark, strings.ReplaceAll(v.Name(), ".json", ""), info.StartTime, info.EndTime}
 		candinates = append(candinates, cur)
 	}
 
@@ -191,12 +194,12 @@ func exportCsv(uuid string) (string, error) {
 		return "", e
 	}
 
-	output := "Số thứ tự,Tên,Lớp,Điểm,Mã bài làm"
+	output := "Số thứ tự,Tên,Lớp,Điểm,Mã bài làm,Thời gian bắt đầu, Thời gian kết thúc"
 
 	c := 1
 	for _, v := range candinates {
 		if v.IsDone {
-			output += "\n" + fmt.Sprintf("%v,\"%v\",\"%v\",%v,\"%v\"", c, v.Name, v.Class, v.Mark, v.UUID)
+			output += "\n" + fmt.Sprintf("%v,\"%v\",\"%v\",%v,\"%v\",\"%v\",\"%v\"", c, v.Name, v.Class, v.Mark, v.UUID, v.StartTime, v.EndTime)
 			c++
 		}
 	}

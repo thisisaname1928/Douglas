@@ -17,3 +17,6 @@ test.csv
 testraw.xml
 res.xml
 venv
+*.exe
+dist
+build

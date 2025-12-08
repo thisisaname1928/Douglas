@@ -102,6 +102,10 @@ func StartApp() {
 	server.HandleFunc("/TutorialPage/{FILE}", tutorialPageRes)
 	server.HandleFunc("/check", check)
 	server.HandleFunc("/getVersion", getVersion)
+	server.HandleFunc("/quickEditor", quickEditorRoute)
+	server.HandleFunc("/quickEditor/{FILE}", quickEditorRouteRes)
+	server.HandleFunc("/API/genAI", genAIAPI)
+	server.HandleFunc("/API/quickPreview", quickPreviewAPI)
 	fmt.Println("dia chi web app: http://localhost:8080/Home")
 	http.ListenAndServe("localhost:8080", server)
 }

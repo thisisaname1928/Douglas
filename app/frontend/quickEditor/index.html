@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Douglas - Quick Editor</title>
+    <link href="/LivePreview/materialIcon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/LivePreview/styles.css">
+    <link rel="stylesheet" href="/quickEditor/quickEditor.css">
+    <style>
+        /* body {
+            margin: 0;
+            height: 100vh;
+            background: #0a0f1f;
+            overflow: hidden;
+        } */
+
+        .aurora {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        .blob {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle at center,
+                    rgba(120, 200, 255, 0.55),
+                    rgba(140, 80, 255, 0.0));
+            filter: blur(80px);
+            animation: move 4s infinite ease-in-out alternate;
+            mix-blend-mode: screen;
+        }
+
+        .blob:nth-child(2) {
+            background: radial-gradient(circle at center,
+                    rgba(255, 100, 180, 0.45),
+                    rgba(80, 0, 150, 0));
+            animation-duration: 12s;
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(-20%, -10%) scale(1);
+            }
+
+            50% {
+                transform: translate(35%, 10%) scale(1.2);
+            }
+
+            100% {
+                transform: translate(10%, 40%) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
+                <label class="page-header">Trình chỉnh sửa đề AI</label>
+                <button id="exportButton" class="mode-toggle-button">Xuất đề</button>
+                <button id="AIModeButton" class="mode-toggle-button">AI Mode</button>
+            </div>
+
+
+            <button id="modeToggleButton" class="mode-toggle-button">Chế độ tối</button>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+            </div>
+            <div class="split-container">
+                <div class="quickEditor-panel">
+                    <center>
+                        <h4>Khung nhập văn bản</h4>
+                    </center>
+                    <textarea id="textEditor" class="editor-panel"></textarea>
+                </div>
+                <div class="quickEditor-panel">
+                    <center>
+                        <h4>Bản xem trước</h4>
+                    </center>
+                    <div class="preview-panel">
+                        <div id="questions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="AIPopup" class="hidden-element">
+            <div class="overlay-layer" id="blackLayer"></div>
+            <div class="popup-ask">
+                <center>
+                    <h4>Trình tạo đề AI</h4>
+                </center>
+
+                <form>
+                    <label for="numOfTNQues">Số câu trắc nghiệm: </label>
+                    <br><br>
+                    <input id="numOfTNQues" class="config-input">
+                    <br><br>
+                    <label for="numOfTNDSQues">Số câu trắc nghiệm đúng sai: </label>
+                    <br><br>
+                    <input id="numOfTNDSQues" class="config-input">
+                    <br><br>
+                    <label for="numOfTLNQues">Số câu trắc nghiệm trả lời ngắn: </label>
+                    <br><br>
+                    <input id="numOfTLNQues" class="config-input">
+                    <br><br>
+                    <label for="testContent">Nội dung đề: </label>
+                    <br><br>
+                    <textarea id="testContent" class="config-input"></textarea>
+                </form>
+                <br><br>
+                <center>
+                    <button id="createAITest" class="mode-toggle-button">Tạo</button>
+                    <label style="padding-left: 10px;padding-right: 10px;"></label>
+                    <button id="closeBtn" class="mode-toggle-button">Đóng</button>
+                </center>
+            </div>
+        </div>
+
+
+        <div id="auroraLayer" class="aurora hidden-element">
+            <div class="blob"></div>
+            <div class="blob"></div>
+        </div>
+        <script src="/quickEditor/quickEditor.js"></script>
+        <script src="/quickEditor/AIMode.js"></script>
+</body>
+
+</html>

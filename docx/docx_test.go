@@ -12,16 +12,12 @@ func TestCopyFluid(t *testing.T) {
 }
 
 func TestDocx(t *testing.T) {
-
-	fluid, e := Parse2Fluid("C:\\Users\\nguye\\Downloads\\Document 1 (1).docx")
-
-	if e != nil {
-		panic(e)
-	}
-
+	//fluid, _ := Parse2Fluid("C:\\Users\\nguye\\OneDrive\\Documents\\Câu_1.docx")
+	fluid := String2Fluid("Câu * 1: 1        23. *a) Dap          an A=A.*A. b) Dap An B *c) Dap an C d) Dap an D")
 	//return
 	//sf := CopyFluid(fluid[0], 0, 5)
 	tokens := Lex(fluid)
+	fmt.Println(tokens)
 
 	for _, v := range tokens {
 		switch v.Type {
@@ -47,16 +43,18 @@ func TestDocx(t *testing.T) {
 			fmt.Print("TOKEN_TLN_ANSWER_KEY ")
 		case TOKEN_TNDS_ANSWER_KEY:
 			fmt.Print("TOKEN_TNDS_ANSWER_KEY ")
+		case TOKEN_ANSWER_MARK:
+			fmt.Print("TOKEN_ANSWER_MARK ")
 		}
 	}
 
-	// ques := BetterParse(tokens)
-	// ex := ques[3]
+	ques := BetterParse(tokens)
+	ex := ques[0]
 
-	// fmt.Println("\n", ex.Content)
-	// fmt.Println("\n", ex.TrueAnswer)
-	// fmt.Println("\nA.", ex.Answer[0])
-	// fmt.Println("\nB.", ex.Answer[1])
-	// fmt.Println("\nC.", ex.Answer[2])
-	// fmt.Println("\nD.", ex.Answer[3])
+	fmt.Println("\n", ex.Content)
+	fmt.Println("\n", ex.TrueAnswer)
+	fmt.Println("\nA.", ex.Answer[0])
+	fmt.Println("\nB.", ex.Answer[1])
+	fmt.Println("\nC.", ex.Answer[2])
+	fmt.Println("\nD.", ex.Answer[3])
 }

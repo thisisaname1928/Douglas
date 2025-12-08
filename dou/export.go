@@ -214,3 +214,88 @@ func Export(input string, output string, author string, testDuration uint64, use
 
 	return nil
 }
+
+func ExportWithFluid(fluid []docx.FluidString, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string) error {
+	// make sure...
+	ConvertPath(&output)
+
+	var ques []docx.Question = docx.BetterParse(docx.Lex(fluid))
+
+	// parse questions into better type
+	var douQues []DouQuestion
+	for _, v := range ques {
+		index := search4Stype(douQues, v.Stype)
+		if index == -1 { // there is no stype like that
+			var currentDouQues DouQuestion
+			currentDouQues.Stype = v.Stype
+			currentDouQues.Question = append(currentDouQues.Question, v)
+			douQues = append(douQues, currentDouQues)
+		} else {
+			douQues[index].Question = append(douQues[index].Question, v)
+		}
+	}
+
+	// convert to json
+	var dou DouData
+	dou.Questions = douQues
+	dou.Revision = DOU_REVISION_1
+	dou.TestDuration = testDuration
+
+	dou.UseTestStructure = useTestStructure
+	if useTestStructure {
+		dou.TestStruct = testStructure
+	}
+
+	jsonQuestionData, e := json.Marshal(&dou)
+	if e != nil {
+		return e
+	}
+
+	// pack into a zip
+	archive, e := os.Create(output)
+	if e != nil {
+		return e
+	}
+	defer archive.Close()
+	writer := zip.NewWriter(archive)
+
+	// copy jsonQuestionData
+	w, e := writer.Create("data.json")
+	if e != nil {
+		return e
+	}
+
+	if useEncryption {
+		jsonQuestionData, e = security.Encrypt(jsonQuestionData, key)
+		if e != nil {
+			return e
+		}
+	}
+
+	io.Copy(w, bytes.NewReader(jsonQuestionData))
+
+	// write dou info
+	var info DouInfo
+	info.Revision = DOU_REVISION_1
+	info.Author = author
+	info.Encrypted = useEncryption
+
+	if useEncryption {
+		info.Key = security.EncryptKey(key)
+	}
+
+	jsonDouInfo, e := json.Marshal(&info)
+	if e != nil {
+		return e
+	}
+	w, e = writer.Create("info.json")
+	if e != nil {
+		return e
+	}
+	io.Copy(w, bytes.NewReader(jsonDouInfo))
+
+	// end
+	writer.Close()
+
+	return nil
+}

@@ -60,6 +60,50 @@ func livePreviewRes(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// allow upload file with path
+func internalUploadAPI(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Path string `json:"path"`
+		UUID string `json:"UUID"`
+	}
+
+	var response struct {
+		Status bool   `json:"status"`
+		Msg    string `json:"msg"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+	e := decoder.Decode(&request)
+	if e != nil {
+		response.Msg = "ERR_FILE_NOT_FOUND"
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	f, e := os.ReadFile(request.Path)
+
+	if e != nil {
+		response.Msg = "ERR_FILE_NOT_FOUND"
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	e = os.WriteFile("./app/tests/"+request.UUID+".dat", f, os.FileMode(0777))
+	if e != nil {
+		response.Msg = "INTERNAL_ERR"
+		response.Status = false
+		encoder.Encode(response)
+		return
+	}
+
+	response.Msg = "ok"
+	response.Status = true
+	encoder.Encode(response)
+}
+
 type GenJsonAPIRequest struct {
 	Path string `json:"path"`
 }
@@ -67,12 +111,14 @@ type GenJsonAPIRequest struct {
 type GenJsonResponse struct {
 	Status    bool            `json:"status"`
 	Error     string          `json:"error"`
+	Msg       string          `json:"msg"`
 	Questions []docx.Question `json:"questions"`
 }
 
 func livePreviewAPI(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	if vars["NAME"] == "genJson" {
+	switch vars["NAME"] {
+	case "genJson":
 		decoder := json.NewDecoder(r.Body)
 		var request GenJsonAPIRequest
 		decoder.Decode(&request)
@@ -90,6 +136,8 @@ func livePreviewAPI(w http.ResponseWriter, r *http.Request) {
 			response.Questions = res
 		}
 		encoder.Encode(&response)
+	case "internalUploadAPI":
+		internalUploadAPI(w, r)
 	}
 }
 

@@ -28,6 +28,65 @@ func calLen(inp string) int {
 	return len([]rune(inp))
 }
 
+func isAnswerKey(ch rune, ch2 rune) bool {
+	if ch == 'A' || ch == 'B' || ch == 'C' || ch == 'D' {
+		if ch2 == '.' {
+			return true
+		}
+	}
+
+	if ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' {
+		if ch2 == ')' {
+			return true
+		}
+	}
+
+	return false
+}
+
+func removeRune(s []rune, i int) []rune {
+	return append(s[:i], s[i+1:]...)
+}
+
+func String2Fluid(content string) []FluidString {
+	var res []FluidString
+	aRune := []rune(content)
+
+	for i := 0; i < len(aRune); {
+		curRes := ""
+
+		for aRune[i] != '\n' {
+			curRes += string(aRune[i])
+			i++
+
+			if i >= len(aRune) {
+				break
+			}
+		}
+
+		aaRune := []rune(curRes)
+		var prop []FluidProperty
+
+		for k := 0; k < len(aaRune)-3; {
+			if aaRune[k] == '*' && aaRune[k+3] == ' ' && isAnswerKey(aaRune[k+1], aaRune[k+2]) {
+				aaRune = removeRune(aaRune, k)
+				prop = append(prop, FluidProperty{Start: k, End: k + 1, Property: []Prop{{Marked, "yellow"}}})
+				k += 2
+			} else {
+				k++
+			}
+		}
+
+		curRes = string(aaRune)
+
+		res = append(res, FluidString{Text: curRes, Properties: prop})
+
+		i++
+	}
+
+	return res
+}
+
 func MakeFluidStringInstance(fluid FluidString) FluidString {
 	var res FluidString
 	res.Text = fluid.Text[:]

@@ -3,6 +3,7 @@ const body = document.body;
 const filePathInput = document.getElementById('filePathInput')
 const msg = document.getElementById('msg')
 const questions = document.getElementById('questions')
+const exportButton = document.getElementById('exportButton')
 
 document.addEventListener('DOMContentLoaded', () => {
     const savedMode = localStorage.getItem('theme');
@@ -42,6 +43,8 @@ function transTNAnswer(A, B, C, D) {
     if (D) {
         return 'D'
     }
+
+    return 'Chưa xác định'
 }
 
 function transTNDSAnswer(A, B, C, D) {
@@ -94,12 +97,16 @@ function getTnAns(sheet) {
 
 function prepareQuestions(json) {
     if (!json.status) {
-        msg.innerText = json.error
         return;
     }
-    msg.innerText = ""
 
     ques = ""
+
+    if (!json.questions || json.questions.length == 0) {
+        questions.innerHTML = ''
+        return
+    }
+
     for (i = 0; i < json.questions.length; i++) {
         if (json.questions[i].type == 0x12) {
             ques += `<div class="question-card">
@@ -170,29 +177,13 @@ function fetchForQuestions() {
     return fetch('/LivePreview/API/genJson', { method: 'POST', body: JSON.stringify({ path: filePathInput.value }) }).then((r) => { r.json().then((json) => prepareQuestions(json)) })
 }
 
-async function getUUID() {
-    response = await fetch("/Export/API/genUUID", { method: "POST" })
-    res = await response.text()
+async function fetch4Questions() {
+    textContent = document.getElementById("textEditor").value
 
-    return await res
-}
+    res = await fetch("/API/quickPreview", { method: "POST", body: JSON.stringify({ content: textContent }) })
+    obj = await res.json()
 
-async function internalUploadFileAPI(path) {
-    UUID = await getUUID()
-
-    res = await fetch("/LivePreview/API/internalUploadAPI", { method: "POST", body: JSON.stringify({ path: path, UUID: UUID }) })
-    resJ = await res.json()
-
-    if (!resJ.status) {
-        if (resJ.msg == "ERR_FILE_NOT_FOUND") {
-            alert("Đường dẫn nhập bị sai!")
-        } else {
-            alert("Có lỗi trong quá trình tìm file!")
-        }
-        return
-    }
-
-    window.location.href = window.location.href.replace("/LivePreview", "/Export/Config/UUID/" + UUID + "?exportType=useDocx")
+    prepareQuestions(obj)
 }
 
 function sleep(ms) {
@@ -203,6 +194,30 @@ livePreviewLoop()
 async function livePreviewLoop() {
     while (true) {
         await sleep(700);
-        fetchForQuestions()
+        fetch4Questions()
     }
 }
+
+function uploadFile(data, uuid) {
+    var hdrs = new Headers()
+    hdrs.append("uuid", uuid)
+    hdrs.append("Content-Type", "application/octet-stream")
+    return fetch("/Export/API/upload", { method: "POST", headers: hdrs, body: data })
+}
+
+async function getUUID() {
+    response = await fetch("/Export/API/genUUID", { method: "POST" })
+    res = await response.text()
+
+    return await res
+}
+
+
+exportButton.addEventListener('click', async () => {
+    textContent = document.getElementById('textEditor').value
+    uuid = await getUUID()
+
+    await uploadFile(textContent, uuid)
+
+    window.location.href = window.location.href.replace("/quickEditor", "/Export/Config/UUID/" + uuid + "?exportType=useRawText")
+})

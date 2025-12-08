@@ -59,7 +59,7 @@ async function handleFile(file) {
     try {
         data = await readFile(file)
         UUID = await uploadWrapper(data)
-        window.location.href = window.location.href.replace("/Export", "/Export/Config/UUID/" + UUID)
+        window.location.href = window.location.href.replace("/Export", "/Export/Config/UUID/" + UUID + "?exportType=useDocx")
 
     } catch (error) {
         return;

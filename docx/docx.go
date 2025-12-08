@@ -101,8 +101,6 @@ func Parse(path string) (Document, error) {
 	documentXML, e := DecompressFile(path, "word/document.xml")
 	documentXML = []byte(StripTag(string(documentXML)))
 
-	os.WriteFile("./test.xml", documentXML, os.ModePerm.Perm())
-
 	if e != nil {
 		return doc, invalidDocxFile
 	}

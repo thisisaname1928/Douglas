@@ -9,7 +9,7 @@ host = "localhost"
 port = 8080
 
 if __name__ == '__main__':
-    proccess = subprocess.Popen(["go", "run", "."])
+    proccess = subprocess.Popen(["goParsingDocx.exe"])
 
     while True:
         try:
@@ -20,9 +20,9 @@ if __name__ == '__main__':
             time.sleep(0.5)
     
     webview.settings['ALLOW_DOWNLOADS'] = True
-    webview.create_window(title="Douglas", url=f'http://{host}:{port}/Home')
+    webview.create_window(title="Douglas", url=f'http://{host}:{port}/Home', width=1424, height=700)
 
-    webview.start()
+    webview.start(icon="./app/icon.ico")
 
     if sys.platform == "win32":
         proccess.terminate()

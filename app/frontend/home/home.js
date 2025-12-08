@@ -1,6 +1,7 @@
 const openLPButton = document.getElementById('openLP')
 const openExButton = document.getElementById('openEx')
 const openStButton = document.getElementById('openSt')
+const openQEButton = document.getElementById('openQE')
 
 openLPButton.addEventListener('click', () => {
     window.location.href = window.location.href.replace("/Home", "/LivePreview")
@@ -12,6 +13,10 @@ openStButton.addEventListener('click', () => {
 
 openExButton.addEventListener('click', () => {
     window.location.href = window.location.href.replace("/Home", "/Export")
+});
+
+openQEButton.addEventListener('click', () => {
+    window.location.href = window.location.href.replace("/Home", "/quickEditor")
 });
 
 async function getAppVersion() {

@@ -4,16 +4,9 @@ const configBox = document.getElementById('configBox')
 const exportButton = document.getElementById('exp')
 const body = document.body;
 tmp = window.location.href.split("/")
-const UUID = tmp[tmp.length - 1]
-
-exportButton.addEventListener('click', () => {
-    expData = getConfig()
-    if (!expData.status) {
-        alert(expData.msg)
-    }
-
-    exportTest(expData)
-})
+let UUID = tmp[tmp.length - 1]
+const parsedUrl = new URL(location.href)
+const parseExportType = parsedUrl.searchParams.get("exportType")
 
 
 modeToggleButton.addEventListener('click', () => {
@@ -37,6 +30,31 @@ document.addEventListener('DOMContentLoaded', () => {
         modeToggleButton.textContent = 'Chế độ tối';
     }
 
+    if (!parseExportType) {
+        configBox.innerHTML = 'Lỗi không xác định, vui lòng xuất lại đề!'
+        return
+    }
+
+    res = ""
+    for (i = 0; i < UUID.length; i++) {
+        if (UUID[i] == '?') {
+            break
+        }
+
+        res += UUID[i]
+    }
+
+    UUID = res
+
+    exportButton.addEventListener('click', () => {
+        expData = getConfig()
+        if (!expData.status) {
+            alert(expData.msg)
+        }
+
+        exportTest(expData)
+    })
+
     initConf()
 })
 
@@ -57,7 +75,11 @@ async function initConf() {
     confObj = obj
 
     if (!obj.status) {
-        msg.innerText = obj.msg
+        if (obj.msg == "invalid docx file") {
+            msg.innerText = "File được xuất không hợp lệ!"
+        } else {
+            msg.innerText = obj.msg
+        }
         return
     }
 
@@ -106,7 +128,7 @@ function getConfig() {
         stype.push({ stype: confObj.stype[i].stype, N: numberOfQuesPerTest, Point: pointPerQues })
     }
 
-    return { status: true, UUID: UUID, testDuration: testDuration, msg: "ok", author: author, key: key, stype: stype }
+    return { status: true, UUID: UUID, testDuration: testDuration, msg: "ok", author: author, key: key, stype: stype, exportType: parseExportType }
 }
 
 async function exportTest(obj) {
@@ -127,7 +149,7 @@ async function exportTest(obj) {
 }
 
 function fetch4ExportConfig() {
-    res = fetch("/Export/API/getConfig", { method: "POST", body: JSON.stringify({ UUID: UUID }) })
+    res = fetch("/Export/API/getConfig", { method: "POST", body: JSON.stringify({ UUID: UUID, exportType: parseExportType }) })
     return res
 }
 

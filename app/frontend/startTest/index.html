@@ -16,6 +16,7 @@
             <div class="topbar-left">
                 <i class="material-icons back-icon" onclick="history.back()">arrow_back</i>
                 <label class="page-header">Quản lí bài kiểm tra</label>
+                <button class="mode-toggle-button" id="uploadFile">Tải đề lên</button>
             </div>
 
             <button id="modeToggleButton" class="mode-toggle-button">Chế độ tối</button>
@@ -23,14 +24,14 @@
 
         <div class="main-content">
             <div class="content-header">
-                <h2>Danh sách đề thi</h2>
-                <div class="button-container-left">
-                    <input type="file" id="fileInput" hidden>
-                    <button class="btn" id="uploadFile">Tải đề lên</button>
-                </div>
-            </div>
-            <div id="testList">
-                <div class="scrollable-box" id="testListBox">
+                <center>
+                    <h2>Danh sách đề thi</h2>
+                </center>
+                <input type="file" id="fileInput" hidden>
+
+                <div id="testList">
+                    <div class="scrollable-box" id="testListBox">
+                    </div>
                 </div>
             </div>
             <div>
