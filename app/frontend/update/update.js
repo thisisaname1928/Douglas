@@ -1,4 +1,6 @@
 const updateStatus = document.getElementById('updateStatus')
+const downloadStatus = document.getElementById('downloadStatus')
+const statusMsg = document.getElementById('status')
 
 document.addEventListener('DOMContentLoaded', async () => {
     updateStatus.innerHTML = `<i
@@ -13,11 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateStatus.innerHTML = `<i
                     class="material-icons icon">check</i>Có bản cập nhật mới: Douglas_${res}`
 
+        downloadStatus.innerHTML = `<i
+                    class="material-icons icon material-spinner">refresh</i>Đang tải xuống bản cập nhật`
+
         res = await update()
 
+        downloadStatus.innerHTML = `<i
+                    class="material-icons icon">check</i>Đang tải xuống bản cập nhật`
+
         if (!res.status) {
-            alert(res.msg)
+            statusMsg.innerHTML = `<i
+                    class="material-icons icon">close</i>Lỗi: ${res.msg}`
+            return
         }
+
+        statusMsg.innerHTML = `<i
+                    class="material-icons icon">check</i>Đã xong`
     }
 })
 
