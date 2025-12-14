@@ -4,7 +4,6 @@ import time
 import subprocess
 import sys
 import requests
-import os
 import json
 
 host = "localhost"
@@ -34,14 +33,15 @@ def check4Update():
                 f = open("./appVersion.json", "w", encoding="utf-8")
                 f.write(r)
                 f.close()
-            print("ok")
+                print("ok")
+            else:
+                print("not ok")
     except:
         print("not ok")
 
 if __name__ == '__main__':
     check4Update()
     
-    os._exit(0)
     proccess = subprocess.Popen(["goParsingDocx.exe"])
 
     while True:
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     webview.settings['ALLOW_DOWNLOADS'] = True
     webview.create_window(title="Douglas", url=f'http://{host}:{port}/Home', width=1424, height=700)
 
-    webview.start(icon="./app/icon.ico")
+    webview.start(icon="./icon.png")
 
     if sys.platform == "win32":
         proccess.terminate()

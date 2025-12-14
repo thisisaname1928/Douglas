@@ -114,9 +114,15 @@ func BetterParse(tokens []Token) []Question {
 		for ; i < len(tokens); i++ {
 			switch tokens[i].Type {
 			case TOKEN_TN_ANSWER_KEY:
+				if tokens[i].Value.Text != "A." {
+					break
+				}
 				CurrentQuestion.Type = TN
 				break getQuestionContentLoop
 			case TOKEN_TNDS_ANSWER_KEY:
+				if tokens[i].Value.Text != "a)" {
+					break
+				}
 				CurrentQuestion.Type = TNDS
 				break getQuestionContentLoop
 			case TOKEN_TLN_ANSWER_KEY:

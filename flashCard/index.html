@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Douglas - Flash Card</title>
+    <link href="styles.css" rel="stylesheet">
+    <link href="materialIcon.css" rel="stylesheet">
+    <link href="flashCard.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="topbar">
+            <div class="header">
+                <div>
+                    <img style="display: flex;" height="32" width="32" src="favicon.ico">
+                </div>
+
+                <div>
+                    <h3 style="display: flex;">Douglas - Flash card</h3>
+                </div>
+
+            </div>
+            <div class="topbar-left">
+                <i id="modeToggleButton" class="material-icons icon switch-mode-icon">light_mode</i>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="content-header"></div>
+            <div id="testContent"></div>
+        </div>
+    </div>
+    <div id="debugArea"></div>
+    <script type="text/javascript" src="zip.min.js"></script>
+    <script src="webMode.js"></script>
+    <script src="douglas.js"></script>
+</body>
+
+</html>

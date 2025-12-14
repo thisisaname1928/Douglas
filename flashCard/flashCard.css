@@ -1,0 +1,41 @@
+.switch-mode-icon {
+
+    animation-name: enableLightMode;
+    animation-duration: 0.75s;
+    animation-iteration-count: 1;
+    cursor: pointer;
+}
+
+@keyframes enableDarkMode {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes enableLightMode {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+body.dark-mode .switch-mode-icon {
+    animation-name: enableDarkMode;
+    animation-duration: 0.75s;
+    animation-iteration-count: 1;
+}
+
+.header {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+
+    gap: 40px;
+}

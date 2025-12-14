@@ -111,7 +111,7 @@ function prepareQuestions(json) {
         if (json.questions[i].type == 0x12) {
             ques += `<div class="question-card">
                     <div class="question-text">
-                        Câu trắc loại ${json.questions[i].stype} : ${json.questions[i].content}
+                        Câu trắc nghiệm loại ${json.questions[i].stype} : ${json.questions[i].content}
                     </div>
                     <div class="options-list">
                         <div class="option-item">

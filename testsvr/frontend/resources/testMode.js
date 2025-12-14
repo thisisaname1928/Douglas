@@ -3,7 +3,6 @@ TESTUUID = 'NONE'
 
 function disableScroll() {
     document.body.style.overflow = 'hidden';
-
     document.documentElement.style.overflow = 'hidden';
 }
 
@@ -11,8 +10,17 @@ async function warn() {
     res = await fetch("/api/warn", { method: "POST", body: JSON.stringify({ uuid: TESTUUID }) })
 }
 
+function setUpTestModeAgain() {
+    htmlElement.requestFullscreen().catch((err) => {
+        console.log(err)
+        return false
+    })
+    hideElement('popup-ask')
+}
+
 async function setUpTestMode(uuid) {
     TESTUUID = uuid
+    testModeInited = true
 
     htmlElement.requestFullscreen().catch((err) => {
         console.log(err)

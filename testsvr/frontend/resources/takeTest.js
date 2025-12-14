@@ -2,6 +2,7 @@ const testContent = document.getElementById("testContent")
 const summitBtn = document.getElementById("summitTest")
 const testResult = document.getElementById("testResult")
 let isDone = false
+let testModeInited = false
 
 async function checkIfTestDone() {
     res = await fetch("/api/getTestStatus", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
@@ -35,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function startTest() {
     isDone = await checkIfTestDone()
 
-    document.getElementById('okBut').addEventListener('click', () => { setUpTestMode() })
     hideElement('popup-ask')
     await getTest(uuid)
     if (!isDone) {
@@ -342,7 +342,11 @@ async function doneTest() {
     jsonRes = await res.json()
 
     if (!jsonRes.status) {
-        alert(jsonRes.msg)
+        if (jsonRes.msg == "TEST_ACCESS_DENIED") {
+            alert("Bạn đã bị tước quyền làm bài!")
+        } else {
+            alert(`Lỗi nội bộ: ${jsonRes.msg}`)
+        }
         return false
     }
 

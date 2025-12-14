@@ -32,7 +32,6 @@ async function timerLoop() {
 
         t = new Date(ctStr)
         duration = t - startTestTime
-        console.log(duration)
 
         durationSec = maxDuration * 60 - Math.round(duration / 1000)
 

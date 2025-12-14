@@ -378,7 +378,13 @@ func (fir *DouglasFir) warnAPI(w http.ResponseWriter, r *http.Request) {
 		UUID string `json:"uuid"`
 	}
 
+	var response struct {
+		Status bool   `json:"status"`
+		Msg    string `json:"msg"`
+	}
+
 	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
 
 	e := decoder.Decode(&request)
 
@@ -388,12 +394,18 @@ func (fir *DouglasFir) warnAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !fir.verifyIP(request.UUID, getIP(r)) {
-		w.WriteHeader(401)
+		response.Status = false
+		response.Msg = "TEST_ACCESS_DENIED"
+		encoder.Encode(response)
 		return
 	}
 
 	fir.TestSessions.Warn(request.UUID)
-	w.WriteHeader(200)
+
+	response.Status = true
+	response.Msg = "ok"
+
+	encoder.Encode(response)
 }
 
 // func (fir *DouglasFir) startSession(w http.ResponseWriter, r *http.Request) {

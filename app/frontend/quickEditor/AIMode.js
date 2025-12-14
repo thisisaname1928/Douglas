@@ -8,16 +8,22 @@ createAITest.addEventListener('click', async () => {
     numberOfTNQues = parseInt(document.getElementById('numOfTNQues').value)
     numberOfTNDSQues = parseInt(document.getElementById('numOfTNDSQues').value)
     numberOfTLNQues = parseInt(document.getElementById('numOfTLNQues').value)
-    testContent = document.getElementById('testContent').value
+    testContent = document.getElementById('testContent').value;
 
     hideElement('AIPopup')
     showElement('loadingPopup')
-    showElement("auroraLayer");
+    showElement("auroraLayer")
 
     resObj = await fetch4AITest(numberOfTNQues, numberOfTNDSQues, numberOfTLNQues, testContent)
 
     if (!resObj.status) {
-        alert(resObj.msg)
+        if (resObj.msg == "ERR_GEN_AI_NOT_AVAILABLE") {
+            alert("Tính năng chỉ có thể dùng cho phiên bản PRO")
+        } else {
+            alert(`Lỗi nội bộ: ${resObj.msg}`)
+        }
+        hideElement('loadingPopup')
+        hideElement('auroraLayer')
         return
     }
 

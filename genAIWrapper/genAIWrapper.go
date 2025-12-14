@@ -17,7 +17,7 @@ var Secret struct {
 	MAX_RETRY      int    `json:"MAX_RETRY"`
 }
 var client *genai.Client
-var isInit = false
+var IsInit = false
 
 func InitGenAIWrapper() error {
 
@@ -42,7 +42,7 @@ func InitGenAIWrapper() error {
 		return e
 	}
 
-	isInit = true
+	IsInit = true
 	return nil
 }
 
@@ -87,7 +87,7 @@ func GeminiGenContent(input string) (string, error) {
 }
 
 func AutoGenContent(input string) (string, error) {
-	if !isInit {
+	if !IsInit {
 		return "", errors.New("ERR_GEN_AI_NOT_AVAILABLE")
 	}
 
