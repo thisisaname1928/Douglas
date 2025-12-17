@@ -59,8 +59,7 @@ async function getDouNeccessaryFile(blobReader) {
     return [info, data]
 }
 
-async function doTest() {
-    const blobReader = new zip.BlobReader(await (await getFile("exported.dou")).blob())
+async function getQuestionFromDou(blobReader) {
     let res = await getDouNeccessaryFile(blobReader)
     let info = await res[0]
     let data = await res[1]
@@ -93,16 +92,142 @@ async function doTest() {
 
     questions = shuffleQuesArray(questionsRaw)
 
-    console.log(questions)
+    return questions
+}
 
-    renderTest([await questions[0]])
+function showElement(id) {
+    document.getElementById(id).classList.remove("hidden-element")
+}
+
+function hideElement(id) {
+    document.getElementById(id).classList.add("hidden-element")
+}
+
+let currentQues
+let currentQuesIdx = 0
+let n = 0
+let curBlobReader
+let numOfRightQues = 0
+let curBlob
+
+function checkAns() {
+
+    if (!currentQues.type) {
+        return false
+    }
+
+    switch (currentQues.type) {
+        case 0x12:
+            ans = getTNAnswer(0)
+
+            if (currentQues.TNAnswers[ans]) {
+                item = document.getElementById(`QUES.0.TN.${ans}`)
+                item.innerHTML += "<i class=\"material-icons icon\">check</i>"
+                numOfRightQues++
+                setRightQuesNum(numOfRightQues)
+            } else {
+                item = document.getElementById(`QUES.0.TN.${ans}`)
+                item.innerHTML += "<i class=\"material-icons icon\">close</i>"
+            }
+            break
+        case 0x13:
+            break
+        case 0x15:
+            ans = getTNDSAnswer(0)
+            nr = 0
+            for (i = 0; i < 4; i++) {
+                if (ans[i] == currentQues.TNAnswers[i]) {
+                    nr++
+                    item = document.getElementById(`QUES.0.TNDS.${i}`)
+                    item.innerHTML += "<i class=\"material-icons icon\">check</i>"
+                } else {
+                    item = document.getElementById(`QUES.0.TNDS.${i}`)
+                    item.innerHTML += "<i class=\"material-icons icon\">close</i>"
+                }
+
+            }
+
+            if (nr == 4) numOfRightQues++
+            break
+    }
+
+    hideElement("checkAnswer")
+    showElement("nextQues")
+
+    currentQuesIdx++
+
+
+    if (currentQuesIdx >= n) {
+        document.getElementById("testContent").innerHTML = ''
+        hideElement("nextQues")
+
+        showElement("endTest")
+        document.getElementById("doneQuesNumL").innerHTML = n
+        document.getElementById("rightQuesNumL").innerHTML = numOfRightQues
+
+        return
+    }
+
+    setRightQuesNum(numOfRightQues)
+}
+
+
+
+function setQuesIdx(i, n) {
+    document.getElementById("quesIdx").innerText = `Câu ${i}/${n}`
+}
+
+function setRightQuesNum(n) {
+    document.getElementById("quesRightNum").innerText = `Đúng: ${n}`
+}
+
+function redoTest() {
+    hideElement("endTest")
+
+    doTest(curBlob)
+}
+
+async function doTest(blob) {
+    const blobReader = new zip.BlobReader(await blob)
+    curBlob = blob
+    curBlobReader = blobReader
+
+    try {
+        questions = await getQuestionFromDou(blobReader)
+    }
+    catch {
+        console.log("NOT OK")
+        return
+    }
+
+    hideElement('startTest')
+
+    n = questions.length
+
+    numOfRightQues = 0
+
+    showElement("quesIdx")
+    showElement("quesRightNum")
+    showElement("checkAnswer")
+
+    currentQuesIdx = 0
+
+    await nextQuestion(currentQuesIdx)
+}
+
+async function nextQuestion(i) {
+    renderTest([await questions[i]])
+    setQuesIdx(i + 1, n)
+    setRightQuesNum(numOfRightQues)
+    currentQues = questions[i]
 
     normalizeDouImgPath()
 }
 
 async function renderTest(questions) {
-
     testContent = document.getElementById("testContent")
+    testContent.innerHTML = ''
+
 
     // render questions
     for (i = 0; i < questions.length; i++) {
@@ -110,7 +235,7 @@ async function renderTest(questions) {
             testContent.innerHTML += `
 <div class="question-card" id="QUES.${i}.TN">
     <div class="question-text">
-        Câu ${i + 1} (Trắc nghiệm): ${questions[i].content}
+        Câu ${currentQuesIdx + 1} (Trắc nghiệm): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TN.0" onclick="chooseTNOption(${i}, 0, true)">
@@ -135,7 +260,7 @@ async function renderTest(questions) {
             testContent.innerHTML += `    
     <div class="question-card" id="QUES.${i}.TLN">
         <div class="question-text">
-            Câu ${i + 1} (Trắc nghiệm trả lời ngắn): ${questions[i].content}
+            Câu ${currentQuesIdx + 1} (Trắc nghiệm trả lời ngắn): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
             <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 0)" id="QUES.${i}.TLN.0">
@@ -148,7 +273,7 @@ async function renderTest(questions) {
             testContent.innerHTML += `
 <div class="question-card" id="QUES.${i}.TNDS">
     <div class="question-text" >
-        Câu ${i + 1} (Trắc nghiệm đúng sai): ${questions[i].content}
+        Câu ${currentQuesIdx + 1} (Trắc nghiệm đúng sai): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TNDS.0">
@@ -262,21 +387,7 @@ function getTNAnswer(th) {
     for (i = 0; i < 4; i++) {
         item = document.getElementById(`QUES.${th}.TN.${i}`)
         if (item.classList.contains("option-item-highlighted")) {
-            if (i == 0) {
-                return 'A'
-            }
-
-            if (i == 1) {
-                return 'B'
-            }
-
-            if (i == 2) {
-                return 'C'
-            }
-
-            if (i == 3) {
-                return 'D'
-            }
+            return i
         }
     }
 
@@ -285,16 +396,16 @@ function getTNAnswer(th) {
 
 function getTNDSAnswer(th) {
     // prevent smth bad
-    ans = ['', '', '', '']
+    ans = [false, false, false, false]
     for (i = 0; i < 4; i++) {
         item = document.getElementById(`QUES.${th}.TNDS.${i}.R`)
         if (item.classList.contains("tnds-ans-r-highlighted")) {
-            ans[i] = 'r'
+            ans[i] = true
         }
 
         item = document.getElementById(`QUES.${th}.TNDS.${i}.W`)
         if (item.classList.contains("tnds-ans-w-highlighted")) {
-            ans[i] = 'w'
+            ans[i] = false
         }
     }
 
@@ -319,4 +430,25 @@ function getTLNAnswer(th) {
     return ans
 }
 
-doTest()
+document.getElementById("fileInput").addEventListener('change', (e) => {
+    const f = e.target.files[0]
+
+    if (!f) {
+        return
+    }
+
+    const reader = new FileReader()
+
+    reader.onload = async function (e) {
+        const arrayBuffer = e.target.result;
+
+        blob = new Blob([arrayBuffer])
+        doTest(await blob)
+    }
+
+    reader.readAsArrayBuffer(f)
+})
+
+document.getElementById("fileInputBtn").addEventListener("click", () => {
+    document.getElementById("fileInput").click()
+})

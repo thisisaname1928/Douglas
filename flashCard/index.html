@@ -21,7 +21,8 @@
                 <div>
                     <h3 style="display: flex;">Douglas - Flash card</h3>
                 </div>
-
+                <label id="quesIdx" class="hidden-element">Câu 1/1</label>
+                <label id="quesRightNum" class="hidden-element">Số câu đúng: 1</label>
             </div>
             <div class="topbar-left">
                 <i id="modeToggleButton" class="material-icons icon switch-mode-icon">light_mode</i>
@@ -29,7 +30,60 @@
         </div>
         <div class="main-content">
             <div class="content-header"></div>
-            <div id="testContent"></div>
+            <div id="startTest">
+                <p>Bắt đầu bài kiểm tra bằng cách:</p>
+                <input id="fileInput" type="file" hidden>
+                <button id="fileInputBtn" style="margin-right: 10px;" class="mode-toggle-button">Chọn đề</button>
+                <br>
+                <br>
+                <label style="margin-right: 10px;">Hoặc dùng liên kết tới file đề (.dou)</label>
+                <br>
+                <br>
+                <input id="urlInput" class="config-input">
+                <button style="margin-left: 10px;" onclick="alert('khúc này ch viết xong')" id="startWithLink"
+                    class="mode-toggle-button">Bắt đầu làm
+                    bài</button>
+            </div>
+            <div id="testContent">
+            </div>
+
+            <!-- end test form-->
+            <center>
+                <div id="endTest" class="question-card hidden-element">
+                    <center>
+                        <h1>Đã hoàn thành</h1>
+                    </center>
+                    <table style="margin-left: 30px;margin-right: 30px;">
+                        <tr>
+                            <td style="padding-right: 100px;"><b>Tổng số câu đã làm:</b> </td>
+                            <td id="doneQuesNumL">1</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+
+                            </td>
+                        </tr>
+                        <tr style="margin-bottom: 20px;">
+                            <td><b>Số câu đúng:</b> </td>
+                            <td id="rightQuesNumL">1</td>
+                        </tr>
+                    </table>
+                    <center><button style="margin-top: 50px;" id="redo" onclick="redoTest()"
+                            class="mode-toggle-button">Làm lại lần
+                            nữa</button><button style="margin-left: 20px;" id="newTest" onclick="location.reload()"
+                            class="mode-toggle-button">Làm
+                            bài
+                            mới</button></center>
+
+                    <div style="height: 10px;"></div>
+                </div>
+            </center>
+            <button style="margin-top: 50px;" id="checkAnswer" onclick="checkAns()"
+                class="mode-toggle-button hidden-element">Kiểm tra đáp
+                án</button>
+            <button style="margin-top: 50px;" id="nextQues" onclick="nextQuestion(currentQuesIdx);showElement('checkAnswer');
+    hideElement('nextQues');" class="mode-toggle-button hidden-element">Câu tiếp theo</button>
         </div>
     </div>
     <div id="debugArea"></div>
