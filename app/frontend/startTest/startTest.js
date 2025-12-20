@@ -96,8 +96,8 @@ async function updateTestList() {
             customNameStyle = "color: lightgreen;"
         }
 
-        testListBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick="quickRedirect('StartTest.TestInfo/uuid/${testList.list[i].uuid}')">
-                        <b style='${customNameStyle}'>${testList.list[i].name}</b> <br>Mã đề thi: ${testList.list[i].uuid}<br>Số lượt làm bài: ${testList.list[i].numberOfCandinate}
+        testListBox.innerHTML += `<div class="test-card" style="display: flex;justify-content: space-between;">
+                        <span  style="cursor: pointer" onclick="quickRedirect('StartTest.TestInfo/uuid/${testList.list[i].uuid}')"><b style='${customNameStyle}'>${testList.list[i].name}</b> <br>Mã đề thi: ${testList.list[i].uuid}<br>Số lượt làm bài: ${testList.list[i].numberOfCandinate}</span><span onclick='deleteTest("${testList.list[i].uuid}")' class="material-icons icon del-btn">delete</span>
                     </div>`
     }
 }
@@ -148,4 +148,9 @@ function quickRedirect(path) {
     window.location.pathname = path
 }
 
+
+async function deleteTest(uuid) {
+    await fetch("/StartTest/API/deleteTest", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
+    updateTestList()
+}
 

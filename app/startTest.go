@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -115,7 +116,32 @@ func startTestAPI(w http.ResponseWriter, r *http.Request) {
 		getCandinateListAPI(w, r)
 	case "exportCsv":
 		exportCsvAPI(w, r)
+	case "deleteTest":
+		deleteTest(w, r)
 	}
+}
+
+func deleteTest(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		UUID string `json:"uuid"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+
+	e := decoder.Decode(&request)
+
+	if e != nil {
+		w.WriteHeader(200)
+		return
+	}
+
+	e = os.RemoveAll("./testsvr/testdata/" + request.UUID)
+
+	if e != nil {
+		fmt.Println("SOMETHINGS GO WRONGG!")
+	}
+
+	w.WriteHeader(200)
 }
 
 func exportCsvAPI(w http.ResponseWriter, r *http.Request) {

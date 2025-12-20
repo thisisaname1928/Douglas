@@ -23,19 +23,30 @@
         <div class="main-content">
             <div class="content-header">
                 <h1>Trang chủ</h1>
-                <p>Mở live preview để bắt đầu soạn thảo đề, <a class="a-link" href="/TutorialPage">cần hướng
+                <p>Mở bản xem trước docx hoặc trình soạn thảo nhanh để bắt đầu soạn thảo đề, <a class="a-link"
+                        href="/TutorialPage">cần hướng
                         dẫn?</a></p>
             </div>
             <div class="button-container-left">
-                <button class="btn" id="openLP">Mở Live preview</button>
-                <button class="btn" id="openQE">Mở Quick Editor</button>
-                <button class="btn" id="openEx">Xuất đề</button>
-                <button class="btn" id="openSt">Quản lí bài kiểm tra</button>
+                <div style="display: flex; gap: 20px;">
+                    <div class="homeMenuBtn" id="openLP">
+                        <span class="material-icons homeMenuIcon">document_scanner</span>
+
+                        <label class="homeMenuText">Xem trước docx</label>
+                    </div>
+                    <div class="homeMenuBtn" id="openQE">
+                        <span class="material-icons homeMenuIcon">edit</span>
+                        <label class="homeMenuText">Trình soạn thảo</label>
+                    </div>
+                    <div class="homeMenuBtn" id="openSt">
+                        <span class="material-icons homeMenuIcon">assignment</span>
+                        <label class="homeMenuText">Quản lí bài thi</label>
+                    </div>
+                </div>
+                <button class="btn hidden-element" id="openEx">Xuất đề</button>
             </div>
             <h3 id="versionNotify"></h3>
         </div>
-
-
 
         <script src="/Home/webMode.js"></script>
         <script src="/Home/home.js"></script>

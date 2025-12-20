@@ -29,6 +29,8 @@ createAITest.addEventListener('click', async () => {
 
     document.getElementById('textEditor').value = resObj.content
 
+    fetch4Questions()
+
     hideElement('loadingPopup')
     hideElement('auroraLayer')
 })

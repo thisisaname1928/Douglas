@@ -407,6 +407,7 @@
             justify-content: left;
             align-items: left;
             width: 100%;
+            margin-left: 20px;
         }
 
         .btn {
@@ -651,4 +652,56 @@
         .ques_content {
             white-space: pre-wrap;
             overflow-wrap: break-word;
+        }
+
+        .homeMenuBtn {
+            cursor: pointer;
+            display: grid;
+            width: 160px;
+            height: 160px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            grid-template-columns: 1fr;
+            transition: all 0.1s ease-out;
+        }
+
+        .homeMenuBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .homeMenuIcon {
+            font-size: 50px;
+        }
+
+        .homeMenuText {
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .del-btn {
+            cursor: pointer;
+            color: red;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            transition: all 0.1s ease-out;
+        }
+
+        .del-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .del-btn {
+            color: rgb(248, 149, 149);
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
         }

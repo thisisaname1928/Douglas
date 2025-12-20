@@ -156,18 +156,6 @@ function checkAns() {
 
     currentQuesIdx++
 
-
-    if (currentQuesIdx >= n) {
-        document.getElementById("testContent").innerHTML = ''
-        hideElement("nextQues")
-
-        showElement("endTest")
-        document.getElementById("doneQuesNumL").innerHTML = n
-        document.getElementById("rightQuesNumL").innerHTML = numOfRightQues
-
-        return
-    }
-
     setRightQuesNum(numOfRightQues)
 }
 
@@ -216,6 +204,18 @@ async function doTest(blob) {
 }
 
 async function nextQuestion(i) {
+
+    if (currentQuesIdx >= n) {
+        document.getElementById("testContent").innerHTML = ''
+        hideElement("nextQues")
+
+        showElement("endTest")
+        document.getElementById("doneQuesNumL").innerHTML = n
+        document.getElementById("rightQuesNumL").innerHTML = numOfRightQues
+
+        return
+    }
+
     renderTest([await questions[i]])
     setQuesIdx(i + 1, n)
     setRightQuesNum(numOfRightQues)

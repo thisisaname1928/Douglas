@@ -60,9 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderStypeConfig(quesType, maxQues) {
     return `<div class="config-container">
-                <label class="config-label">Cau loai ${quesType}, so cau ${maxQues};</label>
-                <input id="${quesType}.N" type="text" class="config-input" placeholder="So cau cho mot de">
-                <input id="${quesType}.Point" type="text" class="config-input" placeholder="So diem moi cau">
+                
+                <label class="config-label">Câu loại ${quesType}, số câu ${maxQues}:</label>
+                <input id="${quesType}.N" type="number" class="config-input" placeholder="Số câu mỗi đề">
+                <input id="${quesType}.Point" type="number" class="config-input" placeholder="Số điểm mỗi câu">
+                
             </div>`
 }
 
@@ -95,7 +97,7 @@ async function initConf() {
 
     configBox.innerHTML += `<div class="config-container">
                 <label class="config-label">Thời gian làm bài (phút):</label>
-                <input id="testDuration" type="text" class="config-input" placeholder="Đặt 0 nếu không có thời gian cố định">
+                <input id="testDuration" type="number" class="config-input" placeholder="Đặt 0 nếu không có thời gian cố định">
             </div>`
 
     for (i = 0; i < obj.stype.length; i++) {

@@ -190,7 +190,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-livePreviewLoop()
 async function livePreviewLoop() {
     while (true) {
         await sleep(700);
@@ -220,4 +219,8 @@ exportButton.addEventListener('click', async () => {
     await uploadFile(textContent, uuid)
 
     window.location.href = window.location.href.replace("/quickEditor", "/Export/Config/UUID/" + uuid + "?exportType=useRawText")
+})
+
+document.getElementById('textEditor').addEventListener('input', () => {
+    fetch4Questions()
 })

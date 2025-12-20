@@ -1,33 +1,30 @@
 .split-container {
     display: flex;
-    height: 100%;
-    width: 100%;
 }
 
 .quickEditor-panel {
     flex: 1;
-    padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
 }
 
 .editor-panel {
-    width: 85%;
+    width: 94%;
     height: 480px;
     border-radius: 8px;
-    padding: 15px;
     font-size: 20px;
+
+    padding: 15px;
 }
 
 .preview-panel {
-    width: 85%;
+    width: 90%;
     height: 480px;
     border-radius: 8px;
-    padding: 15px;
+    padding: 5px;
 
     background-color: #fff;
     border: 1px solid #ddd;
-    padding: 15px;
 
     overflow-y: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
