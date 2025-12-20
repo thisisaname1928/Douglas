@@ -1,6 +1,6 @@
 {
-    "versionInt": 3,
-    "versionStr": "alpha2Test",
-    "shouldUpdate": false,
-    "updatePathWin64": "https://raw.githubusercontent.com/thisisaname1928/Douglas/refs/heads/master/appVersion.json"
+    "versionInt": 5,
+    "versionStr": "stable_1.0.1",
+    "shouldUpdate": true,
+    "updatePathWin64": "https://github.com/thisisaname1928/Douglas/raw/refs/heads/master/updates/douglas_1.0.1stable.zip"
 }

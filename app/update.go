@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -45,7 +46,7 @@ func downloadUpdate(w http.ResponseWriter, r *http.Request) {
 
 	f, e := os.ReadFile("./tmp.json")
 	if e != nil {
-		response.Msg = "Tải file lỗi!"
+		response.Msg = "Tải file lỗi!: " + fmt.Sprint(e)
 		response.Status = false
 		encoder.Encode(response)
 		return
@@ -54,7 +55,7 @@ func downloadUpdate(w http.ResponseWriter, r *http.Request) {
 	var config appVersion
 	e = json.Unmarshal(f, &config)
 	if e != nil {
-		response.Msg = "Tải file lỗi!"
+		response.Msg = "Tải file lỗi!" + fmt.Sprint(e)
 		response.Status = false
 		encoder.Encode(response)
 		return
@@ -65,7 +66,7 @@ func downloadUpdate(w http.ResponseWriter, r *http.Request) {
 
 	e = client.Get()
 	if e != nil {
-		response.Msg = "Tải file lỗi!"
+		response.Msg = "Tải file lỗi!" + fmt.Sprint(e)
 		response.Status = false
 		encoder.Encode(response)
 		return
@@ -75,7 +76,7 @@ func downloadUpdate(w http.ResponseWriter, r *http.Request) {
 	config.ShouldUpdate = true
 	b, e := json.Marshal(config)
 	if e != nil {
-		response.Msg = "Tải file lỗi!"
+		response.Msg = "Tải file lỗi!" + fmt.Sprint(e)
 		response.Status = false
 		encoder.Encode(response)
 		return
