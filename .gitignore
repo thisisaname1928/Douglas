@@ -2,6 +2,8 @@ tmp/
 testmedia/
 .*
 
+update.zip
+tmp.json
 s.zip
 test.xml
 test.html
@@ -11,6 +13,7 @@ exported.dou
 output.dou
 *.dat
 *.dou
+!test.dou
 go.sum
 test.csv
 testraw.xml

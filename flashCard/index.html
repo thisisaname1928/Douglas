@@ -21,8 +21,6 @@
                 <div>
                     <h3 style="display: flex;">Douglas - Flash card</h3>
                 </div>
-                <label id="quesIdx" class="hidden-element">Câu 1/1</label>
-                <label id="quesRightNum" class="hidden-element">Số câu đúng: 1</label>
             </div>
             <div class="topbar-left">
                 <i id="modeToggleButton" class="material-icons icon switch-mode-icon">light_mode</i>
@@ -40,8 +38,8 @@
                 <br>
                 <br>
                 <input id="urlInput" class="config-input">
-                <button style="margin-left: 10px;" onclick="alert('khúc này ch viết xong')" id="startWithLink"
-                    class="mode-toggle-button">Bắt đầu làm
+                <button style="margin-left: 10px;margin-top: 10px;" onclick="alert('khúc này ch viết xong')"
+                    id="startWithLink" class="mode-toggle-button">Bắt đầu làm
                     bài</button>
             </div>
             <div id="testContent">
@@ -79,11 +77,16 @@
                     <div style="height: 10px;"></div>
                 </div>
             </center>
-            <button style="margin-top: 50px;" id="checkAnswer" onclick="checkAns()"
-                class="mode-toggle-button hidden-element">Kiểm tra đáp
-                án</button>
-            <button style="margin-top: 50px;" id="nextQues" onclick="nextQuestion(currentQuesIdx);showElement('checkAnswer');
+            <div>
+                <button style="margin-top: 50px;" id="checkAnswer" onclick="checkAns()"
+                    class="mode-toggle-button hidden-element">Kiểm tra đáp
+                    án</button>
+                <button style="margin-top: 50px;" id="nextQues" onclick="nextQuestion(currentQuesIdx);showElement('checkAnswer');
     hideElement('nextQues');" class="mode-toggle-button hidden-element">Câu tiếp theo</button>
+                <label id="quesIdx" class="hidden-element">Câu 1/1</label>
+                <label id="quesRightNum" class="hidden-element">Số câu đúng: 1</label>
+
+            </div>
         </div>
     </div>
     <div id="debugArea"></div>

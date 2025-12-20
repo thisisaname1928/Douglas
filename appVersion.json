@@ -1,6 +1,1 @@
-{
-    "versionInt": 5,
-    "versionStr": "stable_1.0.1",
-    "shouldUpdate": true,
-    "updatePathWin64": "https://github.com/thisisaname1928/Douglas/raw/refs/heads/master/updates/douglas_1.0.1stable.zip?archive=false"
-}
+{"versionInt":5,"versionStr":"stable_1.0.1","shouldUpdate":true,"updatePathWin64":"https://github.com/thisisaname1928/Douglas/raw/refs/heads/master/updates/douglas_1.0.1stable.zip?archive=false"}

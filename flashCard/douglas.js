@@ -176,6 +176,8 @@ function redoTest() {
 }
 
 async function doTest(blob) {
+    document.getElementById("testContent").innerHTML = 'Chờ xíu, đang tải!'
+
     const blobReader = new zip.BlobReader(await blob)
     curBlob = blob
     curBlobReader = blobReader
@@ -451,4 +453,18 @@ document.getElementById("fileInput").addEventListener('change', (e) => {
 
 document.getElementById("fileInputBtn").addEventListener("click", () => {
     document.getElementById("fileInput").click()
+})
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+
+    link = params.get("useLink")
+
+    // fetch 4 file
+    request = await fetch(link, { method: 'GET' })
+    data = await request.arrayBuffer()
+
+    blob = new Blob([data])
+
+    doTest(blob)
 })
