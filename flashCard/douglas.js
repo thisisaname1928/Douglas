@@ -128,6 +128,14 @@ function checkAns() {
             } else {
                 item = document.getElementById(`QUES.0.TN.${ans}`)
                 item.innerHTML += "<i class=\"material-icons icon\">close</i>"
+
+                for (counter = 0; counter < 4; counter++) {
+                    if (currentQues.TNAnswers[counter]) {
+                        item = document.getElementById(`QUES.0.TN.${counter}`)
+                        item.innerHTML += "<i class=\"material-icons icon\">check</i>"
+                        break
+                    }
+                }
             }
             break
         case 0x13:
@@ -460,8 +468,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     link = params.get("useLink")
 
+    if (!link || link == "") {
+        return
+    }
+
     // fetch 4 file
-    request = await fetch(link, { method: 'GET' })
+    request = await fetch(link)
     data = await request.arrayBuffer()
 
     blob = new Blob([data])

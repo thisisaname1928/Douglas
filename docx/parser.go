@@ -100,7 +100,7 @@ func BetterParse(tokens []Token) []Question {
 
 			j := 1
 			for ; j < len(anaRune); j++ {
-				if anaRune[j-1] == ':' {
+				if anaRune[j-1] == ':' || anaRune[j-1] == '.' {
 					break
 				}
 			}
