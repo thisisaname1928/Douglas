@@ -166,8 +166,8 @@ function prepareQuestions(json) {
     questions.innerHTML = ques;
 }
 
-function fetchForQuestions() {
-    return fetch('/LivePreview/API/genJson', { method: 'POST', body: JSON.stringify({ path: filePathInput.value }) }).then((r) => { r.json().then((json) => prepareQuestions(json)) })
+async function fetchForQuestions() {
+    return await fetch('/LivePreview/API/genJson', { method: 'POST', body: JSON.stringify({ path: filePathInput.value }) }).then((r) => { r.json().then((json) => prepareQuestions(json)) })
 }
 
 async function getUUID() {
@@ -202,7 +202,7 @@ function sleep(ms) {
 livePreviewLoop()
 async function livePreviewLoop() {
     while (true) {
-        await sleep(700);
-        fetchForQuestions()
+        await sleep(500);
+        await fetchForQuestions()
     }
 }

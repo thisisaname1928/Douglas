@@ -23,6 +23,7 @@
                 </div>
             </div>
             <div class="topbar-left">
+                <i onclick="showElement('aboutDialog')" style="cursor: pointer;" class="material-icons icon">info</i>
                 <i id="modeToggleButton" class="material-icons icon switch-mode-icon">light_mode</i>
             </div>
         </div>
@@ -38,9 +39,11 @@
                 <br>
                 <br>
                 <input id="urlInput" class="config-input">
-                <button style="margin-left: 10px;margin-top: 10px;" onclick="alert('khúc này ch viết xong')"
+                <button style="margin-left: 10px;margin-top: 10px;"
+                    onclick="window.location.href = window.location.origin + window.location.pathname + `?useLink=${document.getElementById('urlInput').value}`;"
                     id="startWithLink" class="mode-toggle-button">Bắt đầu làm
                     bài</button>
+                <p id="doTestStatus" style="color: rgb(243, 114, 114)"></p>
             </div>
             <div id="testContent">
             </div>
@@ -88,6 +91,26 @@
                 <label id="quesRightNum" class="hidden-element">Số câu đúng: 1</label>
 
             </div>
+        </div>
+    </div>
+    <div>
+        <div id="aboutDialog" style="margin: auto;" class="popup-ask hidden-element">
+            <center>
+                <img style="display: flex;" height="70" width="70" src="favicon.ico">
+                <br>
+                <h1>Douglas - Flash Card</h1>
+                <p>
+                    Source code: <a href="https://github.com/thisisaname1928/Douglas">check on github</a>
+                </p>
+                <p>
+                    Copyright 2025 Quoc Trung Nguyen. Licensed under the Apache License, Version 2.0 (the "License");
+                    you
+                    may not
+                    use this file except in compliance with the License. You may obtain a copy of the License at
+                    <a href="http://www.apache.org/licenses/LICENSE-2.0">www.apache.org</a>.
+                </p>
+                <button class="mode-toggle-button" onclick="hideElement('aboutDialog')">Close</button>
+            </center>
         </div>
     </div>
     <div id="debugArea"></div>

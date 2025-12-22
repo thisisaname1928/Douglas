@@ -1,5 +1,5 @@
 .switch-mode-icon {
-
+    cursor: pointer;
     animation-name: enableLightMode;
     animation-duration: 0.75s;
     animation-iteration-count: 1;

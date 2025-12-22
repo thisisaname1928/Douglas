@@ -184,7 +184,7 @@ function redoTest() {
 }
 
 async function doTest(blob) {
-    document.getElementById("testContent").innerHTML = 'Chờ xíu, đang tải!'
+    document.getElementById("testContent").innerHTML = '<br>Chờ xíu, đang tải!'
 
     const blobReader = new zip.BlobReader(await blob)
     curBlob = blob
@@ -194,7 +194,8 @@ async function doTest(blob) {
         questions = await getQuestionFromDou(blobReader)
     }
     catch {
-        console.log("NOT OK")
+        setDoTestErr("Đọc đề lỗi, hãy chắc chắn rằng file đề đúng định dạng .dou")
+        document.getElementById("testContent").innerHTML = ''
         return
     }
 
@@ -463,6 +464,10 @@ document.getElementById("fileInputBtn").addEventListener("click", () => {
     document.getElementById("fileInput").click()
 })
 
+function setDoTestErr(msg) {
+    document.getElementById('doTestStatus').innerHTML = msg
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
 
@@ -473,10 +478,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // fetch 4 file
-    request = await fetch(link)
-    data = await request.arrayBuffer()
+    try {
+        request = await fetch(link)
+        data = await request.arrayBuffer()
 
-    blob = new Blob([data])
+        blob = new Blob([data])
+    }
+    catch {
+        setDoTestErr("Link truy cập tới bài làm bị hỏng!")
+        return
+    }
 
     doTest(blob)
 })
