@@ -203,7 +203,7 @@
             font-size: 14px;
             flex-grow: 1;
             margin-right: 10px;
-            min-width: 500px;
+            width: 250px;
         }
 
         .file-path-input:hover {

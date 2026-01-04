@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/thisisaname1928/goParsingDocx/docx"
+	"github.com/thisisaname1928/goParsingDocx/dou"
 )
 
 // copy to prevent circular import:)
@@ -31,16 +32,17 @@ type startTestResponse struct {
 }
 
 type testsvrInfo struct {
-	Name            string          `json:"name"`
-	Class           string          `json:"class"`
-	IP              string          `json:"IP"`
-	StartTime       time.Time       `json:"startTime"`
-	EndTime         time.Time       `json:"endTime"`
-	Done            bool            `json:"done"`
-	MaxTestDuration uint64          `json:"testDuration"`
-	Questions       []docx.Question `json:"questions"`
-	AnswerSheet     [][]string      `json:"answerSheet"`
-	WarnTimes       int             `json:"warnTimes"`
+	Name                 string                      `json:"name"`
+	Class                string                      `json:"class"`
+	IP                   string                      `json:"IP"`
+	StartTime            time.Time                   `json:"startTime"`
+	EndTime              time.Time                   `json:"endTime"`
+	Done                 bool                        `json:"done"`
+	MaxTestDuration      uint64                      `json:"testDuration"`
+	Questions            []docx.Question             `json:"questions"`
+	AnswerSheet          [][]string                  `json:"answerSheet"`
+	WarnTimes            int                         `json:"warnTimes"`
+	AdditionalExportData dou.DouAdditionalExportData `json:"additionalExportData"`
 }
 
 // I forgot to export it:)
@@ -74,6 +76,7 @@ func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	info.StartTime = time.Now()
 	info.Done = false
 	info.MaxTestDuration = fir.Douglas.Data.TestDuration
+	info.AdditionalExportData = fir.Douglas.Data.AdditionalExportData
 
 	// save IP
 	IP, _, _ := net.SplitHostPort(r.RemoteAddr)
@@ -96,6 +99,10 @@ func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	response.UUID = uuid
 
 	encoder.Encode(&response)
+}
+
+func (fir *DouglasFir) getSchoolName(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(fir.ExtraInfo.SchoolName))
 }
 
 func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +129,8 @@ func (fir *DouglasFir) testsvrAPI(w http.ResponseWriter, r *http.Request) {
 		fir.isAdmin(w, r)
 	case "getTestName":
 		fir.getTestName(w, r)
+	case "getSchoolName":
+		fir.getSchoolName(w, r)
 	case "warn":
 		fir.warnAPI(w, r)
 	}

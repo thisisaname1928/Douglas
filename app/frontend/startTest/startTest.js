@@ -58,7 +58,7 @@ async function handleFile(file) {
 }
 
 async function loadTest() {
-    res = await fetch("/StartTest/API/load", { method: "POST", body: JSON.stringify({ name: document.getElementById("name").value, key: document.getElementById("key").value }) })
+    res = await fetch("/StartTest/API/load", { method: "POST", body: JSON.stringify({ name: document.getElementById("name").value, schoolName: document.getElementById("schoolName").value, key: document.getElementById("key").value }) })
     jsonRes = await res.json()
 
     if (!jsonRes.status) {

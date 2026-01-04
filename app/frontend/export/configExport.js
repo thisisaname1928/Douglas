@@ -60,11 +60,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderStypeConfig(quesType, maxQues) {
     return `<div class="config-container">
-                
                 <label class="config-label">Câu loại ${quesType}, số câu ${maxQues}:</label>
-                <input id="${quesType}.N" type="number" class="config-input" placeholder="Số câu mỗi đề">
-                <input id="${quesType}.Point" type="number" class="config-input" placeholder="Số điểm mỗi câu">
                 
+                <table>
+                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Số câu:</label>
+                    </td>
+                    <td>
+                        <input id="${quesType}.N" type="number" class="config-input" placeholder="Số câu mỗi đề">
+                    </td>
+                </tr>
+                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Số điểm:</label>
+                    </td>
+                    <td>
+                        <input id="${quesType}.Point" type="number" class="config-input" placeholder="Số điểm mỗi câu">
+                    </td>
+                </tr>
+                </table>
             </div>`
 }
 
@@ -86,8 +101,12 @@ async function initConf() {
     }
 
     configBox.innerHTML += `<div class="config-container">
-                <label class="config-label">Tác giả:</label>
-                <input id="author" type="text" class="config-input" placeholder="Tên người ra đề">
+                <div class="input-config-row">
+                    <label class="config-label">Tác giả:</label>
+                </div>
+                <div class="input-config-row">
+                    <input id="author" type="text" class="config-input" placeholder="Tên người ra đề">
+                </div>
             </div>`
 
     configBox.innerHTML += `<div class="config-container">
@@ -100,9 +119,57 @@ async function initConf() {
                 <input id="testDuration" type="number" class="config-input" placeholder="Đặt 0 nếu không có thời gian cố định">
             </div>`
 
+    configBox.innerHTML += `<div class="config-container">
+                <label class="config-label">Điểm đúng sai: </label>
+                
+                <table>
+                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Đúng một câu (%):</label>
+                    </td>
+                    <td>
+                        <input id="TNDSPer1" type="number" class="config-input" placeholder="% điểm của câu" value="25">
+                    </td>
+                </tr>
+                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Đúng hai câu (%):</label>
+                    </td>
+                    <td>
+                        <input id="TNDSPer2" type="number" class="config-input" placeholder="% điểm của câu" value="50">
+                    </td>
+                </tr>
+                                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Đúng ba câu (%):</label>
+                    </td>
+                    <td>
+                        <input id="TNDSPer3" type="number" class="config-input" placeholder="% điểm của câu" value="75">
+                    </td>
+                </tr>
+                                <tr class="input-config-row">
+                    <td>
+                        <label  class="sub-config-label">Đúng bốn câu (%):</label>
+                    </td>
+                    <td>
+                        <input id="TNDSPer4" type="number" class="config-input" placeholder="% điểm của câu" value="100">
+                    </td>
+                </tr>
+                </table>
+            </div>`
+
     for (i = 0; i < obj.stype.length; i++) {
         configBox.innerHTML += renderStypeConfig(obj.stype[i].stype, obj.stype[i].N)
     }
+}
+
+function getTNDSPointCalcInfo() {
+    TNDSPer1 = document.getElementById('TNDSPer1').value
+    TNDSPer2 = document.getElementById('TNDSPer2').value
+    TNDSPer3 = document.getElementById('TNDSPer3').value
+    TNDSPer4 = document.getElementById('TNDSPer4').value
+
+    return [Number(TNDSPer1), Number(TNDSPer2), Number(TNDSPer3), Number(TNDSPer4)]
 }
 
 function getConfig() {
@@ -130,7 +197,7 @@ function getConfig() {
         stype.push({ stype: confObj.stype[i].stype, N: numberOfQuesPerTest, Point: pointPerQues })
     }
 
-    return { status: true, UUID: UUID, testDuration: testDuration, msg: "ok", author: author, key: key, stype: stype, exportType: parseExportType }
+    return { status: true, UUID: UUID, testDuration: testDuration, msg: "ok", author: author, key: key, stype: stype, exportType: parseExportType, additionalExportData: { TNDSPointCalcInfo: getTNDSPointCalcInfo() } }
 }
 
 async function exportTest(obj) {

@@ -28,11 +28,12 @@ type TestStructure struct {
 }
 
 type DouData struct {
-	Revision         uint64          `json:"revision"`     // version data
-	TestDuration     uint64          `json:"testDuration"` // in second, if this field is zero then no time limit
-	Questions        []DouQuestion   `json:"questions"`    // store info about dou file version
-	UseTestStructure bool            `json:"useTestStructure"`
-	TestStruct       []TestStructure `json:"testStructure"` // store info about how 2 display the test, and point per type
+	Revision             uint64                  `json:"revision"`     // version data
+	TestDuration         uint64                  `json:"testDuration"` // in second, if this field is zero then no time limit
+	Questions            []DouQuestion           `json:"questions"`    // store info about dou file version
+	UseTestStructure     bool                    `json:"useTestStructure"`
+	TestStruct           []TestStructure         `json:"testStructure"` // store info about how 2 display the test, and point per type
+	AdditionalExportData DouAdditionalExportData `json:"additionalExportData"`
 }
 
 type DouInfo struct {
@@ -40,6 +41,10 @@ type DouInfo struct {
 	Author    string `json:"author"`
 	Encrypted bool   `json:"encrypted"`
 	Key       string `json:"key"` // store as sha256
+}
+
+type DouAdditionalExportData struct {
+	TNDSPointCalcInfo *[4]int `json:"TNDSPointCalcInfo"`
 }
 
 func ConvertPath(path *string) {
@@ -76,7 +81,7 @@ func search4Stype(qs []DouQuestion, stype string) int {
 // 	return nil
 // }
 
-func Export(input string, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string) error {
+func Export(input string, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string, additionalExportData DouAdditionalExportData) error {
 	// make sure...
 	ConvertPath(&input)
 	ConvertPath(&output)
@@ -108,6 +113,7 @@ func Export(input string, output string, author string, testDuration uint64, use
 	dou.Questions = douQues
 	dou.Revision = DOU_REVISION_1
 	dou.TestDuration = testDuration
+	dou.AdditionalExportData = additionalExportData
 
 	dou.UseTestStructure = useTestStructure
 	if useTestStructure {
@@ -215,7 +221,7 @@ func Export(input string, output string, author string, testDuration uint64, use
 	return nil
 }
 
-func ExportWithFluid(fluid []docx.FluidString, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string) error {
+func ExportWithFluid(fluid []docx.FluidString, output string, author string, testDuration uint64, useTestStructure bool, testStructure []TestStructure, useEncryption bool, key string, additionalExportData DouAdditionalExportData) error {
 	// make sure...
 	ConvertPath(&output)
 
@@ -240,6 +246,7 @@ func ExportWithFluid(fluid []docx.FluidString, output string, author string, tes
 	dou.Questions = douQues
 	dou.Revision = DOU_REVISION_1
 	dou.TestDuration = testDuration
+	dou.AdditionalExportData = additionalExportData
 
 	dou.UseTestStructure = useTestStructure
 	if useTestStructure {

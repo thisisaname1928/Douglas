@@ -1,6 +1,8 @@
 tmp/
 testmedia/
 .*
+*.png
+*.wmf
 
 update.zip
 tmp.json
@@ -14,6 +16,7 @@ output.dou
 *.dat
 *.dou
 !test.dou
+!icon.png
 go.sum
 test.csv
 testraw.xml

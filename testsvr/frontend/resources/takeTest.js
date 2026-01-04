@@ -43,6 +43,11 @@ async function startTest() {
         showElement('summitTest')
         setUpTestMode(uuid)
         setUpTimer(glbTestsvr.test.startTime, glbTestsvr.test.testDuration)
+
+
+        document.getElementById("schoolName").innerHTML = `Trường: ${await getSchoolName()}`
+        document.getElementById("candinateName").innerHTML = `Học sinh: ${glbTestsvr.test.name}`
+        document.getElementById("testName").innerHTML = `Bài thi: ${await getTestName()}`
     } else {
         showElement('timer')
         showElement('testResult')
@@ -490,4 +495,14 @@ function getAnswer() {
     }
 
     return result
+}
+
+async function getTestName() {
+    res = await fetch("/api/getTestName", { method: "GET" })
+    return await res.text()
+}
+
+async function getSchoolName() {
+    res = await fetch("/api/getSchoolName", { method: "GET" })
+    return await res.text()
 }

@@ -262,17 +262,17 @@
             border-radius: 8px;
             box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2);
             padding: 15px 20px;
-            max-width: 450px;
             border: 1px solid #e0e0e0;
-            margin-top: 20px;
+            margin: auto;
             position: fixed;
             z-index: 1001;
-
-            left: 30%;
-            top: 10%;
-            overflow: auto;
+            max-width: 450px;
+            padding-bottom: 30px;
 
             width: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         body.dark-mode .popup-ask {
@@ -445,7 +445,7 @@
         }
 
         .config-container {
-            width: 350px;
+            width: 450px;
             padding: 20px;
             margin: 20px;
 
@@ -471,9 +471,22 @@
             font-size: 16px;
             color: #333;
             margin: 0;
+            font-weight: bold;
+        }
+
+        .sub-config-label {
+            font-family: sans-serif;
+            font-size: 14px;
+            color: #333;
+            margin: 0;
+            margin-right: 20px;
         }
 
         body.dark-mode .config-label {
+            color: white;
+        }
+
+        body.dark-mode .sub-config-label {
             color: white;
         }
 
@@ -482,7 +495,7 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 14px;
-            width: 100%;
+            width: 60%;
             box-sizing: border-box;
         }
 
@@ -704,4 +717,9 @@
         body.dark-mode .del-btn {
             color: rgb(248, 149, 149);
             box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+        }
+
+        .input-config-row {
+            align-items: center;
+            width: 100%;
         }

@@ -73,14 +73,15 @@ type GetConfigRequest struct {
 }
 
 type ExportRequest struct {
-	Status       bool     `json:"status"`
-	UUID         string   `json:"UUID"`
-	Msg          string   `json:"msg"`
-	TestDuration uint64   `json:"testDuration"`
-	Author       string   `json:"author"`
-	Key          string   `json:"key"`
-	Stype        []StypeN `json:"stype"`
-	ExportType   string   `json:"exportType"`
+	Status               bool                        `json:"status"`
+	UUID                 string                      `json:"UUID"`
+	Msg                  string                      `json:"msg"`
+	TestDuration         uint64                      `json:"testDuration"`
+	Author               string                      `json:"author"`
+	Key                  string                      `json:"key"`
+	Stype                []StypeN                    `json:"stype"`
+	ExportType           string                      `json:"exportType"`
+	AdditionalExportData dou.DouAdditionalExportData `json:"additionalExportData"`
 }
 
 type ExportRespone struct {
@@ -143,7 +144,7 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 
 		switch request.ExportType {
 		case "useDocx":
-			e = dou.Export("./app/tests/"+request.UUID+".dat", "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+			e = dou.Export("./app/tests/"+request.UUID+".dat", "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key, request.AdditionalExportData)
 			if e != nil {
 				response.Msg = "invalid docx file"
 				response.Status = false
@@ -164,7 +165,7 @@ func exportAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			e = dou.ExportWithFluid(docx.String2Fluid(string(b)), "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key)
+			e = dou.ExportWithFluid(docx.String2Fluid(string(b)), "./app/tests/"+request.UUID+".dou", request.Author, request.TestDuration, true, testStructure, useEncryption, request.Key, request.AdditionalExportData)
 			if e != nil {
 				response.Msg = "invalid docx file"
 				response.Status = false

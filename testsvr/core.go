@@ -140,7 +140,7 @@ func calcTLNQuestion(point float64, trueAns [4]string, userAns [4]string) float6
 	return 0
 }
 
-func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64 {
+func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string, TNDSPointCalcInfo *[4]int) float64 {
 	var res float64
 	var n = 0
 
@@ -152,7 +152,12 @@ func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string) float64
 		}
 	}
 
-	res = point * float64(float64(n)/4)
+	if TNDSPointCalcInfo == nil {
+		res = point * float64(float64(n)/4)
+	} else if n > 0 {
+		res = point * float64(TNDSPointCalcInfo[n-1]) / 100
+	}
+
 	return res
 }
 
@@ -194,7 +199,7 @@ func (fir *DouglasFir) CalculateMark(UUID string) (int, float64, error) {
 				trueQuesCount++
 			}
 		case docx.TNDS:
-			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]), fir.Douglas.Data.AdditionalExportData.TNDSPointCalcInfo)
 
 			mark += point
 			if point == testInfo.Questions[i].Point {
@@ -244,7 +249,7 @@ func CalculateMarkNoOpen(TestUUID string, UUID string) (int, float64, error) {
 				trueQuesCount++
 			}
 		case docx.TNDS:
-			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]))
+			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]), testInfo.AdditionalExportData.TNDSPointCalcInfo)
 
 			mark += point
 			if point == testInfo.Questions[i].Point {
@@ -291,6 +296,9 @@ func (fir *DouglasFir) getCurrentServerTime(w http.ResponseWriter, r *http.Reque
 
 // return false if test end of time
 func (fir *DouglasFir) checkTestTime(UUID string) bool {
+	if fir.Douglas.Data.TestDuration == 0 {
+		return true
+	}
 	st, e := fir.TestSessions.GetSessionStartTime(UUID)
 
 	if e != nil {

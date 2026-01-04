@@ -53,8 +53,9 @@ func loadTestAPI(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	var request struct {
-		Name string `json:"name"`
-		Key  string `json:"key"`
+		Name       string `json:"name"`
+		SchoolName string `json:"schoolName"`
+		Key        string `json:"key"`
 	}
 
 	var response struct {
@@ -86,6 +87,7 @@ func loadTestAPI(w http.ResponseWriter, r *http.Request) {
 	var info testInfoJson
 	info.Name = request.Name
 	info.Key = request.Key
+	info.SchoolName = request.SchoolName
 
 	b, _ := json.Marshal(info)
 	os.WriteFile("./testsvr/testdata/"+t.UUID+"/info.json", b, 0666)

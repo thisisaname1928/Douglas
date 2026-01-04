@@ -22,8 +22,9 @@ const (
 )
 
 type TestInfoJson struct {
-	Name string `json:"name"`
-	Key  string `json:"key"`
+	Name       string `json:"name"`
+	Key        string `json:"key"`
+	SchoolName string `json:"schoolName"`
 }
 
 type DouglasFir struct {
