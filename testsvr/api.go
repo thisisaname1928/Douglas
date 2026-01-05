@@ -101,7 +101,7 @@ func (fir *DouglasFir) handleStartTest(w http.ResponseWriter, r *http.Request) {
 	encoder.Encode(&response)
 }
 
-func (fir *DouglasFir) getSchoolName(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) getSchoolName(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte(fir.ExtraInfo.SchoolName))
 }
 

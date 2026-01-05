@@ -326,6 +326,6 @@ func favicon(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (fir *DouglasFir) getTestName(w http.ResponseWriter, r *http.Request) {
+func (fir *DouglasFir) getTestName(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte(fir.ExtraInfo.Name))
 }

@@ -76,7 +76,7 @@ type UsageMetadata struct {
 	TotalTokenCount      int `json:"totalTokenCount"`
 }
 
-func call4AI(prompt string, key string) (string, error) {
+func Call4AI(prompt string, key string) (string, error) {
 	jsonContent := `{
     "contents": [
       {
