@@ -339,9 +339,9 @@
             overflow-wrap: break-word;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 690px) {
             .question-card {
-                padding: 15px;
+                padding: 10px;
                 margin-top: 10px;
             }
 
@@ -350,7 +350,7 @@
             }
 
             .option-item {
-                padding: 8px 12px;
+                padding: 7px 10px;
                 font-size: 0.9em;
             }
 

@@ -94,7 +94,11 @@ function getTnAns(sheet) {
 
 function prepareQuestions(json) {
     if (!json.status) {
-        msg.innerText = json.error
+        if (json.error == "invalid docx file") {
+            msg.innerText = "File không hợp lệ!"
+        } else {
+            msg.innerText = json.error
+        }
         return;
     }
     msg.innerText = ""

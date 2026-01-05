@@ -13,7 +13,9 @@ async function checkIfTestDone() {
 
 function showElement(id) { document.getElementById(id).classList.remove("hidden-element") }
 
-function hideElement(id) { document.getElementById(id).classList.add("hidden-element") }
+function hideElement(id) {
+    document.getElementById(id).classList.add("hidden-element")
+}
 
 function warnPopup() {
     showElement("popup-ask")
@@ -30,7 +32,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         startTest()
     }
 
-    document.getElementById('okBut').addEventListener('click', () => { startTest() })
+    document.getElementById('okBut').addEventListener('click', async () => {
+        if (!testModeInited) startTest()
+
+        if (await checkIfTestDone()) {
+            location.reload()
+        }
+    })
 })
 
 async function startTest() {
@@ -54,7 +62,7 @@ async function startTest() {
         res = await fetch("/api/getPoint", { method: "POST", body: JSON.stringify({ uuid: uuid }) })
         jsonRes = await res.json()
 
-        document.getElementById("test").innerHTML = JSON.stringify(jsonRes)
+        // document.getElementById("test").innerHTML = JSON.stringify(jsonRes)
 
         bgTime = new Date(glbTestsvr.test.startTime)
         edTime = new Date(glbTestsvr.test.endTime)
@@ -214,15 +222,27 @@ async function renderTest(testsvr) {
     questions = testsvr.test.questions
     glbTestsvr = testsvr
 
-    testContent.innerHTML = ''
+    part1 = document.getElementById('part1')
+    part2 = document.getElementById('part2')
+    part3 = document.getElementById('part3')
+
+    part1ShouldShow = false
+    part2ShouldShow = false
+    part3ShouldShow = false
+
+    part1Idx = 0
+    part2Idx = 0
+    part3Idx = 0
 
     // render questions
     for (i = 0; i < questions.length; i++) {
         if (questions[i].type == 0x12) { // TN
-            testContent.innerHTML += `
+            part1ShouldShow = true
+            part1Idx++
+            part1.innerHTML += `
 <div class="question-card" id="QUES.${i}.TN">
     <div class="question-text">
-        Câu ${i + 1} (Trắc nghiệm): ${questions[i].content}
+        Câu ${part1Idx} (Trắc nghiệm): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TN.0" onclick="chooseTNOption(${i}, 0, true)">
@@ -244,23 +264,27 @@ async function renderTest(testsvr) {
     </div>
 </div>`
         } else if (questions[i].type == 0x13) {
-            testContent.innerHTML += `    
+            part3ShouldShow = true
+            part3Idx++
+            part3.innerHTML += `    
     <div class="question-card" id="QUES.${i}.TLN">
         <div class="question-text">
-            Câu ${i + 1} (Trắc nghiệm trả lời ngắn): ${questions[i].content}
+            Câu ${part3Idx} (Trắc nghiệm trả lời ngắn): ${questions[i].content}
         </div>
         <div class="TLN-input-container">
-            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 0)" id="QUES.${i}.TLN.0">
-            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 1)" id="QUES.${i}.TLN.1">
-            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 2)" id="QUES.${i}.TLN.2">
-            <input class="square-input" type="text" maxlength="1" oninput="chooseTLNAnswer(${i}, 3)" id="QUES.${i}.TLN.3">
+            <input class="square-input" type="number" maxlength="1" oninput="chooseTLNAnswer(${i}, 0)" id="QUES.${i}.TLN.0">
+            <input class="square-input" type="number" maxlength="1" oninput="chooseTLNAnswer(${i}, 1)" id="QUES.${i}.TLN.1">
+            <input class="square-input" type="number" maxlength="1" oninput="chooseTLNAnswer(${i}, 2)" id="QUES.${i}.TLN.2">
+            <input class="square-input" type="number" maxlength="1" oninput="chooseTLNAnswer(${i}, 3)" id="QUES.${i}.TLN.3">
         </div>
     </div>`
         } else if (questions[i].type == 0x15) {
-            testContent.innerHTML += `
+            part2ShouldShow = true
+            part2Idx++
+            part2.innerHTML += `
 <div class="question-card" id="QUES.${i}.TNDS">
     <div class="question-text" >
-        Câu ${i + 1} (Trắc nghiệm đúng sai): ${questions[i].content}
+        Câu ${part2Idx} (Trắc nghiệm đúng sai): ${questions[i].content}
     </div>
     <div class="options-list">
         <div class="option-item" id="QUES.${i}.TNDS.0">
@@ -291,6 +315,15 @@ async function renderTest(testsvr) {
 </div>`
         }
     }
+
+    if (!part1ShouldShow)
+        hideElement('part1')
+
+    if (!part2ShouldShow)
+        hideElement('part2')
+
+    if (!part3ShouldShow)
+        hideElement('part3')
 }
 
 async function getTest(uuid) {

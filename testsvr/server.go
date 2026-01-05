@@ -1,6 +1,8 @@
 package testsvr
 
 import (
+	"crypto/ecdsa"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,6 +38,7 @@ type DouglasFir struct {
 	TestSessions      TestSessions
 	ExtraInfo         TestInfoJson
 	NumberOfQuestions int
+	PrivateKey        *ecdsa.PrivateKey
 }
 
 func copyFile(dest string, src string) {
@@ -186,6 +189,9 @@ func GetFreePort() (int, error) {
 }
 
 func (fir *DouglasFir) OpenServer() error {
+	// create private key
+	fir.PrivateKey = genECDHKey()
+
 	// init testSession
 	fir.TestSessions.Init()
 	fir.TestSessions.SessionTestUUID = fir.UUID
@@ -215,7 +221,11 @@ func (fir *DouglasFir) OpenServer() error {
 		panic(e)
 	}
 
-	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + strconv.Itoa(p), Handler: server}
+	// gen cert for https
+	cert, key := genSelfSignCert()
+	tlsCert, _ := tls.X509KeyPair(cert, key)
+
+	fir.HttpServer = &http.Server{Addr: "0.0.0.0:" + strconv.Itoa(p), Handler: server, TLSConfig: &tls.Config{InsecureSkipVerify: true, Certificates: []tls.Certificate{tlsCert}}}
 
 	fmt.Println(fir.GetServerPort())
 

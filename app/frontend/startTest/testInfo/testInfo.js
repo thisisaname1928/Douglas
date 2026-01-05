@@ -98,6 +98,12 @@ async function viewTest(uuid) {
     else alert("Bắt đầu bài kiểm tra để có thể xem được kết quả")
 }
 
+
+function showElement(id) {
+    document.getElementById(id).classList.remove("hidden-element")
+}
+
+
 let testInfo
 async function updateTestInfo() {
     testInfo = await getTestInfo()
@@ -112,9 +118,20 @@ async function updateTestInfo() {
         ip = await getTestIp()
         document.getElementById("testName").innerHTML = `<lable style="color:lightgreen;">${testInfo.name}</label>`
         document.getElementById("testStatus").innerHTML = "<b>Trạng thái bài kiểm tra:</b> đang được mở"
-        document.getElementById("testAddress").innerHTML = `<a style="cursor: pointer;" onclick="window.open('http:///${ip}', '_blank');"><b>Làm bài tại:</b> <u style="color: lightblue;">${ip}</u></a> <i id="copyButton" onclick="copyToClipBoard('${ip}')" class="material-icons" style="font-size: 18px;cursor: pointer;margin-top:3px;">content_copy</i>`
+        document.getElementById("testAddress").innerHTML = `<a style="cursor: pointer;" onclick="window.open('http://${ip}', '_blank');"><b>Làm bài tại:</b> <u style="color: lightblue;">${ip}</u></a> <i id="copyButton" onclick="copyToClipBoard('${ip}')" class="material-icons" style="font-size: 18px;cursor: pointer;margin-top:3px;">content_copy</i>`
 
         justAButton.innerHTML = "Dừng bài kiểm tra"
+
+        showElement("qrcode")
+
+        var _qrcode = new QRCode("qrcode", {
+            text: `http://${ip}`,
+            width: 128,
+            height: 128,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
 
         justAButton.addEventListener('click', async () => {
             stopATest()

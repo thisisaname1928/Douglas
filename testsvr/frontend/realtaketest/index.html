@@ -16,22 +16,32 @@
         <h3 id="candinateName">Bài kiểm tra ""</h3>
     </div>
     <div id="testContent">
-    </div>
-    <div class="center-div">
-        <button id="summitTest" class="btn hidden-element">Nộp bài</button>
-    </div>
-    <div id="test"></div>
-    <div class="float-timer hidden-element" id="timer">Thời gian còn lại: không giới hạn</div>
-
-    <div id="popup-ask" class="hidden-element">
-        <div class="overlay-layer" id="blackLayer"></div>
-        <div class="popup-card" id="popup">
-            <center>
-                <p style="color: lightcoral;">Bất kì sự kiện nào thoát ra khỏi màn làm bài đều bị ghi nhận</p>
-            </center>
-            <center><button id="okBut" class="btn" onclick="setUpTestModeAgain()">Bắt đầu bài làm</button></center>
+        <div id="part1">
+            <h2 class="content-header">Phần I. Trắc nghiệm nhiều lựa chọn</h2>
         </div>
-    </div>
+        <div id="part2">
+            <h2 class="content-header">Phần II. Trắc nghiệm đúng sai</h2>
+        </div>
+        <div id="part3">
+            <h2 class="content-header">Phần III. Trắc nghiệm trả lời ngắn</h2>
+        </div>
+        <div class="center-div">
+            <button id="summitTest" class="btn hidden-element">Nộp bài</button>
+        </div>
+        <div id="test"></div>
+        <div class="float-timer hidden-element" id="timer">Thời gian còn lại: không giới hạn</div>
+
+        <div id="popup-ask" class="hidden-element">
+            <div class="overlay-layer" id="blackLayer"></div>
+            <div class="popup-card" id="popup">
+                <center>
+                    <p style="color: lightcoral;">Bất kì sự kiện nào thoát ra khỏi màn làm bài đều bị ghi nhận</p>
+                </center>
+                <center>
+                    <button id="okBut" class="btn" onclick="setUpTestModeAgain()">Bắt đầu bài làm</button>
+                </center>
+            </div>
+        </div>
     </div>
 
     <script src="/rsrc/takeTest.js"></script>

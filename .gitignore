@@ -27,3 +27,6 @@ dist
 secretKey.json
 build
 ./tmp.json
+testsvr/testdata/*
+!holder.txt
+app/media/*
