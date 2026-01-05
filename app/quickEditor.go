@@ -12,8 +12,6 @@ import (
 	genaiwrapper "github.com/thisisaname1928/goParsingDocx/genAIWrapper"
 )
 
-var GEMINI_API_KEY = "AIzaSyAqfmYjzo3lsMl_Y86TV9Hw5AZoz3xioV8"
-
 func quickEditorRouteRes(w http.ResponseWriter, r *http.Request) {
 	addResource(w, r, "./app/frontend/quickEditor/")
 }
