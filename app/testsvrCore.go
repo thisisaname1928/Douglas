@@ -146,6 +146,7 @@ type candinate struct {
 	UUID      string    `json:"uuid"`
 	StartTime time.Time `json:"startTime"`
 	EndTime   time.Time `json:"endTime"`
+	WarnTimes int       `json:"warnTimes"`
 }
 
 func getCandinateList(uuid string) ([]candinate, error) {
@@ -180,7 +181,7 @@ func getCandinateList(uuid string) ([]candinate, error) {
 		if e != nil {
 			return []candinate{}, e
 		}
-		var cur = candinate{info.Name, info.Class, info.Done, mark, strings.ReplaceAll(v.Name(), ".json", ""), info.StartTime, info.EndTime}
+		var cur = candinate{info.Name, info.Class, info.Done, mark, strings.ReplaceAll(v.Name(), ".json", ""), info.StartTime, info.EndTime, info.WarnTimes}
 		candinates = append(candinates, cur)
 	}
 

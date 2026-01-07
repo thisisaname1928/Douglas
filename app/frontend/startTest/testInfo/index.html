@@ -31,6 +31,13 @@
                 <button id="justAButton" class="btn">Bắt đầu bài kiểm tra</button>
                 <button id="exportCsv" class="btn">Export file điểm</button>
             </div>
+            <div class="popup-ask hidden-element">
+                <div class="popup-header">
+                    <h4 style="padding-left: 10px;">Thống kê</h4>
+                    <i style="cursor: pointer;" class="material-icons icon">close</i>
+                </div>
+                <canvas id="chartBro"></canvas>
+            </div>
             <div class="qrcode-container hidden-element" id="qrcode">
                 <center style="font-size: 14px;padding-bottom: 5px;">Quét để làm bài</center>
             </div>
@@ -38,11 +45,28 @@
                 <h2>Danh sách bài làm</h2>
             </center>
             <div id="candinateBox" class="scrollable-box">
+                <table class="table-container">
+                    <thead style="border-radius: 8px;" class="table-header">
+                        <tr>
+                            <th style="width: 20px;padding-left: 5px;border-radius: 8px 0px 0px 8px;"
+                                class="table-header">STT</th>
+                            <th style="width: 100px;padding-left: 5px;" class="table-header">Tên học sinh</th>
+                            <th style="width: 20px;padding-left: 5px;" class="table-header">Lớp</th>
+                            <th style="width: 20px;padding-left: 5px;" class="table-header">Điểm</th>
+                            <th style="width: 20px;padding-left: 5px;border-radius: 0px 8px 8px 0px;"
+                                class="table-header">Số lần cảnh cáo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candinateList">
+
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <script src="/Home/webMode.js"></script>
         <script src="/StartTest/qrcode.min.js"></script>
+        <script type="module" src="/StartTest/chart.umd.min.js"></script>
         <script src="/StartTest.TestInfo/testInfo.js"></script>
 
 </body>

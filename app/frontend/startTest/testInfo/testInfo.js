@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     uuid = window.location.pathname.replace("/StartTest.TestInfo/uuid/", "")
 
     updateTestInfo()
+
+    createChart(document.getElementById("chartBro"))
 })
 
 async function viewLoop() {
@@ -82,13 +84,18 @@ function delay(ms) {
 async function updateTestCandinate() {
     candinates = await getCandinateList()
 
-    candinateBox = document.getElementById("candinateBox")
+    candinateList = document.getElementById("candinateList")
 
     for (i = 0; i < candinates.length; i++) {
-        candinateBox.innerHTML += `<div class="test-card" style="cursor: pointer;" onclick='viewTest("${candinates[i].uuid}")'>
-                    <b>Tên: ${candinates[i].name}, Lớp: ${candinates[i].class}</b><br>
-                    Điểm: ${checkCanMark(candinates[i].mark, candinates[i].isDone)}
-                </div>`
+        candinateList.innerHTML += `
+            <tr>
+                <td class="table-cell">${i + 1}</td>
+                <td class="table-cell">${candinates[i].name}</td>
+                <td class="table-cell">${candinates[i].class}</td>
+                <td class="table-cell">${checkCanMark(candinates[i].mark, candinates[i].isDone)}</td>
+                <td class="table-cell">${candinates[i].warnTimes}</td>
+            </tr>
+        `
     }
 }
 
@@ -152,4 +159,35 @@ async function copyToClipBoard(address) {
     document.getElementById("copyButton").innerText = "check"
     await delay(1000)
     document.getElementById("copyButton").innerText = "content_copy"
+}
+
+async function createChart(chartElement) {
+    const data = [
+        { year: 0, count: 1 },
+        { year: 1, count: 0 },
+        { year: 2, count: 0 },
+        { year: 3, count: 0 },
+        { year: 4, count: 0 },
+        { year: 5, count: 0 },
+        { year: 7, count: 0 },
+        { year: 8, count: 0 },
+        { year: 9, count: 0 },
+        { year: 10, count: 0 },
+    ];
+
+    new Chart(
+        chartElement,
+        {
+            type: 'bar',
+            data: {
+                labels: data.map(row => row.year),
+                datasets: [
+                    {
+                        label: 'Số học sinh đạt điểm',
+                        data: data.map(row => row.count)
+                    }
+                ]
+            }
+        }
+    );
 }
