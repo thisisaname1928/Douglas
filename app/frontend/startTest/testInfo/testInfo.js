@@ -8,7 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTestInfo()
 
-    createChart(document.getElementById("chartBro"))
+    document.getElementById("showChart").addEventListener('click', () => {
+        showElement("charPopup")
+        createChart(document.getElementById("chartBro"))
+    })
 })
 
 async function viewLoop() {
@@ -81,6 +84,7 @@ function delay(ms) {
     });
 }
 
+let candinates
 async function updateTestCandinate() {
     candinates = await getCandinateList()
 
@@ -88,7 +92,7 @@ async function updateTestCandinate() {
 
     for (i = 0; i < candinates.length; i++) {
         candinateList.innerHTML += `
-            <tr>
+            <tr style="cursor: pointer;" onclick="viewTest('${candinates[i].uuid}')">
                 <td class="table-cell">${i + 1}</td>
                 <td class="table-cell">${candinates[i].name}</td>
                 <td class="table-cell">${candinates[i].class}</td>
@@ -108,6 +112,10 @@ async function viewTest(uuid) {
 
 function showElement(id) {
     document.getElementById(id).classList.remove("hidden-element")
+}
+
+function hideElement(id) {
+    document.getElementById(id).classList.add("hidden-element")
 }
 
 
@@ -161,30 +169,46 @@ async function copyToClipBoard(address) {
     document.getElementById("copyButton").innerText = "content_copy"
 }
 
-async function createChart(chartElement) {
-    const data = [
-        { year: 0, count: 1 },
-        { year: 1, count: 0 },
-        { year: 2, count: 0 },
-        { year: 3, count: 0 },
-        { year: 4, count: 0 },
-        { year: 5, count: 0 },
-        { year: 7, count: 0 },
-        { year: 8, count: 0 },
-        { year: 9, count: 0 },
-        { year: 10, count: 0 },
-    ];
+let curChart
 
-    new Chart(
+function deleteCurChart() {
+    curChart.destroy()
+    hideElement("charPopup")
+}
+
+async function createChart(chartElement) {
+    let data = new Map()
+
+    for (i = 1; i <= 10; i++) {
+        data.set(i, 0)
+    }
+
+    for (i = 0; i < candinates.length; i++) {
+        if (candinates[i].isDone) {
+            if (data.has(Number(candinates[i].mark))) {
+                data.set(Number(candinates[i].mark), data.get(Number(candinates[i].mark)) + 1)
+            }
+            else {
+                data.set(Number(candinates[i].mark), 1)
+            }
+        }
+    }
+
+    // sort data
+    data = new Map([...data.entries()].sort((a, b) => a[0] - b[0]));
+
+    console.log(data)
+
+    curChart = new Chart(
         chartElement,
         {
             type: 'bar',
             data: {
-                labels: data.map(row => row.year),
+                labels: Array.from(data.keys()),
                 datasets: [
                     {
                         label: 'Số học sinh đạt điểm',
-                        data: data.map(row => row.count)
+                        data: Array.from(data.values())
                     }
                 ]
             }

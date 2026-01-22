@@ -134,6 +134,11 @@
             margin-right: 80px;
         }
 
+        body.dark-mode .main-content {
+            background-color: #2a2a2a;
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
         .content-header {
             padding: 0 20px;
             margin-bottom: 20px;
@@ -151,7 +156,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             transition: background-color 0.3s, border-color 0.3s;
-            margin: 0 20px;
+            margin: 4px 20px;
             flex-shrink: 0;
         }
 

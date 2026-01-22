@@ -133,11 +133,13 @@ func calcTLNQuestion(point float64, trueAns [4]string, userAns [4]string) float6
 		}
 	}
 
-	if trueAns == userAns {
-		return point
+	for i := range trueAns {
+		if trueAns[i] != userAns[i] {
+			return 0
+		}
 	}
 
-	return 0
+	return point
 }
 
 func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string, TNDSPointCalcInfo *[4]int) float64 {
@@ -155,7 +157,7 @@ func calcTNDSQuestion(point float64, trueAns [4]bool, userAns [4]string, TNDSPoi
 	if TNDSPointCalcInfo == nil {
 		res = point * float64(float64(n)/4)
 	} else if n > 0 {
-		res = point * float64(TNDSPointCalcInfo[n-1]) / 100
+		res = point * (float64(TNDSPointCalcInfo[n-1]) / 100)
 	}
 
 	return res
@@ -241,6 +243,7 @@ func CalculateMarkNoOpen(TestUUID string, UUID string) (int, float64, error) {
 			if point == testInfo.Questions[i].Point {
 				trueQuesCount++
 			}
+
 		case docx.TLN:
 			point := calcTLNQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TLNA, [4]string(testInfo.AnswerSheet[i]))
 
@@ -248,6 +251,7 @@ func CalculateMarkNoOpen(TestUUID string, UUID string) (int, float64, error) {
 			if point == testInfo.Questions[i].Point {
 				trueQuesCount++
 			}
+
 		case docx.TNDS:
 			point := calcTNDSQuestion(testInfo.Questions[i].Point, testInfo.Questions[i].TrueAnswer, [4]string(testInfo.AnswerSheet[i]), testInfo.AdditionalExportData.TNDSPointCalcInfo)
 
@@ -255,6 +259,7 @@ func CalculateMarkNoOpen(TestUUID string, UUID string) (int, float64, error) {
 			if point == testInfo.Questions[i].Point {
 				trueQuesCount++
 			}
+
 		}
 	}
 

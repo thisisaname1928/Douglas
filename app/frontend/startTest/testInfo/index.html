@@ -30,11 +30,13 @@
                 <p id="testAddress"></p>
                 <button id="justAButton" class="btn">Bắt đầu bài kiểm tra</button>
                 <button id="exportCsv" class="btn">Export file điểm</button>
+                <button id="showChart" class="btn">Thống
+                    kê</button>
             </div>
-            <div class="popup-ask hidden-element">
+            <div class="popup-ask hidden-element" id="charPopup">
                 <div class="popup-header">
                     <h4 style="padding-left: 10px;">Thống kê</h4>
-                    <i style="cursor: pointer;" class="material-icons icon">close</i>
+                    <i style="cursor: pointer;" class="material-icons icon" onclick="deleteCurChart()">close</i>
                 </div>
                 <canvas id="chartBro"></canvas>
             </div>
